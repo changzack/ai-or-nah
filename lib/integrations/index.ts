@@ -1,12 +1,12 @@
 /**
  * External API integrations barrel export
+ *
+ * Note: Only exports main public interfaces to avoid naming conflicts.
+ * Provider-specific modules (hive, sightengine) should be imported directly if needed.
  */
 
 export * from "./apify";
-export * from "./hive";
 export * from "./ai-detection";
-export * from "./sightengine";
-export * from "./ai-detection-mock";
 
 // Error handling
 export { AIOrNahError, getErrorMessage, validateProfileForAnalysis } from "../errors";

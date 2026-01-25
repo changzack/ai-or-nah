@@ -51,7 +51,7 @@ export async function scrapeInstagramProfile(
       return null;
     }
 
-    const profileData = items[0] as ApifyInstagramProfile;
+    const profileData = items[0] as unknown as ApifyInstagramProfile;
 
     // Check if profile exists and is accessible
     if (!profileData || !profileData.id) {
