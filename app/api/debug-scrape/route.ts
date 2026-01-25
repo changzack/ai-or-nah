@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const profileData = items[0];
+    const profileData = items[0] as any;
 
     return NextResponse.json({
       status: "success",
