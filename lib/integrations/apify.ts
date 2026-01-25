@@ -53,15 +53,27 @@ export async function scrapeInstagramProfile(
 
     const profileData = items[0] as unknown as ApifyInstagramProfile;
 
+    // Debug: Log raw response to understand what we're getting
+    console.log(`[Apify] Raw response keys for ${username}:`, Object.keys(profileData));
+    console.log(`[Apify] Profile data - id: ${profileData.id}, private: ${profileData.private}, username: ${profileData.username}`);
+
     // Check if profile exists and is accessible
     if (!profileData || !profileData.id) {
       console.error(`[Apify] Profile not found: ${username}`);
+      console.error(`[Apify] Raw data:`, JSON.stringify(profileData, null, 2));
       return null;
     }
 
     // Check if profile is private
     if (profileData.private) {
       console.error(`[Apify] Profile is private: ${username}`);
+      console.error(`[Apify] Profile metadata:`, {
+        id: profileData.id,
+        username: profileData.username,
+        private: profileData.private,
+        postsCount: profileData.postsCount,
+        followersCount: profileData.followersCount,
+      });
       return null;
     }
 
