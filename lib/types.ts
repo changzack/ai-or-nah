@@ -101,10 +101,13 @@ export type InstagramPost = {
   commentsCount: number;
 };
 
-// Hive API response
-export type HiveImageScore = {
+// AI Detection API response (provider-agnostic)
+export type AIImageScore = {
   imageUrl: string;
   aiProbability: number; // 0-1
   success: boolean;
   error?: string;
 };
+
+/** @deprecated Use AIImageScore instead. Maintained for backward compatibility. */
+export type HiveImageScore = AIImageScore;

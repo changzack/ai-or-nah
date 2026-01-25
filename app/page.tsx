@@ -1,65 +1,170 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, FormEvent, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { parseInstagramUsername } from "@/lib/username";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { DesktopGate } from "@/components/DesktopGate";
+import { Footer } from "@/components/Footer";
+
+export default function HomePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showRateLimitNotice, setShowRateLimitNotice] = useState(false);
+
+  // Check if user was redirected due to rate limit
+  useEffect(() => {
+    if (searchParams.get("rate_limited") === "true") {
+      setShowRateLimitNotice(true);
+      // Auto-hide after 10 seconds
+      const timeout = setTimeout(() => {
+        setShowRateLimitNotice(false);
+      }, 10000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    // Validate input
+    if (!input.trim()) {
+      setError("Please enter an Instagram username or URL");
+      return;
+    }
+
+    // Parse username
+    const username = parseInstagramUsername(input);
+
+    if (!username) {
+      setError("Invalid Instagram username or URL. Try again.");
+      return;
+    }
+
+    // Navigate to check page
+    setIsSubmitting(true);
+    router.push(`/check/${username}`);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <>
+      <DesktopGate />
+
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 flex items-center justify-center px-5 py-12">
+        <div className="w-full max-w-md">
+          {/* Rate Limit Notice */}
+          {showRateLimitNotice && (
+            <div className="mb-6 bg-orange-50 border border-orange-200 rounded-xl p-4 animate-fade-in">
+              <div className="flex items-start gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                  />
+                </svg>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-orange-900 mb-1">
+                    Daily limit reached
+                  </p>
+                  <p className="text-sm text-orange-800">
+                    You can still view accounts others have searched!
+                    Try entering a popular username.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowRateLimitNotice(false)}
+                  className="text-orange-500 hover:text-orange-700 flex-shrink-0"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+              AI or Nah
+            </h1>
+            <p className="text-2xl font-semibold text-gray-800 mb-2">
+              Check if your IG crush is real
+            </p>
+            <p className="text-lg text-gray-600">
+              Find out in 30 seconds
+            </p>
+          </div>
+
+          {/* Input Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              type="text"
+              placeholder="@username or instagram.com/username"
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                setError("");
+              }}
+              error={error}
+              disabled={isSubmitting}
+              autoFocus
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="large"
+              fullWidth
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Checking..." : "Check Account"}
+            </Button>
+          </form>
+
+          {/* Supporting Copy */}
+          <div className="mt-8 text-center space-y-2">
+            <p className="text-base text-gray-600">
+              Don&apos;t get catfished.
+            </p>
+            <p className="text-base text-gray-600">
+              Verify before you slide into DMs.
+            </p>
+          </div>
+
+          {/* Example */}
+          <div className="mt-10 pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-500 text-center">
+              <span className="font-medium">Example:</span>{" "}
+              @username, instagram.com/username, or paste full URL
+            </p>
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+
+        <Footer />
+      </div>
+    </>
   );
 }
