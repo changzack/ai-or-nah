@@ -5,7 +5,7 @@ import { createServerClient } from "../supabase/server";
  * Bucket name: "instagram-images"
  */
 
-const BUCKET_NAME = "instagram-images";
+const BUCKET_NAME = "analyzed-images";
 
 /**
  * Upload an image from URL to Supabase Storage

@@ -57,12 +57,12 @@ export function getVerdictLabel(verdict: VerdictLevel): string {
 export function getBottomLine(verdict: VerdictLevel): string {
   switch (verdict) {
     case "real":
-      return "💡 Bottom line: Looks legit. But stay cautious.";
+      return "Looks legit. But stay cautious.";
     case "unclear":
-      return "💡 Bottom line: Hard to tell. Trust your instincts.";
+      return "Hard to tell. Trust your instincts.";
     case "likely_fake":
     case "almost_definitely_fake":
-      return "💡 Bottom line: This is AI-generated. Don't send money.";
+      return "This is AI-generated. Don't send money.";
   }
 }
 

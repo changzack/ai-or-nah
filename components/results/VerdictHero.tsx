@@ -8,8 +8,6 @@ import { useHaptic } from "@/hooks/useHaptic";
 import {
   slamIn,
   fadeInUp,
-  triggerConfetti,
-  prefersReducedMotion,
 } from "@/lib/animations";
 
 interface VerdictHeroProps {
@@ -24,7 +22,6 @@ export function VerdictHero({
   username,
 }: VerdictHeroProps) {
   const [showVerdict, setShowVerdict] = useState(false);
-  const [hasTriggeredConfetti, setHasTriggeredConfetti] = useState(false);
   const haptic = useHaptic();
 
   // Animated percentage counter
@@ -42,20 +39,6 @@ export function VerdictHero({
     return () => clearTimeout(timer);
   }, []);
 
-  // Trigger confetti for extreme results
-  useEffect(() => {
-    if (showVerdict && !hasTriggeredConfetti) {
-      const isExtreme = aiLikelihood > 85 || aiLikelihood < 15;
-      if (isExtreme && !prefersReducedMotion()) {
-        setHasTriggeredConfetti(true);
-        triggerConfetti({
-          particleCount: 150,
-          spread: 90,
-        });
-      }
-    }
-  }, [showVerdict, aiLikelihood, hasTriggeredConfetti]);
-
   const getVerdictColor = () => {
     if (aiLikelihood <= 30) return "text-[#A8D5BA]";
     if (aiLikelihood <= 60) return "text-[#FCD34D]";
@@ -64,10 +47,10 @@ export function VerdictHero({
   };
 
   const getVerdictLabel = () => {
-    if (aiLikelihood <= 30) return "Probably Real";
-    if (aiLikelihood <= 60) return "Hard to Tell";
-    if (aiLikelihood <= 80) return "Likely Fake";
-    return "Almost Definitely Fake";
+    if (aiLikelihood <= 30) return "Human";
+    if (aiLikelihood <= 60) return "Probably Human";
+    if (aiLikelihood <= 80) return "Sus";
+    return "Definitely AI";
   };
 
   const getVerdictEmoji = () => {
@@ -96,13 +79,39 @@ export function VerdictHero({
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`bg-gradient-to-b ${getVerdictBg()} rounded-2xl p-8 text-center mb-6 shadow-lg ${getGlowColor()}`}
+      className={`bg-gradient-to-b ${getVerdictBg()} rounded-2xl p-8 text-center mb-6 shadow-lg ${getGlowColor()} relative`}
     >
+      {/* Decorative emoji - top left inside */}
+      <motion.div
+        initial={{ scale: 0, rotate: -15 }}
+        animate={{ scale: 1, rotate: -12 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 20,
+          delay: 0.4,
+        }}
+        className="absolute top-2 left-2 text-2xl"
+        style={{ transform: "rotate(-12deg)" }}
+      >
+        👩
+      </motion.div>
+
+      {/* AI Likelihood Score label at the top */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="text-sm font-bold text-gray-600 mb-2 uppercase tracking-wide"
+      >
+        AI Likelihood Score
+      </motion.p>
+
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="text-sm text-gray-600 mb-2"
+        className="text-base font-bold text-gray-900 mb-4"
       >
         @{username}
       </motion.p>
@@ -128,20 +137,11 @@ export function VerdictHero({
           variants={slamIn}
           initial="hidden"
           animate="visible"
-          className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2"
+          className="text-3xl font-bold text-gray-900 flex items-center justify-center gap-2"
         >
           {getVerdictEmoji()} {getVerdictLabel()}
         </motion.h2>
       )}
-
-      <motion.p
-        variants={fadeInUp}
-        initial="hidden"
-        animate={showVerdict ? "visible" : "hidden"}
-        className="text-gray-600"
-      >
-        AI Likelihood Score
-      </motion.p>
     </motion.div>
   );
 }

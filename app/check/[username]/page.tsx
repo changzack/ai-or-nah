@@ -13,6 +13,7 @@ import { ShareButton } from "@/components/ShareButton";
 import { Sticker } from "@/components/ui/Sticker";
 import { RateLimitError } from "@/components/RateLimitError";
 import { Footer } from "@/components/Footer";
+import { MagnifyingGlassLoader } from "@/components/MagnifyingGlassLoader";
 import { useHaptic } from "@/hooks/useHaptic";
 import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
 import type { AnalysisResult, RateLimitResult } from "@/lib/types";
@@ -80,9 +81,8 @@ function LoadingStageItem({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
+      initial={{ opacity: 1, x: 0 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.3 }}
       className={`flex items-center gap-3 py-3 px-4 rounded-lg transition-colors ${
         status === "active"
           ? "bg-[#8B5CF6]/10"
@@ -158,6 +158,10 @@ export default function CheckPage({
       setError(null);
       setCurrentStage(0);
 
+      // Record start time for minimum duration enforcement
+      const startTime = Date.now();
+      const MINIMUM_LOADING_DURATION = 5000; // 5 seconds minimum
+
       // Progress through stages
       const stageInterval = setInterval(() => {
         setCurrentStage((prev) => {
@@ -186,6 +190,15 @@ export default function CheckPage({
       }
 
       const data = await response.json();
+
+      // Calculate elapsed time and ensure minimum duration
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, MINIMUM_LOADING_DURATION - elapsedTime);
+
+      if (remainingTime > 0) {
+        console.log(`[Loading] Adding ${remainingTime}ms delay to meet minimum duration`);
+        await new Promise((resolve) => setTimeout(resolve, remainingTime));
+      }
 
       // Small delay before showing results for smooth transition
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -222,28 +235,26 @@ export default function CheckPage({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }}
             className="w-full max-w-sm"
           >
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-2xl font-bold text-gray-900 mb-2 text-center"
-            >
-              analyzing @{username}
-            </motion.h2>
+            <MagnifyingGlassLoader username={username} />
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              transition={{ duration: 0.3 }}
               className="text-gray-500 text-center mb-8"
             >
-              This may take 30-60 seconds
+              This will only take a few moments
             </motion.p>
 
             {/* Loading stages */}
-            <div className="space-y-2">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-2"
+            >
               {loadingStages.map((stage, index) => (
                 <LoadingStageItem
                   key={index}
@@ -258,13 +269,13 @@ export default function CheckPage({
                   }
                 />
               ))}
-            </div>
+            </motion.div>
 
             {/* Progress bar */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
+              transition={{ duration: 0.3 }}
               className="mt-8"
             >
               <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
@@ -378,41 +389,6 @@ export default function CheckPage({
             initial="hidden"
             animate="visible"
           >
-            {/* Metadata: Last Checked & Cache Info */}
-            <motion.div
-              variants={fadeInUp}
-              className="bg-white rounded-2xl p-4 mb-4 flex items-center justify-between text-sm"
-              style={{ boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)" }}
-            >
-              <div className="flex items-center gap-2 text-gray-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>Last checked: {formatTimeAgo(result.checkedAt)}</span>
-              </div>
-              {result.isCached && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                  className="bg-[#A8D5BA]/20 text-[#A8D5BA] px-2 py-1 rounded text-xs font-bold"
-                >
-                  Cached
-                </motion.span>
-              )}
-            </motion.div>
-
             {/* Image Analysis Section */}
             <motion.div
               variants={fadeInUp}
@@ -420,7 +396,7 @@ export default function CheckPage({
               style={{ boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)" }}
             >
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                <span aria-label="camera">&#x1F4F8;</span> the images
+                <span aria-label="camera">&#x1F4F8;</span> The Images
               </h3>
 
               <p className="text-base text-gray-700 mb-4">
@@ -438,8 +414,8 @@ export default function CheckPage({
               {result.profileFlags.length > 0 && (
                 <motion.div variants={fadeInUp} className="mb-4">
                   <FlagsCard
-                    title="the profile"
-                    emoji="\uD83D\uDC64"
+                    title="Profile Analysis"
+                    emoji="👤"
                     flags={result.profileFlags}
                   />
                 </motion.div>
@@ -451,8 +427,8 @@ export default function CheckPage({
               {result.consistencyFlags.length > 0 && (
                 <motion.div variants={fadeInUp} className="mb-4">
                   <FlagsCard
-                    title="the pattern"
-                    emoji="\uD83C\uDFAF"
+                    title="Engagement Pattern Analysis"
+                    emoji="🎯"
                     flags={result.consistencyFlags}
                   />
                 </motion.div>

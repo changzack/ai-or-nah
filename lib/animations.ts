@@ -261,3 +261,18 @@ export async function triggerMiniConfetti(originX: number, originY: number) {
     scalar: 0.8,
   });
 }
+
+// Gentle floating animation for decorative elements
+export const float: Variants = {
+  initial: {
+    y: 0,
+  },
+  animate: {
+    y: [-8, 8, -8],
+    transition: {
+      duration: 4,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};

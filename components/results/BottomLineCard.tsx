@@ -16,7 +16,7 @@ export function BottomLineCard({ message }: BottomLineCardProps) {
       className="bg-[#8B5CF6]/10 rounded-2xl p-6 border-2 border-[#8B5CF6]/30"
     >
       <h3 className="text-xl font-semibold text-gray-900 mb-3">
-        <span aria-label="lightbulb">&#x1F4A1;</span> the bottom line
+        The Bottom Line
       </h3>
       <motion.p
         initial={{ opacity: 0 }}

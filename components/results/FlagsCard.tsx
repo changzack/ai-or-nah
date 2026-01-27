@@ -38,11 +38,11 @@ export function FlagsCard({ title, emoji, flags }: FlagsCardProps) {
         {flags.map((flag, index) => (
           <motion.div
             key={index}
-            className="flex items-start gap-3"
+            className="flex gap-3"
             variants={popIn}
           >
             <motion.span
-              className="text-xl flex-shrink-0 mt-0.5"
+              className="text-lg flex-shrink-0 leading-6"
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
@@ -59,7 +59,7 @@ export function FlagsCard({ title, emoji, flags }: FlagsCardProps) {
                 <span aria-label="green check">&#x2705;</span>
               )}
             </motion.span>
-            <p className="text-base text-gray-700 leading-relaxed">
+            <p className="text-base text-gray-700 leading-6 flex-1">
               {flag.message}
             </p>
           </motion.div>

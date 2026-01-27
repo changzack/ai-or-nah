@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Sticker } from "@/components/ui/Sticker";
 import { DesktopGate } from "@/components/DesktopGate";
 import { Footer } from "@/components/Footer";
-import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
+import { fadeInUp, staggerContainer, springTransition, float } from "@/lib/animations";
 
 function HomePageContent() {
   const router = useRouter();
@@ -63,10 +63,42 @@ function HomePageContent() {
         <div className="flex-1 flex items-center justify-center px-5 py-12 relative">
           {/* Decorative stickers */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <Sticker emoji="👁️" size="md" rotation={-12} className="absolute top-20 left-8" />
-            <Sticker emoji="✨" size="sm" rotation={8} className="absolute top-32 right-12" />
-            <Sticker emoji="🔍" size="lg" rotation={15} className="absolute bottom-32 left-12" />
-            <Sticker emoji="⚡" size="md" rotation={-8} className="absolute bottom-24 right-8" />
+            <motion.div
+              variants={float}
+              initial="initial"
+              animate="animate"
+              className="absolute top-24 left-6"
+              style={{ transform: 'scaleX(-1)' }}
+            >
+              <Sticker emoji="👁️" size="md" rotation={-8} />
+            </motion.div>
+            <motion.div
+              variants={float}
+              initial="initial"
+              animate="animate"
+              transition={{ delay: 0.5 }}
+              className="absolute top-40 right-12"
+            >
+              <Sticker emoji="🔍" size="md" rotation={8} />
+            </motion.div>
+            <motion.div
+              variants={float}
+              initial="initial"
+              animate="animate"
+              transition={{ delay: 1 }}
+              className="absolute bottom-40 left-12"
+            >
+              <Sticker emoji="💫" size="md" rotation={15} />
+            </motion.div>
+            <motion.div
+              variants={float}
+              initial="initial"
+              animate="animate"
+              transition={{ delay: 1.5 }}
+              className="absolute bottom-32 right-8"
+            >
+              <Sticker emoji="🚩" size="md" rotation={-8} />
+            </motion.div>
           </div>
 
           <motion.div
@@ -137,33 +169,24 @@ function HomePageContent() {
 
             {/* Header */}
             <motion.div variants={fadeInUp} className="text-center mb-10">
-              {/* Hero Mascot */}
+              {/* Hero Logo */}
               <motion.div
-                className="flex justify-center mb-6"
+                className="flex justify-center"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
               >
                 <Image
-                  src="/hero-mobile-mascot.jpg"
-                  alt="AI or Nah mascot - AI detection tool"
-                  width={200}
-                  height={200}
+                  src="/ai_or_nah_logo_no_bg.png"
+                  alt="AI or Nah logo - AI detection tool"
+                  width={400}
+                  height={400}
                   priority
-                  className="rounded-2xl"
                 />
               </motion.div>
 
-              <motion.h1
-                className="text-4xl font-bold text-gray-900 mb-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                ai or nah
-              </motion.h1>
               <motion.p
-                className="text-2xl font-semibold text-gray-800 mb-2"
+                className="text-2xl font-semibold text-gray-800 mb-1 -mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -174,7 +197,7 @@ function HomePageContent() {
                 className="text-lg text-gray-600"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
               >
                 Find out in 30 seconds
               </motion.p>
@@ -186,7 +209,7 @@ function HomePageContent() {
               className="space-y-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Input
                 type="text"
@@ -226,17 +249,17 @@ function HomePageContent() {
                     Checking...
                   </motion.span>
                 ) : (
-                  "Check Account"
+                  "Let's Check 'Em"
                 )}
               </Button>
             </motion.form>
 
             {/* Supporting Copy */}
             <motion.div
-              className="mt-8 text-center space-y-2"
+              className="mt-8 mb-16 text-center space-y-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
             >
               <p className="text-base text-gray-600">
                 Don&apos;t get catfished.
@@ -244,18 +267,8 @@ function HomePageContent() {
               <p className="text-base text-gray-600">
                 Verify before you slide into DMs.
               </p>
-            </motion.div>
-
-            {/* Example */}
-            <motion.div
-              className="mt-10 pt-6 border-t border-gray-200"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              <p className="text-sm text-gray-500 text-center">
-                <span className="font-medium">Example:</span> @username,
-                instagram.com/username, or paste full URL
+              <p className="text-base text-gray-600">
+                Check before you subscribe.
               </p>
             </motion.div>
           </motion.div>

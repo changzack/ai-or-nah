@@ -4,6 +4,9 @@ import { analyzeProfileSignals } from "./scoring/profile-signals";
 import { analyzeConsistency } from "./scoring/consistency";
 import { getVerdict, getBottomLine, getImageAnalysisMessage } from "./constants";
 import { validateProfileForAnalysis, AIOrNahError } from "./errors";
+import { saveResult } from "./db/results";
+import { saveResultImages } from "./db/images";
+import { uploadImageFromUrl } from "./storage/images";
 import type { AnalysisResult, ErrorResult, InstagramProfile, AIImageScore } from "./types";
 
 /**
@@ -117,6 +120,55 @@ export async function analyzeAccount(username: string): Promise<AnalysisResult |
     const verdict = getVerdict(aiLikelihood);
     const bottomLine = getBottomLine(verdict);
 
+    console.log(
+      `[Analyze] Complete: ${username} - ${aiLikelihood}% AI likelihood (${verdict})`
+    );
+
+    // Step 8: Upload images to Supabase Storage
+    console.log(`[Analyze] Uploading ${imageUrls.length} images to storage...`);
+    const uploadedImages = await Promise.all(
+      imageUrls.map(async (url, index) => {
+        const uploaded = await uploadImageFromUrl(url, username, index);
+        return uploaded || { publicUrl: url, storagePath: "" }; // Fallback to original URL if upload fails
+      })
+    );
+
+    const storedImageUrls = uploadedImages.map((img) => img.publicUrl);
+    console.log(`[Analyze] ✓ Uploaded ${uploadedImages.filter(img => img.storagePath).length}/${imageUrls.length} images`);
+
+    // Step 9: Save result to database
+    console.log(`[Analyze] Saving result to database...`);
+    const savedResult = await saveResult({
+      username: profile.username,
+      aiLikelihoodScore: aiLikelihood,
+      verdict,
+      imageAnalysisScore: averageAIScore,
+      imagesAnalyzedCount: aiScores.filter((s) => s.success).length,
+      profileFlags,
+      consistencyFlags,
+      bottomLine,
+    });
+
+    if (savedResult) {
+      console.log(`[Analyze] ✓ Saved result with ID: ${savedResult.id}`);
+
+      // Step 10: Save image references
+      const imageRefs = uploadedImages
+        .filter((img) => img.storagePath) // Only save successfully uploaded images
+        .map((img, index) => ({
+          imageUrl: img.publicUrl,
+          storagePath: img.storagePath,
+          position: index,
+        }));
+
+      if (imageRefs.length > 0) {
+        await saveResultImages(savedResult.id, imageRefs);
+        console.log(`[Analyze] ✓ Saved ${imageRefs.length} image references`);
+      }
+    } else {
+      console.warn(`[Analyze] ⚠ Failed to save result to database`);
+    }
+
     const result: AnalysisResult = {
       status: "success",
       username: profile.username,
@@ -130,15 +182,11 @@ export async function analyzeAccount(username: string): Promise<AnalysisResult |
       profileFlags,
       consistencyFlags,
       bottomLine,
-      imageUrls, // Original Instagram URLs (will be replaced with stored URLs later)
+      imageUrls: storedImageUrls, // Return stored URLs instead of Instagram CDN
       checkedAt: new Date().toISOString(),
       lastAccessedAt: new Date().toISOString(),
       isCached: false,
     };
-
-    console.log(
-      `[Analyze] Complete: ${username} - ${aiLikelihood}% AI likelihood (${verdict})`
-    );
 
     return result;
   } catch (error) {
