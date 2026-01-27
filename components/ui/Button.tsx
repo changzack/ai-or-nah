@@ -1,10 +1,17 @@
-import React from "react";
+"use client";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+import React from "react";
+import { motion, type HTMLMotionProps } from "framer-motion";
+import { springTransition } from "@/lib/animations";
+import { useHaptic } from "@/hooks/useHaptic";
+
+interface ButtonProps
+  extends Omit<HTMLMotionProps<"button">, "children" | "disabled"> {
   variant?: "primary" | "secondary";
   size?: "default" | "large";
   fullWidth?: boolean;
   children: React.ReactNode;
+  disabled?: boolean;
 }
 
 export function Button({
@@ -14,32 +21,46 @@ export function Button({
   children,
   className = "",
   disabled,
+  onClick,
   ...props
 }: ButtonProps) {
+  const haptic = useHaptic();
+
   const baseClasses =
-    "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center font-bold rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variantClasses = {
     primary:
-      "bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white shadow-sm shadow-orange-500/20",
+      "bg-[#FF6B6B] hover:bg-[#E85555] active:bg-[#D14444] text-white shadow-sm shadow-[#FF6B6B]/20",
     secondary:
-      "bg-transparent border border-gray-300 hover:bg-gray-50 active:bg-gray-100 text-gray-700",
+      "bg-transparent border-2 border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white active:bg-[#000000] text-[#1A1A1A]",
   };
 
   const sizeClasses = {
-    default: "h-12 px-4 text-base",
-    large: "h-14 px-6 text-lg",
+    default: "h-12 px-8 text-base",
+    large: "h-14 px-10 text-lg",
   };
 
   const widthClass = fullWidth ? "w-full" : "";
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!disabled) {
+      haptic.light();
+      onClick?.(e);
+    }
+  };
+
   return (
-    <button
+    <motion.button
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${className}`}
       disabled={disabled}
+      onClick={handleClick}
+      whileHover={disabled ? undefined : { scale: 1.05 }}
+      whileTap={disabled ? undefined : { scale: 0.98 }}
+      transition={springTransition}
       {...props}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }

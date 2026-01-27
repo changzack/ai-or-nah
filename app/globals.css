@@ -3,40 +3,45 @@
 /* Brand Color System - AI or Nah */
 :root {
   /* Primary Brand Colors */
-  --brand-primary: #6366F1; /* Indigo-500 */
-  --brand-primary-alt: #7C3AED; /* Purple-600 */
-  --brand-accent: #F97316; /* Orange-500 */
-  --brand-accent-light: #FB923C; /* Orange-400 */
-  
+  --brand-warm-cream: #FDF6E9;
+  --brand-charcoal: #1A1A1A;
+  --brand-coral-pop: #FF6B6B;
+
+  /* Secondary Brand Colors */
+  --brand-soft-sage: #A8D5BA;
+  --brand-electric-violet: #8B5CF6;
+  --brand-sunny-yellow: #FCD34D;
+  --brand-sky-blue: #60A5FA;
+
   /* Backgrounds */
-  --bg-primary: #FAFAFA; /* Gray-50 */
-  --bg-secondary: #F9FAFB; /* Gray-100 */
+  --bg-primary: #FDF6E9; /* Warm Cream */
+  --bg-secondary: #FFFFFF;
   --bg-white: #FFFFFF;
-  
+
   /* Semantic Colors */
-  --color-fake: #EF4444; /* Red-500 */
-  --color-fake-dark: #DC2626; /* Red-600 */
-  --color-real: #10B981; /* Green-500 */
-  --color-real-dark: #059669; /* Green-600 */
-  --color-unclear: #F59E0B; /* Amber-500 */
-  --color-unclear-dark: #D97706; /* Amber-600 */
-  
+  --color-fake: #FF6B6B; /* Coral Pop */
+  --color-fake-dark: #E85555;
+  --color-real: #A8D5BA; /* Soft Sage */
+  --color-real-dark: #8BC5A6;
+  --color-unclear: #FCD34D; /* Sunny Yellow */
+  --color-unclear-dark: #F4C536;
+
   /* Text Colors */
-  --text-primary: #1F2937; /* Gray-800 */
-  --text-heading: #111827; /* Gray-900 */
+  --text-primary: #1A1A1A; /* Charcoal */
+  --text-heading: #1A1A1A; /* Charcoal */
   --text-secondary: #6B7280; /* Gray-500 */
 }
 
 @theme inline {
   /* Brand colors */
-  --color-brand-primary: var(--brand-primary);
-  --color-brand-accent: var(--brand-accent);
+  --color-brand-primary: var(--brand-coral-pop);
+  --color-brand-accent: var(--brand-electric-violet);
   --color-fake: var(--color-fake);
   --color-real: var(--color-real);
   --color-unclear: var(--color-unclear);
-  
+
   /* Typography */
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-jakarta);
   --font-body: 16px;
   --font-heading: 32px;
 }
@@ -44,7 +49,7 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -59,9 +64,9 @@ body {
 /* Reusable Card Styles */
 .card {
   background: var(--bg-white);
-  border-radius: 12px;
-  padding: 20px 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
 /* Reusable Button Styles */
@@ -69,34 +74,37 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 18px;
+  border-radius: 100px; /* Pill shape */
+  font-weight: 700;
+  font-size: 16px;
   min-height: 48px;
-  padding: 0 16px;
+  padding: 16px 32px;
   transition: all 200ms ease;
   cursor: pointer;
   border: none;
 }
 
 .btn-primary {
-  background: var(--brand-accent);
+  background: var(--brand-coral-pop);
   color: white;
-  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+  box-shadow: 0 2px 4px rgba(255, 107, 107, 0.2);
 }
 
 .btn-primary:hover {
-  background: #EA580C; /* Orange-600 */
+  background: #E85555;
+  transform: scale(1.05);
 }
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--text-secondary);
-  color: var(--text-primary);
+  border: 2px solid var(--brand-charcoal);
+  color: var(--brand-charcoal);
 }
 
 .btn-secondary:hover {
-  background: var(--bg-secondary);
+  background: var(--brand-charcoal);
+  color: white;
+  transform: scale(1.05);
 }
 
 /* Animations */

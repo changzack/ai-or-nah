@@ -1,29 +1,27 @@
-AiorNah Brand Guidelines
-
-
-# AI or Nah - Brand Design Guidelines
-
-**Version:** 1.0  
-**Last Updated:** January 25, 2026  
-**Purpose:** Visual design system for Claude Code implementation
+# FakeCheck Brand Guidelines
+### AI Instagram Fake Model Finder
 
 ---
 
 ## Brand Essence
 
-### Core Identity
-**Product Name:** AI or Nah  
-**Domain:** aiornah.ai  
-**Tagline:** "Check if your IG crush is real"
+**Tagline:** "instagram but real."
 
-### Brand Positioning
-- **Primary emotion:** Entertainment (75%) with Trust (25%)
-- **Tone:** Playful, casual, approachable but credible
-- **Voice:** Knowledgeable friend giving you straight talk - not corporate, not meme page
-- **Target balance:** Modern enough for 25-year-olds to share, credible enough for 45-year-olds to trust
+**Mission:** Help people spot AI-generated fake accounts and protect themselves from catfishing, scams, and manipulation — all while keeping it fun, approachable, and zero judgment.
 
-### Key Principle
-**Personality in copy, professionalism in design.** The words can be playful ("Skin smoother than a Snapchat filter"), but the design stays clean and clear.
+**Tone:** Your savvy best friend who happens to be really good at spotting fakes. We're not paranoid conspiracy theorists — we're just looking out for you.
+
+---
+
+## Personality Traits
+
+| Do This | Not This |
+|---------|----------|
+| Playful & approachable | Cold & corporate |
+| Confident but humble | Preachy or fear-mongering |
+| Gen-Z native language | Stiff marketing speak |
+| Empowering users | Shaming victims |
+| Casual lowercase vibes | ALL CAPS WARNINGS |
 
 ---
 
@@ -31,570 +29,311 @@ AiorNah Brand Guidelines
 
 ### Primary Colors
 
-**Brand Primary: Deep Purple/Indigo**
-- `#6366F1` (Indigo-500) - Main brand color
-- `#7C3AED` (Purple-600) - Alternative primary
-- Usage: Primary buttons, key UI elements, percentage scores, brand accents
-- Why: Modern, tech-forward, credible but not corporate, works across age groups
+| Name | Hex | Usage |
+|------|-----|-------|
+| **Warm Cream** | `#FDF6E9` | Background, base canvas |
+| **Charcoal** | `#1A1A1A` | Primary text, headlines |
+| **Coral Pop** | `#FF6B6B` | Alerts, fake indicators, CTAs |
 
-**Background: Soft White**
-- `#FAFAFA` (Gray-50) - Primary background
-- `#F9FAFB` (Gray-100) - Alternative background
-- `#FFFFFF` - Pure white for cards
-- Usage: Page backgrounds, card backgrounds
-- Why: Clean, legible, app-like, doesn't strain eyes
+### Secondary Colors
 
-**Accent/CTA: Warm Orange/Coral**
-- `#F97316` (Orange-500) - Primary CTA color
-- `#FB923C` (Orange-400) - Hover/light variant
-- Usage: Primary action buttons (Share, Submit), interactive elements
-- Why: Warm, inviting, action-oriented, not too young or boring
-
-### Semantic Colors
-
-**AI/Fake Indicator: Bold Red**
-- `#EF4444` (Red-500) - High AI likelihood
-- `#DC2626` (Red-600) - Darker variant
-- Usage: "Almost Definitely Fake" verdicts, ❌ red flags, warning states
-- Why: Clear warning without being alarming
-
-**Real Indicator: Green**
-- `#10B981` (Green-500) - Low AI likelihood
-- `#059669` (Green-600) - Darker variant
-- Usage: "Probably Real" verdicts, ✅ positive indicators
-- Why: Reassuring, positive, trustworthy
-
-**Unclear/Mixed: Amber**
-- `#F59E0B` (Amber-500) - Medium AI likelihood
-- `#D97706` (Amber-600) - Darker variant
-- Usage: "Hard to Tell" verdicts, 🤔 unclear states
-- Why: Caution without judgment
-
-### Text Colors
-
-**Primary Text**
-- `#1F2937` (Gray-800) - Main body text
-- `#111827` (Gray-900) - Headings, emphasis
-- Why: Easier to read than pure black, professional
-
-**Secondary Text**
-- `#6B7280` (Gray-500) - Supporting text, metadata
-- Usage: "Last checked: 3 days ago", timestamps, labels
-- Why: Clear hierarchy without disappearing
+| Name | Hex | Usage |
+|------|-----|-------|
+| **Soft Sage** | `#A8D5BA` | Verified/safe indicators |
+| **Electric Violet** | `#8B5CF6` | AI/tech accents |
+| **Sunny Yellow** | `#FCD34D` | Highlights, stickers |
+| **Sky Blue** | `#60A5FA` | Links, interactive elements |
 
 ### Gradients
 
-**Background Gradients (Subtle)**
-- Light purple to light blue: `linear-gradient(135deg, #F3F4F6 0%, #E0E7FF 100%)`
-- Soft gradient behind hero sections or cards
-- Keep subtle - 5-10% opacity maximum
-- Usage: Landing page background, results page header background
-
-**Button Gradients (Optional)**
-- Primary CTA: `linear-gradient(135deg, #F97316 0%, #FB923C 100%)`
-- Keep subtle, mainly for hover states
-
-**Card Gradients (Very Subtle)**
-- White to off-white: `linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)`
-- Adds depth without being obvious
+- **Hero Gradient:** `#FF6B6B` → `#8B5CF6` (coral to violet)
+- **Safe Gradient:** `#A8D5BA` → `#60A5FA` (sage to sky)
 
 ---
 
 ## Typography
 
-### Font Family
+### Primary Typeface: **Plus Jakarta Sans**
+A modern geometric sans-serif with warmth and personality.
 
-**Primary Font: Inter or DM Sans**
-- Modern sans-serif with personality but professional
-- Clean, highly legible across all sizes
-- Works well on mobile screens
-- Not too playful (avoid Poppins, Quicksand)
-- Fallback: System UI fonts (-apple-system, BlinkMacSystemFont, "Segoe UI")
+| Style | Weight | Usage |
+|-------|--------|-------|
+| Display | 800 (ExtraBold) | Hero headlines, big statements |
+| Headline | 700 (Bold) | Section headers |
+| Body | 500 (Medium) | Paragraphs, descriptions |
+| Caption | 400 (Regular) | Small text, labels |
 
-### Font Weights
+### Type Scale
 
-- **Bold (700):** Verdicts, primary headings, key numbers
-- **Semi-Bold (600):** Section headings, emphasis
-- **Medium (500):** Button text, labels
-- **Regular (400):** Body copy, standard text
+```
+Hero:      48-72px / lowercase preferred
+Headline:  32-40px / sentence case
+Subhead:   20-24px / sentence case
+Body:      16-18px / sentence case
+Caption:   12-14px / sentence case
+```
 
-### Font Sizes (Mobile-First)
+### Typography Rules
 
-**Display/Hero Text:**
-- AI Percentage: `64px` - `72px` (bold)
-- Verdict Statement: `28px` - `32px` (bold)
+1. **Lowercase headlines are default** — feels casual and approachable
+   - ✅ "spot the fakes before they spot you."
+   - ❌ "SPOT THE FAKES BEFORE THEY SPOT YOU"
 
-**Headings:**
-- H1 (Page Title): `32px` (bold)
-- H2 (Section Headers): `24px` (semi-bold)
-- H3 (Subsections): `20px` (semi-bold)
+2. **Bold statements get their own line**
+   - ✅ "zero ai girlfriends."
+   - ✅ "zero catfish."
+   - ✅ "zero scams."
 
-**Body Text:**
-- Primary: `16px` (regular) - Minimum for readability
-- Secondary: `14px` (regular) - Metadata, timestamps
-- Small: `12px` (medium) - Labels, fine print
-
-**Buttons:**
-- Primary CTA: `18px` (medium/semi-bold)
-- Secondary: `16px` (medium)
-
-### Line Height
-- Headings: 1.2-1.3
-- Body text: 1.5-1.6
-- Generous spacing for readability across ages
+3. **Punctuation is casual** — periods on headlines for rhythm, minimal exclamation points
 
 ---
 
-## Visual Style
+## Visual Language
 
-### Design Philosophy
+### Sticker System
 
-**Native App Feel, Not Website**
-- Card-based layouts
-- Bottom-anchored primary actions (thumb-reach)
-- Smooth page transitions
-- Feels like an installed app, not a browser page
+Scattered decorative elements that add personality and playfulness. Use sparingly — they're seasoning, not the main dish.
 
-**Clean But Not Clinical**
-- Professional execution with personality
-- Strategic use of emoji (🤖✅❌⚠️🤔)
-- Playful copy in clean containers
-- Modern but not trendy
+**Core Stickers:**
+- 👁️ — detection/watching
+- ✨ — magic/AI
+- 🔍 — investigation
+- ✅ — verified/safe
+- 🚩 — red flag/warning
+- 🤖 — AI/bot
+- 🎭 — fake/mask
+- ⚡ — fast/instant
+- 💫 — sparkle/trust
 
-### Layout Principles
+**Usage Rules:**
+- Rotate stickers 5-15° for organic feel
+- Vary sizes (small accents vs. featured)
+- Layer on top of photos and cards
+- Max 3-5 stickers visible per section
 
-**1. Generous Whitespace**
-- Not cramped or overwhelming
-- Easy to scan
-- Clear breathing room between sections
+### Photography Style
 
-**2. Card-Based Design**
-- Results sections in distinct cards
-- Subtle shadows for elevation
-- Clear content grouping
+| Do | Don't |
+|----|-------|
+| Real, candid moments | Overly polished stock photos |
+| Diverse, authentic people | Perfect "influencer" aesthetic |
+| Slightly grainy/film quality | Hyper-sharp commercial look |
+| Natural lighting | Heavy studio lighting |
+| Behind-the-scenes vibes | Corporate headshots |
 
-**3. Progressive Disclosure**
-- Most important info first (verdict at top)
-- Details follow in scannable sections
-- Clear visual hierarchy
+### Illustration Style
 
-**4. Thumb-Friendly Mobile UX**
-- Large tap targets (minimum 48px height)
-- Primary actions at bottom of screen
-- One-handed navigation optimized
-- Swipe gestures where appropriate
+- **Line weight:** 2-3px, slightly wobbly/hand-drawn feel
+- **Corners:** Rounded (8-16px radius)
+- **Style:** Flat with subtle shadows, not 3D
+- **Motion:** Subtle bounce/wiggle animations
 
-### Component Styles
+### Phone Mockups
 
-**Buttons:**
-- Border radius: `8px` - `12px` (slightly rounded, not pill-shaped)
-- Height: Minimum `48px` for touch targets
-- Padding: `16px` horizontal
-- Shadow: Subtle on primary buttons
-- States: Clear hover/active states with subtle transitions
-
-**Primary Button (CTA):**
-- Background: Orange gradient `#F97316`
-- Text: White, semi-bold
-- Full-width on mobile
-- Slight shadow for elevation
-
-**Secondary Button:**
-- Background: Transparent or light gray
-- Border: 1px solid gray
-- Text: Dark gray, medium weight
-
-**Cards:**
-- Border radius: `12px` - `16px`
-- Background: White `#FFFFFF`
-- Shadow: `0 1px 3px rgba(0, 0, 0, 0.1)`
-- Padding: `20px` - `24px`
-- Clear separation between sections
-
-**Icons:**
-- Mix of emoji + simple line icons
-- Emoji for personality: 🤖✅❌⚠️🤔📸👤🎯💡
-- Line icons for UI: Share, back button, navigation
-- Size: 24px - 32px for emoji in headings
-
-**Loading States:**
-- Smooth skeleton screens or spinners
-- Use brand purple color
-- Professional animations (not gimmicky)
-- Progress text: "Fetching profile...", "Analyzing images..."
-
-**Animations:**
-- Smooth, subtle (200-300ms transitions)
-- Fade-ins for content
-- Slide-up for modals/sheets
-- Native-feeling page transitions
-- No jarring or distracting animations
+- Show real app interface inside device frames
+- Slight rotation (2-5°) for dynamic feel
+- Drop shadow: soft, warm-toned
+- Can overlap other elements
 
 ---
 
-## Layout Structure
+## Layout Principles
 
-### Results Page Visual Hierarchy
+### Grid System
+
+- **Desktop:** 12-column grid, generous gutters (32-48px)
+- **Mobile:** 4-column grid, 16-24px margins
+- **Max content width:** 1200px
+
+### Spacing Scale
+
 ```
-┌─────────────────────────────┐
-│   [← Back]                  │  ← Minimal top nav
-│                             │
-│   ┌───────────────────────┐ │
-│   │                       │ │
-│   │        87%            │ │  ← Huge percentage (64px+)
-│   │                       │ │     Brand purple color
-│   │   🤖 Almost           │ │  ← Large verdict (28px)
-│   │   Definitely Fake     │ │     Color-coded by result
-│   │                       │ │
-│   └───────────────────────┘ │  Hero card with subtle gradient
-│                             │
-│   ┌───────────────────────┐ │
-│   │ 📸 THE IMAGES         │ │  ← Section card
-│   │                       │ │     Icon + heading (24px)
-│   │ ❌ Skin smoother than │ │  ← Red X + playful copy
-│   │    a Snapchat filter  │ │     16px body text
-│   │                       │ │
-│   │ ❌ Impossible shadows │ │  ← Multiple red flags
-│   │                       │ │
-│   │ ✅ Hands look normal  │ │  ← Green check for positives
-│   │                       │ │
-│   │ [Image thumbnails]    │ │  ← 3x3 grid of analyzed images
-│   │                       │ │
-│   │ Analyzed 9 images     │ │  ← Metadata (14px, gray)
-│   └───────────────────────┘ │
-│                             │
-│   ┌───────────────────────┐ │
-│   │ 👤 THE PROFILE        │ │  ← Another section card
-│   │                       │ │
-│   │ ❌ 52K followers      │ │  ← Factual red flags
-│   │    in 2 months        │ │
-│   │                       │ │
-│   │ ❌ Posts daily at 9am │ │
-│   │                       │ │
-│   │ ❌ Every caption:     │ │
-│   │    "Hey guys 💕"      │ │
-│   └───────────────────────┘ │
-│                             │
-│   ┌───────────────────────┐ │
-│   │ 🎯 THE PATTERN        │ │  ← Consistency section
-│   │                       │ │
-│   │ ❌ All photos         │ │
-│   │    scored 80%+ AI     │ │
-│   └───────────────────────┘ │
-│                             │
-│   ┌───────────────────────┐ │
-│   │ 💡 BOTTOM LINE        │ │  ← Clear guidance card
-│   │                       │ │
-│   │ This is AI-generated. │ │  ← Direct language
-│   │ Don't send money.     │ │     18px, semi-bold
-│   └───────────────────────┘ │
-│                             │
-│   ┌───────────────────────┐ │
-│   │ 🚩 Red flags to       │ │  ← Educational card
-│   │    spot yourself:     │ │
-│   │                       │ │
-│   │ • Perfect skin        │ │  ← Bullet points
-│   │ • Identical face      │ │     14px-16px
-│   │ • Generic captions    │ │
-│   └───────────────────────┘ │
-│                             │
-│   Last checked: 3 days ago  │  ← Small timestamp (12px gray)
-│                             │
-│  ┌─────────────────────────┐│
-│  │   Share This Result 📤  ││  ← Primary CTA
-│  └─────────────────────────┘│     Orange, full-width
-│                             │     48px height
-│                             │
-│     Check Another Account   │  ← Secondary action
-│                             │     Text link or ghost button
-│                             │
-└─────────────────────────────┘
+xs:  8px
+sm:  16px
+md:  24px
+lg:  48px
+xl:  80px
+xxl: 120px
 ```
 
-### Landing Page Structure
-```
-┌─────────────────────────────┐
-│                             │
-│   AI or Nah                 │  ← Logo/wordmark (32px)
-│                             │
-│                             │
-│   Check if your IG          │  ← Headline (28px bold)
-│   crush is real             │
-│                             │
-│   Find out in 30 seconds    │  ← Subheadline (18px)
-│                             │
-│  ┌─────────────────────────┐│
-│  │  @username or URL       ││  ← Input field
-│  └─────────────────────────┘│     48px height, rounded
-│                             │
-│  ┌─────────────────────────┐│
-│  │     Check Account       ││  ← Primary CTA
-│  └─────────────────────────┘│     Orange, bold
-│                             │
-│                             │
-│   Don't get catfished.      │  ← Supporting copy (14px)
-│   Verify before you slide   │
-│   into DMs.                 │
-│                             │
-└─────────────────────────────┘
-```
+### Composition Rules
+
+1. **Asymmetry over rigid grids** — elements should feel placed, not forced
+2. **Generous whitespace** — let content breathe on warm cream background
+3. **Layering is encouraged** — stickers over photos, cards overlapping
+4. **Full-bleed moments** — photo sections can break out of containers
+5. **Horizontal scrollers** — for testimonials, detected fakes gallery
 
 ---
 
-## Design References
+## Components
 
-### Visual Inspiration
-Study these for balanced, credible-but-friendly design:
+### Buttons
 
-**Primary References:**
-- **Robinhood app** - Serious subject (money) with approachable interface
-- **Apple Health app** - Native feel, clean, trustworthy, works across ages
-- **Stripe** - Professional but approachable, clean but not boring
-- **Notion** - Modern, friendly interface that works across demographics
+**Primary CTA**
+- Background: Coral Pop (`#FF6B6B`)
+- Text: White, Bold, 16px
+- Padding: 16px 32px
+- Border radius: 100px (pill shape)
+- Hover: Scale 1.05, slight shadow
 
-**Avoid These Styles:**
-- BeReal (too Gen Z)
-- TikTok UI (too young, too chaotic)
-- Duolingo (too gamified/playful)
-- Brutalist designs (too harsh)
+**Secondary CTA**
+- Background: Transparent
+- Border: 2px Charcoal
+- Text: Charcoal, Bold
+- Hover: Fill Charcoal, text White
 
-### The Sweet Spot
-**"Robinhood meets Apple Health"** - Clean, modern, professional execution with just enough personality to not feel corporate.
+### Cards
+
+- Background: White (`#FFFFFF`)
+- Border radius: 16px
+- Shadow: `0 4px 24px rgba(0,0,0,0.08)`
+- Padding: 24px
+- Can have sticker accents in corners
+
+### Fake Profile Cards
+
+- Red/coral left border (4px)
+- "Fake Score" badge in top right
+- Flag list with 🚩 emoji bullets
+- Blurred/pixelated fake profile image
+
+### Safe Profile Cards
+
+- Green/sage left border (4px)
+- ✅ "Verified Real" badge
+- Trust indicators listed
+- Clear profile image
 
 ---
 
-## Component Specifications
+## Voice & Messaging
 
-### Verdict Display (Critical Component)
+### Headlines
 
-**Visual Treatment:**
-- Large container with subtle background gradient
-- Centered content
-- Clear visual hierarchy
-
-**Percentage Number:**
-- Size: 64px - 72px
-- Weight: Bold (700)
-- Color: Varies by verdict:
-  - 0-30%: Green `#10B981`
-  - 31-60%: Amber `#F59E0B`
-  - 61-80%: Orange `#F97316`
-  - 81-100%: Red `#EF4444`
-
-**Verdict Text:**
-- Size: 28px - 32px
-- Weight: Bold (700)
-- Color: Dark gray `#1F2937`
-- Includes emoji: 🤖 ⚠️ 🤔 ✅
-
-**Verdict Options:**
-- **0-30%:** "✅ Probably Real"
-- **31-60%:** "🤔 Hard to Tell"
-- **61-80%:** "⚠️ Likely Fake"
-- **81-100%:** "🤖 Almost Definitely Fake"
-
-### Section Cards
-
-**Structure:**
-- White background `#FFFFFF`
-- Border radius: 12px - 16px
-- Padding: 20px - 24px
-- Shadow: `0 1px 3px rgba(0, 0, 0, 0.1)`
-- Margin between cards: 16px
-
-**Section Header:**
-- Emoji + text (e.g., "📸 THE IMAGES")
-- Size: 20px - 24px
-- Weight: Semi-bold (600)
-- Color: Dark gray `#1F2937`
-- Margin bottom: 12px
-
-**Section Content:**
-- Red flags with ❌ or ✅ emoji
-- Body text: 16px regular
-- Line spacing: 1.5
-- Clear visual separation between items
-
-### Red Flag List Items
-
-**Structure:**
 ```
-❌ Skin smoother than a Snapchat filter
+"instagram but actually real."
+"spot fakes. protect yourself. stay real."
+"that hot model in your DMs? let's check."
+"zero catfish. zero scams. zero AI girlfriends."
+"because your trust matters."
 ```
 
-**Styling:**
-- Emoji (❌ or ✅): 20px - 24px
-- Text: 16px regular
-- Color: Dark gray for text
-- Spacing: 8px - 12px between items
-- Left-aligned with emoji as visual indicator
+### Body Copy Tone
 
-### Image Grid
+- Conversational, like texting a friend
+- Short sentences. Punchy paragraphs.
+- Rhetorical questions welcome
+- Light humor, never mean-spirited
 
-**Layout:**
-- 3x3 grid of thumbnails
-- Equal spacing (8px - 12px gaps)
-- Rounded corners on images (8px)
-- Aspect ratio: Square (1:1)
-- Tap to expand (optional for MVP)
+### Phrases We Use
 
-**Below Grid:**
-- Metadata text: "Analyzed 9 images"
-- Size: 14px
-- Color: Gray `#6B7280`
-- Center-aligned under grid
+- "let's check" (not "SCAN NOW")
+- "looks fake" (not "FRAUDULENT ACCOUNT DETECTED")
+- "seems legit" (not "VERIFIED AUTHENTIC")
+- "red flags" (not "warning indicators")
+- "real talk" (not "important notice")
 
-### Share Button
+### Phrases We Avoid
 
-**Primary CTA Styling:**
-- Background: Orange `#F97316` with subtle gradient
-- Text: "Share This Result 📤"
-- Color: White
-- Size: 18px semi-bold
-- Height: 48px minimum
-- Border radius: 8px - 12px
-- Full-width on mobile
-- Shadow: `0 2px 4px rgba(249, 115, 22, 0.2)`
+- "WARNING" / "DANGER" / "ALERT"
+- "Victim" (we say "target" if needed)
+- "Stupid" / "fooled" / "tricked"
+- Overly technical jargon
+- Fear-based manipulation
 
-**Interaction:**
-- Hover: Slightly darker orange
-- Active: Pressed state with subtle scale
-- Opens native mobile share sheet
+---
+
+## Animation Guidelines
+
+### Micro-interactions
+
+- **Duration:** 150-300ms
+- **Easing:** ease-out for enters, ease-in for exits
+- **Scale:** 1.02-1.05 for hovers
+- **Opacity:** 0 → 1 for reveals
+
+### Page Transitions
+
+- **Fade + slight upward motion** (20px)
+- **Staggered reveals** for card groups
+- **Parallax** on stickers (subtle, 0.1-0.2 rate)
 
 ### Loading States
 
-**Progress Animation:**
-- Brand purple spinner or skeleton screen
-- Progress text updates:
-  - "Fetching profile..."
-  - "Analyzing images..."
-  - "Calculating score..."
-- Text: 16px regular, gray
-- Center-aligned
-- Smooth transitions between states
+- Pulsing skeleton screens in warm cream
+- Playful "scanning" animation with 👁️ emoji
+- Progress shown as percentage with personality
+  - "23% — checking those selfies..."
+  - "67% — analyzing engagement patterns..."
+  - "99% — almost got 'em..."
 
 ---
 
-## Spacing & Layout
+## Social Media
 
-### Spacing Scale
-- `4px` - Tiny (inline spacing)
-- `8px` - Small (list items, tight groupings)
-- `12px` - Medium (between related elements)
-- `16px` - Default (between sections)
-- `24px` - Large (between major sections)
-- `32px` - Extra large (page margins)
+### Instagram
 
-### Container Widths
-- Mobile: 100% with 16px - 20px side padding
-- Max-width: 480px (centered on tablet/desktop)
-- Cards: Full-width within container
+- Square posts: Bold statement + sticker accents
+- Stories: Behind-the-scenes, fake spotting tips
+- Reels: Quick "is this fake?" analysis clips
 
-### Responsive Breakpoints
-- Mobile-first design (primary)
-- Desktop (>768px): Show "Mobile only" message
-- No tablet/desktop layout in MVP
+### TikTok
 
----
+- Casual, unpolished energy
+- POV-style fake detection content
+- Trending sounds encouraged
+- Stitch/duet friendly
 
-## Accessibility
+### Twitter/X
 
-### Minimum Requirements
-- Color contrast ratio: 4.5:1 for body text
-- Touch targets: 48px minimum height/width
-- Focus states: Visible outline on interactive elements
-- Alt text: Descriptive text for all images
-- Semantic HTML: Proper heading hierarchy
-
-### Readability
-- Minimum font size: 16px for body text
-- Line height: 1.5 - 1.6 for body text
-- Clear visual hierarchy
-- High contrast text on backgrounds
+- Short, punchy observations
+- Thread breakdowns of fake account tactics
+- Community engagement, RT interesting cases
 
 ---
 
-## Implementation Notes
+## Don'ts
 
-### Technical Considerations
-
-**Mobile-First:**
-- Build for mobile viewport (320px - 480px) first
-- Test on actual devices, not just browser dev tools
-- Optimize for one-handed use
-
-**Performance:**
-- Optimize images (WebP format, lazy loading)
-- Minimize animation weight
-- Fast page transitions
-
-**Progressive Enhancement:**
-- Core functionality works without JavaScript
-- Enhance with smooth animations where supported
-- Native share API with clipboard fallback
-
-### CSS Framework Considerations
-- Use Tailwind CSS for rapid development (optional)
-- Or vanilla CSS with CSS variables for colors
-- Consistent spacing using scale above
+❌ Never use harsh red backgrounds (feels aggressive)
+❌ Never shame people who got catfished
+❌ Never show real victims' faces/info
+❌ Never use scary stock photos
+❌ Never use corporate buzzwords
+❌ Never be preachy or condescending
+❌ Never use all-caps for warnings
+❌ Never make it feel like surveillance
 
 ---
 
-## Brand Voice in Design
+## Sample Application
 
-### Copy Tone on UI Elements
+### Hero Section
 
-**Playful but Clear:**
-- ✅ "Skin smoother than a Snapchat filter"
-- ✅ "52K followers in 2 months? Sure, Jan."
-- ❌ Don't: "Detected anomalous dermatological smoothing patterns"
+```
+[warm cream background]
+[scattered stickers: 👁️ ✨ 🔍]
 
-**Direct but Not Harsh:**
-- ✅ "This is AI-generated. Don't send money."
-- ❌ Don't: "You're being scammed, idiot"
-- ❌ Don't: "Potentially synthetic imagery detected"
+[phone mockup, tilted 3°, showing app scan result]
 
-**Confident but Honest:**
-- ✅ "Almost Definitely Fake (87%)"
-- ✅ "Hard to Tell (52%)" with caveat
-- ❌ Don't: "Definitely 100% confirmed fake"
+instagram but real.
 
----
+that model sliding into your DMs?
+let's make sure they actually exist.
 
-## Design System Summary
+[coral pill button: "check a profile"]
 
-### At a Glance
+[stats marquee: "2.4M+ fakes detected • 98.7% accuracy • 50K+ users protected"]
+```
 
-**Colors:**
-- Primary: Purple/Indigo `#6366F1`
-- CTA: Orange `#F97316`
-- Background: White `#FAFAFA`
-- Success: Green `#10B981`
-- Warning: Red `#EF4444`
+### Value Props
 
-**Typography:**
-- Font: Inter or DM Sans
-- Sizes: 64px (hero), 28px (headings), 16px (body)
-- Weights: Bold, Semi-bold, Regular
-
-**Layout:**
-- Card-based design
-- 12-16px border radius
-- Generous whitespace
-- Bottom-anchored CTAs
-
-**Style:**
-- Native app feel
-- Subtle gradients
-- Clean but personable
-- Professional execution, playful copy
-
-**Vibe:**
-- 75% Entertainment, 25% Trust
-- Works for 25-50 age range
-- "Robinhood meets Apple Health"
-- Knowledgeable friend, not corporate tool
+```
+zero catfish.        zero scams.        zero AI girlfriends.
+🎭                   🚩                  🤖
+```
 
 ---
 
-**End of Brand Guidelines**
+*Last updated: January 2026*
+*Version 1.0*

@@ -41,18 +41,18 @@ export function RateLimitError({ resetsAt, showBackButton = true }: RateLimitErr
   }, [resetsAt]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-5 bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
       <div className="w-full max-w-md text-center">
         {/* Icon */}
         <div className="mb-6">
-          <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
+          <div className="w-20 h-20 bg-[#FF6B6B]/10 rounded-full flex items-center justify-center mx-auto">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="w-10 h-10 text-orange-500"
+              className="w-10 h-10 text-[#FF6B6B]"
             >
               <path
                 strokeLinecap="round"
@@ -65,7 +65,7 @@ export function RateLimitError({ resetsAt, showBackButton = true }: RateLimitErr
 
         {/* Heading */}
         <h2 className="text-2xl font-bold text-gray-900 mb-3">
-          Daily Limit Reached
+          daily limit reached
         </h2>
 
         {/* Main Message */}
@@ -77,18 +77,18 @@ export function RateLimitError({ resetsAt, showBackButton = true }: RateLimitErr
         <p className="text-base text-gray-600 mb-6">
           Results reset at midnight PST
           {timeUntilReset && (
-            <span className="block mt-1 text-orange-500 font-semibold">
+            <span className="block mt-1 text-[#FF6B6B] font-bold">
               Resets in {timeUntilReset}
             </span>
           )}
         </p>
 
         {/* Suggestion Box */}
-        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6">
-          <p className="text-sm text-indigo-900 font-medium mb-2">
+        <div className="bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 rounded-2xl p-4 mb-6">
+          <p className="text-sm text-[#1A1A1A] font-bold mb-2">
             💡 Tip
           </p>
-          <p className="text-sm text-indigo-800">
+          <p className="text-sm text-[#1A1A1A]/80">
             You can still view accounts others have already searched!
             Cached results don't count against your limit.
           </p>
@@ -100,14 +100,14 @@ export function RateLimitError({ resetsAt, showBackButton = true }: RateLimitErr
             <>
               <button
                 onClick={() => router.push("/?rate_limited=true")}
-                className="w-full bg-orange-500 text-white py-4 rounded-xl font-semibold text-lg hover:bg-orange-600 transition-colors shadow-sm"
+                className="w-full bg-[#FF6B6B] text-white py-4 rounded-full font-bold text-lg hover:bg-[#E85555] transition-colors"
               >
                 Back to Home
               </button>
 
               <button
                 onClick={() => router.back()}
-                className="w-full bg-white text-gray-700 py-3 rounded-xl font-medium text-base hover:bg-gray-50 transition-colors border border-gray-200"
+                className="w-full bg-white text-[#1A1A1A] py-3 rounded-full font-bold text-base hover:bg-gray-50 transition-colors border-2 border-[#1A1A1A]"
               >
                 Go Back
               </button>

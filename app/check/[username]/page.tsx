@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { DesktopGate } from "@/components/DesktopGate";
 import { VerdictHero } from "@/components/results/VerdictHero";
 import { ImageGrid } from "@/components/results/ImageGrid";
@@ -9,9 +10,20 @@ import { FlagsCard } from "@/components/results/FlagsCard";
 import { BottomLineCard } from "@/components/results/BottomLineCard";
 import { EducationCard } from "@/components/results/EducationCard";
 import { ShareButton } from "@/components/ShareButton";
+import { Sticker } from "@/components/ui/Sticker";
 import { RateLimitError } from "@/components/RateLimitError";
 import { Footer } from "@/components/Footer";
-import type { AnalysisResult, ErrorResult, RateLimitResult } from "@/lib/types";
+import { useHaptic } from "@/hooks/useHaptic";
+import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
+import type { AnalysisResult, RateLimitResult } from "@/lib/types";
+
+// Loading stages configuration
+const loadingStages = [
+  { label: "Finding profile", emoji: "magnifying glass tilted left", icon: "\uD83D\uDD0D" },
+  { label: "Downloading images", emoji: "inbox tray", icon: "\uD83D\uDCE5" },
+  { label: "AI scanning faces", emoji: "robot", icon: "\uD83E\uDD16" },
+  { label: "Calculating verdict", emoji: "balance scale", icon: "\u2696\uFE0F" },
+];
 
 // Helper function to format "time ago" from ISO timestamp
 function formatTimeAgo(isoTimestamp: string): string {
@@ -31,6 +43,97 @@ function formatTimeAgo(isoTimestamp: string): string {
   return `${diffMonths} month${diffMonths === 1 ? "" : "s"} ago`;
 }
 
+// Animated checkmark component
+function AnimatedCheckmark() {
+  return (
+    <motion.svg
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", stiffness: 500, damping: 20 }}
+      className="w-5 h-5 text-[#A8D5BA]"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={3}
+    >
+      <motion.path
+        d="M5 13l4 4L19 7"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </motion.svg>
+  );
+}
+
+// Loading stage item component
+function LoadingStageItem({
+  stage,
+  status,
+  index,
+}: {
+  stage: (typeof loadingStages)[0];
+  status: "pending" | "active" | "complete";
+  index: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.1, duration: 0.3 }}
+      className={`flex items-center gap-3 py-3 px-4 rounded-lg transition-colors ${
+        status === "active"
+          ? "bg-[#8B5CF6]/10"
+          : status === "complete"
+          ? "bg-[#A8D5BA]/20"
+          : "bg-[#FDF6E9]"
+      }`}
+    >
+      {/* Status indicator */}
+      <div className="w-8 h-8 flex items-center justify-center">
+        {status === "complete" ? (
+          <AnimatedCheckmark />
+        ) : status === "active" ? (
+          <motion.div
+            className="w-5 h-5 border-2 border-[#8B5CF6] border-t-transparent rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          />
+        ) : (
+          <div className="w-2 h-2 bg-gray-300 rounded-full" />
+        )}
+      </div>
+
+      {/* Icon */}
+      <span className="text-xl">{stage.icon}</span>
+
+      {/* Label */}
+      <span
+        className={`font-medium ${
+          status === "active"
+            ? "text-[#8B5CF6]"
+            : status === "complete"
+            ? "text-[#A8D5BA]"
+            : "text-gray-500"
+        }`}
+      >
+        {stage.label}
+        {status === "active" && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            ...
+          </motion.span>
+        )}
+      </span>
+    </motion.div>
+  );
+}
+
 export default function CheckPage({
   params,
 }: {
@@ -38,11 +141,12 @@ export default function CheckPage({
 }) {
   const { username } = use(params);
   const router = useRouter();
+  const haptic = useHaptic();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rateLimited, setRateLimited] = useState<RateLimitResult | null>(null);
   const [loading, setLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState("Fetching profile...");
+  const [currentStage, setCurrentStage] = useState(0);
 
   useEffect(() => {
     analyzeUsername();
@@ -52,20 +156,18 @@ export default function CheckPage({
     try {
       setLoading(true);
       setError(null);
+      setCurrentStage(0);
 
-      // Show loading messages
-      const messages = [
-        "Fetching profile...",
-        "Analyzing images...",
-        "Checking patterns...",
-        "Calculating score...",
-      ];
-
-      let messageIndex = 0;
-      const messageInterval = setInterval(() => {
-        messageIndex = (messageIndex + 1) % messages.length;
-        setLoadingMessage(messages[messageIndex]);
-      }, 3000);
+      // Progress through stages
+      const stageInterval = setInterval(() => {
+        setCurrentStage((prev) => {
+          const next = prev + 1;
+          if (next < loadingStages.length) {
+            haptic.light();
+          }
+          return Math.min(next, loadingStages.length - 1);
+        });
+      }, 4000);
 
       const response = await fetch("/api/analyze", {
         method: "POST",
@@ -75,9 +177,18 @@ export default function CheckPage({
         body: JSON.stringify({ username }),
       });
 
-      clearInterval(messageInterval);
+      clearInterval(stageInterval);
+
+      // Complete all stages quickly
+      for (let i = currentStage; i < loadingStages.length; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        setCurrentStage(i + 1);
+      }
 
       const data = await response.json();
+
+      // Small delay before showing results for smooth transition
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Check if rate limited
       if (data.status === "rate_limited") {
@@ -96,6 +207,7 @@ export default function CheckPage({
       // Success
       setResult(data as AnalysisResult);
       setLoading(false);
+      haptic.medium();
     } catch (err) {
       setError("Something went wrong. Please try again.");
       setLoading(false);
@@ -106,17 +218,67 @@ export default function CheckPage({
     return (
       <>
         <DesktopGate />
-        <div className="min-h-screen flex items-center justify-center px-5 bg-gray-50">
-          <div className="text-center">
-            <div className="mb-6">
-              <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-sm"
+          >
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-2xl font-bold text-gray-900 mb-2 text-center"
+            >
+              analyzing @{username}
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-gray-500 text-center mb-8"
+            >
+              This may take 30-60 seconds
+            </motion.p>
+
+            {/* Loading stages */}
+            <div className="space-y-2">
+              {loadingStages.map((stage, index) => (
+                <LoadingStageItem
+                  key={index}
+                  stage={stage}
+                  index={index}
+                  status={
+                    index < currentStage
+                      ? "complete"
+                      : index === currentStage
+                      ? "active"
+                      : "pending"
+                  }
+                />
+              ))}
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Analyzing @{username}
-            </h2>
-            <p className="text-gray-600">{loadingMessage}</p>
-            <p className="text-sm text-gray-500 mt-4">This may take 30-60 seconds</p>
-          </div>
+
+            {/* Progress bar */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-8"
+            >
+              <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-[#8B5CF6] rounded-full"
+                  initial={{ width: "0%" }}
+                  animate={{
+                    width: `${((currentStage + 1) / loadingStages.length) * 100}%`,
+                  }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </>
     );
@@ -135,20 +297,35 @@ export default function CheckPage({
     return (
       <>
         <DesktopGate />
-        <div className="min-h-screen flex items-center justify-center px-5 bg-gray-50">
-          <div className="w-full max-w-md text-center">
-            <div className="text-6xl mb-4">⚠️</div>
+        <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-md text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, delay: 0.1 }}
+              className="text-6xl mb-4"
+            >
+              <span aria-label="warning">&#x26A0;&#xFE0F;</span>
+            </motion.div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              Couldn't Analyze Account
+              couldn't analyze account
             </h2>
             <p className="text-gray-600 mb-6">{error}</p>
-            <button
+            <motion.button
               onClick={() => router.push("/")}
-              className="bg-orange-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-orange-600 transition-colors"
+              className="bg-[#FF6B6B] text-white px-6 py-3 rounded-full font-bold hover:bg-[#E85555] transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              transition={springTransition}
             >
               Try Another Account
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         </div>
       </>
     );
@@ -162,17 +339,31 @@ export default function CheckPage({
     <>
       <DesktopGate />
 
-      <div className="min-h-screen bg-gray-50 pb-20">
-        <div className="max-w-2xl mx-auto px-5 py-8">
+      <div className="min-h-screen bg-[#FDF6E9] pb-20 relative">
+        {/* Decorative stickers */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <Sticker emoji="🤖" size="sm" rotation={-10} className="absolute top-24 right-8" />
+          <Sticker emoji="💫" size="md" rotation={12} className="absolute top-64 left-4" />
+          <Sticker emoji="🚩" size="sm" rotation={-8} className="absolute top-96 right-12" />
+        </div>
+
+        <div className="max-w-2xl mx-auto px-5 py-8 relative z-10">
           {/* Header */}
-          <div className="mb-6">
-            <button
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-6"
+          >
+            <motion.button
               onClick={() => router.push("/")}
               className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+              whileHover={{ x: -4 }}
+              transition={springTransition}
             >
-              ← Back
-            </button>
-          </div>
+              <span aria-label="back arrow">&#x2190;</span> Back
+            </motion.button>
+          </motion.div>
 
           {/* Verdict Hero */}
           <VerdictHero
@@ -181,107 +372,135 @@ export default function CheckPage({
             username={result.username}
           />
 
-          {/* Metadata: Last Checked & Cache Info */}
-          <div className="bg-white rounded-xl p-4 shadow-sm mb-4 flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>
-                Last checked: {formatTimeAgo(result.checkedAt)}
-              </span>
-            </div>
-            {result.isCached && (
-              <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
-                Cached
-              </span>
-            )}
-          </div>
-
-          {/* Image Analysis Section */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm mb-4">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              📸 THE IMAGES
-            </h3>
-
-            <p className="text-base text-gray-700 mb-4">
-              {result.imageAnalysis.message}
-            </p>
-
-            <ImageGrid
-              imageUrls={result.imageUrls}
-              imagesAnalyzed={result.imageAnalysis.count}
-            />
-          </div>
-
-          {/* Profile Flags */}
-          {result.profileFlags.length > 0 && (
-            <div className="mb-4">
-              <FlagsCard
-                title="THE PROFILE"
-                emoji="👤"
-                flags={result.profileFlags}
-              />
-            </div>
-          )}
-
-          {/* Consistency Flags */}
-          {result.consistencyFlags.length > 0 && (
-            <div className="mb-4">
-              <FlagsCard
-                title="THE PATTERN"
-                emoji="🎯"
-                flags={result.consistencyFlags}
-              />
-            </div>
-          )}
-
-          {/* Bottom Line */}
-          <div className="mb-4">
-            <BottomLineCard message={result.bottomLine} />
-          </div>
-
-          {/* Education */}
-          <div className="mb-4">
-            <EducationCard verdict={result.verdict} />
-          </div>
-
-          {/* Disclaimer */}
-          <div className="bg-gray-100 rounded-xl p-4 mb-6">
-            <p className="text-xs text-gray-600 text-center">
-              ⚠️ This is an automated analysis for entertainment purposes.
-              Results are not definitive proof.
-            </p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-3">
-            {/* Share Button - Primary Action */}
-            <ShareButton
-              username={result.username}
-              aiLikelihood={result.aiLikelihood}
-              className="w-full bg-orange-500 text-white py-4 rounded-xl font-semibold text-lg hover:bg-orange-600 transition-colors shadow-sm"
-            />
-
-            {/* Check Another - Secondary Action */}
-            <button
-              onClick={() => router.push("/")}
-              className="w-full bg-white text-gray-700 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors shadow-sm border border-gray-200"
+          {/* Staggered content reveal */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Metadata: Last Checked & Cache Info */}
+            <motion.div
+              variants={fadeInUp}
+              className="bg-white rounded-2xl p-4 mb-4 flex items-center justify-between text-sm"
+              style={{ boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)" }}
             >
-              Check Another Account
-            </button>
-          </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>Last checked: {formatTimeAgo(result.checkedAt)}</span>
+              </div>
+              {result.isCached && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                  className="bg-[#A8D5BA]/20 text-[#A8D5BA] px-2 py-1 rounded text-xs font-bold"
+                >
+                  Cached
+                </motion.span>
+              )}
+            </motion.div>
+
+            {/* Image Analysis Section */}
+            <motion.div
+              variants={fadeInUp}
+              className="bg-white rounded-2xl p-6 mb-4"
+              style={{ boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)" }}
+            >
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                <span aria-label="camera">&#x1F4F8;</span> the images
+              </h3>
+
+              <p className="text-base text-gray-700 mb-4">
+                {result.imageAnalysis.message}
+              </p>
+
+              <ImageGrid
+                imageUrls={result.imageUrls}
+                imagesAnalyzed={result.imageAnalysis.count}
+              />
+            </motion.div>
+
+            {/* Profile Flags */}
+            <AnimatePresence>
+              {result.profileFlags.length > 0 && (
+                <motion.div variants={fadeInUp} className="mb-4">
+                  <FlagsCard
+                    title="the profile"
+                    emoji="\uD83D\uDC64"
+                    flags={result.profileFlags}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Consistency Flags */}
+            <AnimatePresence>
+              {result.consistencyFlags.length > 0 && (
+                <motion.div variants={fadeInUp} className="mb-4">
+                  <FlagsCard
+                    title="the pattern"
+                    emoji="\uD83C\uDFAF"
+                    flags={result.consistencyFlags}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Bottom Line */}
+            <motion.div variants={fadeInUp} className="mb-4">
+              <BottomLineCard message={result.bottomLine} />
+            </motion.div>
+
+            {/* Education */}
+            <motion.div variants={fadeInUp} className="mb-4">
+              <EducationCard verdict={result.verdict} />
+            </motion.div>
+
+            {/* Disclaimer */}
+            <motion.div
+              variants={fadeInUp}
+              className="bg-gray-100 rounded-xl p-4 mb-6"
+            >
+              <p className="text-xs text-gray-600 text-center">
+                <span aria-label="warning">&#x26A0;&#xFE0F;</span> This is an automated analysis for entertainment purposes.
+                Results are not definitive proof.
+              </p>
+            </motion.div>
+
+            {/* Action Buttons */}
+            <motion.div variants={fadeInUp} className="space-y-3">
+              {/* Share Button - Primary Action */}
+              <ShareButton
+                username={result.username}
+                aiLikelihood={result.aiLikelihood}
+                className="w-full bg-[#FF6B6B] text-white py-4 rounded-full font-bold text-lg hover:bg-[#E85555] transition-colors"
+              />
+
+              {/* Check Another - Secondary Action */}
+              <motion.button
+                onClick={() => router.push("/")}
+                className="w-full bg-white text-[#1A1A1A] py-4 rounded-full font-bold text-lg hover:bg-[#FDF6E9] transition-colors border-2 border-[#1A1A1A]"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                transition={springTransition}
+              >
+                Check Another Account
+              </motion.button>
+            </motion.div>
+          </motion.div>
         </div>
 
         <Footer />

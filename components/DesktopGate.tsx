@@ -20,7 +20,7 @@ export function DesktopGate() {
           width: 200,
           margin: 2,
           color: {
-            dark: "#1F2937",
+            dark: "#1A1A1A",
             light: "#FFFFFF",
           },
         })
@@ -46,13 +46,13 @@ export function DesktopGate() {
 
   // Show desktop gate on desktop
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FDF6E9]">
       <div className="max-w-md px-8 text-center">
         <div className="mb-6">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
-            AI or Nah
+            ai or nah
           </h1>
-          <p className="text-xl text-gray-600">Mobile Only</p>
+          <p className="text-xl text-gray-600">mobile only</p>
         </div>
 
         {qrCodeDataUrl && (
@@ -80,7 +80,7 @@ export function DesktopGate() {
         <div className="mt-8 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500">
             Or visit{" "}
-            <span className="font-medium text-indigo-600">aiornah.ai</span> on
+            <span className="font-bold text-[#60A5FA]">aiornah.ai</span> on
             your mobile browser
           </p>
         </div>

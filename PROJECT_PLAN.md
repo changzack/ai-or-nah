@@ -331,6 +331,135 @@ References
 * PRD: “Legal Protection” section
 Acceptance criteria
 * ToS route exists; results page contains disclaimer wording (entertainment/no guarantees).
+# Domain 8 — Brand Redesign
+Align the existing front-end with BRAND_GUIDELINE.md specifications. This domain merges the existing animation work (framer-motion, confetti, hooks) with a cohesive visual redesign.
+
+1. Update global color palette and CSS variables
+Files
+* Modify: `app/globals.css`
+* Modify: `tailwind.config.ts` (if custom colors needed)
+Dependencies
+* Domain 1 Task 2 (styling system)
+References
+* BRAND_GUIDELINE: Color Palette section (Warm Cream, Coral Pop, Soft Sage, Electric Violet, Sunny Yellow, Sky Blue)
+* BRAND_GUIDELINE: Cards section (shadow specification)
+Acceptance criteria
+* App background is Warm Cream (#FDF6E9) throughout.
+* All brand colors are defined as CSS variables and/or Tailwind classes.
+* Card shadow updated to `0 4px 24px rgba(0,0,0,0.08)`.
+
+2. Switch typography to Plus Jakarta Sans
+Files
+* Modify: `app/layout.tsx`
+Dependencies
+* Domain 1 Task 2
+References
+* BRAND_GUIDELINE: Typography section (Plus Jakarta Sans, weights 400/500/700/800)
+Acceptance criteria
+* All text renders in Plus Jakarta Sans.
+* Font weights 400, 500, 700, 800 load correctly.
+
+3. Update Button component to pill shape + brand colors
+Files
+* Modify: `components/ui/Button.tsx`
+Dependencies
+* Domain 8 Task 1 (color variables)
+References
+* BRAND_GUIDELINE: Components > Buttons (pill shape, Coral Pop primary, transparent secondary)
+Acceptance criteria
+* Buttons use rounded-full (pill shape).
+* Primary buttons use Coral Pop (#FF6B6B).
+* Secondary buttons have transparent background with 2px Charcoal border.
+* Hover scale is 1.05.
+
+4. Update Input component styling
+Files
+* Modify: `components/ui/Input.tsx`
+Dependencies
+* Domain 8 Task 1 (color variables)
+References
+* BRAND_GUIDELINE: Color Palette (accent colors for focus states)
+Acceptance criteria
+* Input focus glow uses brand accent color.
+* Error states use Coral Pop (#FF6B6B).
+
+5. Convert headlines to lowercase throughout
+Files
+* Modify: `app/page.tsx`
+* Modify: `app/check/[username]/page.tsx`
+* Modify: `components/results/VerdictHero.tsx`
+* Modify: `components/results/FlagsCard.tsx`
+* Modify: `components/results/BottomLineCard.tsx`
+* Modify: `components/results/EducationCard.tsx`
+Dependencies
+* Domain 4 (Frontend pages exist)
+References
+* BRAND_GUIDELINE: Typography Rules (lowercase headlines are default)
+Acceptance criteria
+* All headlines use lowercase per brand guidelines.
+* Subheads and body copy use sentence case.
+
+6. Update card components with brand styling
+Files
+* Modify: `components/results/VerdictHero.tsx`
+* Modify: `components/results/FlagsCard.tsx`
+* Modify: `components/results/BottomLineCard.tsx`
+* Modify: `components/results/EducationCard.tsx`
+* Modify: `components/results/ImageGrid.tsx`
+Dependencies
+* Domain 8 Task 1 (color variables)
+References
+* BRAND_GUIDELINE: Components > Cards (16px radius, shadow, padding)
+* BRAND_GUIDELINE: Color Palette (accent colors)
+Acceptance criteria
+* Cards have consistent 16px border-radius.
+* Shadow matches brand spec: `0 4px 24px rgba(0,0,0,0.08)`.
+* Accent colors align with brand palette (indigo → Electric Violet, green → Soft Sage).
+
+7. Create Sticker component system
+Files
+* Create: `components/ui/Sticker.tsx`
+* Modify: `app/page.tsx` (add stickers to hero)
+* Modify: `app/check/[username]/page.tsx` (add stickers to results)
+Dependencies
+* Domain 8 Task 1 (styling foundation)
+References
+* BRAND_GUIDELINE: Visual Language > Sticker System (rotation, sizes, usage rules)
+Acceptance criteria
+* Sticker component supports rotation prop (5-15° range).
+* Size variants: sm, md, lg.
+* Core emoji set: 👁️ ✨ 🔍 ✅ 🚩 🤖 🎭 ⚡ 💫
+* Max 3-5 stickers per section.
+
+8. Update ShareButton with brand styling
+Files
+* Modify: `components/ShareButton.tsx`
+Dependencies
+* Domain 8 Task 1 (color variables), Domain 8 Task 3 (button styling)
+References
+* BRAND_GUIDELINE: Color Palette (Coral Pop for celebration)
+Acceptance criteria
+* Confetti colors use brand palette (Coral, Orange tones).
+* Button styling follows brand button specs.
+
+9. Final polish and consistency pass
+Files
+* All modified files from previous tasks
+Dependencies
+* Domain 8 Tasks 1–8
+References
+* BRAND_GUIDELINE: Animation Guidelines (150-300ms duration)
+* BRAND_GUIDELINE: entire document
+Acceptance criteria
+* All pages use Warm Cream background.
+* Loading states use brand personality.
+* Error states follow brand tone.
+* Animations are within 150-300ms per brand spec.
+* No remnants of old color scheme.
+
+Cross-domain notes
+* This domain builds on top of existing Frontend Domain components.
+* Animation infrastructure (framer-motion, hooks) is preserved and enhanced.
 # Execution order across domains (high-level)
 1. Domain 1 (scaffold/theme/types)
 2. Domain 2 (DB/storage)
@@ -339,3 +468,4 @@ Acceptance criteria
 5. Domain 5 (reliability/env/logging)
 6. Domain 6 (tests)
 7. Domain 7 (legal pages)
+8. Domain 8 (brand redesign)
