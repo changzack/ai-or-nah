@@ -12,6 +12,18 @@ import type { InstagramProfile, RedFlag } from "../types";
 export function analyzeProfileSignals(profile: InstagramProfile): RedFlag[] {
   const flags: RedFlag[] = [];
 
+  // Verified account check (green flag - check first as it's a strong positive signal)
+  const verifiedFlag = analyzeVerifiedStatus(profile);
+  if (verifiedFlag) flags.push(verifiedFlag);
+
+  // Username pattern analysis
+  const usernameFlags = analyzeUsername(profile.username);
+  flags.push(...usernameFlags);
+
+  // Missing full name check
+  const fullNameFlag = analyzeFullName(profile.fullName);
+  if (fullNameFlag) flags.push(fullNameFlag);
+
   // Follower-to-following ratio analysis
   const followerRatio = analyzeFollowerRatio(profile);
   if (followerRatio) flags.push(followerRatio);
@@ -28,7 +40,74 @@ export function analyzeProfileSignals(profile: InstagramProfile): RedFlag[] {
   const accountAgeFlag = analyzeAccountAge(profile);
   if (accountAgeFlag) flags.push(accountAgeFlag);
 
+  // Stale account detection
+  const staleFlag = analyzeStaleAccount(profile);
+  if (staleFlag) flags.push(staleFlag);
+
   return flags;
+}
+
+/**
+ * Analyze verified status
+ * Verified accounts are extremely unlikely to be AI/fake
+ */
+function analyzeVerifiedStatus(profile: InstagramProfile): RedFlag | null {
+  if (profile.verified) {
+    return {
+      type: "positive",
+      message: "Verified account. Instagram has confirmed this identity.",
+    };
+  }
+  return null;
+}
+
+/**
+ * Analyze username for suspicious patterns
+ * Bots often have auto-generated usernames
+ */
+function analyzeUsername(username: string): RedFlag[] {
+  const flags: RedFlag[] = [];
+
+  // Pattern: Random numbers at end (e.g., emma_2847362, emma2847362)
+  if (/[a-z]+_?\d{4,}$/i.test(username)) {
+    flags.push({
+      type: "negative",
+      message: "Username has suspicious random number suffix.",
+    });
+  }
+
+  // Pattern: Bot-generated pattern (e.g., sx234ok, ab12cd34)
+  if (/^[a-z]{2,3}\d+[a-z]*\d*$/i.test(username)) {
+    flags.push({
+      type: "negative",
+      message: "Username follows bot-generated pattern.",
+    });
+  }
+
+  // Pattern: Excessive underscores (3 or more)
+  const underscoreCount = (username.match(/_/g) || []).length;
+  if (underscoreCount >= 3) {
+    flags.push({
+      type: "negative",
+      message: "Username has multiple underscores. Common in fake accounts.",
+    });
+  }
+
+  return flags;
+}
+
+/**
+ * Analyze full name field
+ * Real users typically add their display name
+ */
+function analyzeFullName(fullName?: string): RedFlag | null {
+  if (!fullName || fullName.trim().length === 0) {
+    return {
+      type: "negative",
+      message: "No display name set. Real users typically add their name.",
+    };
+  }
+  return null;
 }
 
 /**
@@ -174,6 +253,33 @@ function analyzeAccountAge(profile: InstagramProfile): RedFlag | null {
     return {
       type: "negative",
       message: `${formatNumber(followerCount)} followers with ${postCount} posts. Possible bought followers.`,
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Analyze stale accounts
+ * Accounts with high followers but no recent posts may be abandoned or inactive
+ */
+function analyzeStaleAccount(profile: InstagramProfile): RedFlag | null {
+  const { posts, followerCount } = profile;
+
+  if (posts.length === 0 || followerCount < 5000) {
+    return null;
+  }
+
+  // Get the most recent post timestamp
+  const timestamps = posts.map((p) => new Date(p.timestamp).getTime());
+  const mostRecentPost = Math.max(...timestamps);
+  const now = Date.now();
+  const sixMonthsMs = 180 * 24 * 60 * 60 * 1000; // ~6 months in milliseconds
+
+  if (now - mostRecentPost > sixMonthsMs) {
+    return {
+      type: "negative",
+      message: `No recent posts despite ${formatNumber(followerCount)} followers. Account may be abandoned or inactive.`,
     };
   }
 

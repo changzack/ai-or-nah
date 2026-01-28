@@ -17,7 +17,6 @@ export type ResultRow = {
   images_analyzed_count: number;
   profile_flags: RedFlag[];
   consistency_flags: RedFlag[];
-  bottom_line: string;
   checked_at: string; // ISO timestamp
   last_accessed_at: string; // ISO timestamp
   view_count: number;
@@ -52,7 +51,6 @@ export type AnalysisResult = {
   };
   profileFlags: RedFlag[];
   consistencyFlags: RedFlag[];
-  bottomLine: string;
   imageUrls: string[];
   checkedAt: string;
   lastAccessedAt: string;
@@ -89,6 +87,7 @@ export type InstagramProfile = {
   followingCount: number;
   postCount: number;
   isPrivate: boolean;
+  verified: boolean;
   posts: InstagramPost[];
 };
 
@@ -99,6 +98,8 @@ export type InstagramPost = {
   timestamp: string; // ISO
   likesCount: number;
   commentsCount: number;
+  hashtags: string[];
+  mentions: string[];
 };
 
 // AI Detection API response (provider-agnostic)

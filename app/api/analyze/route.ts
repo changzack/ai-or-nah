@@ -68,7 +68,6 @@ export async function POST(request: Request) {
         },
         profileFlags: cachedResult.profile_flags as any[],
         consistencyFlags: cachedResult.consistency_flags as any[],
-        bottomLine: cachedResult.bottom_line,
         imageUrls,
         checkedAt: cachedResult.checked_at,
         lastAccessedAt: new Date().toISOString(),

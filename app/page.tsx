@@ -60,7 +60,7 @@ function HomePageContent() {
       <DesktopGate />
 
       <div className="min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center px-5 py-12 relative">
+        <div className="flex-1 flex items-center justify-center px-5 py-6 relative">
           {/* Decorative stickers */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <motion.div
@@ -256,7 +256,7 @@ function HomePageContent() {
 
             {/* Supporting Copy */}
             <motion.div
-              className="mt-8 mb-16 text-center space-y-2"
+              className="mt-8 mb-8 text-center space-y-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}

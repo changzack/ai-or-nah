@@ -1,4 +1,4 @@
-import type { InstagramPost, RedFlag, AIImageScore } from "../types";
+import type { InstagramPost, InstagramProfile, RedFlag, AIImageScore } from "../types";
 
 /**
  * Consistency analysis for "THE PATTERN" section
@@ -10,7 +10,8 @@ import type { InstagramPost, RedFlag, AIImageScore } from "../types";
  */
 export function analyzeConsistency(
   posts: InstagramPost[],
-  aiScores: AIImageScore[]
+  aiScores: AIImageScore[],
+  profile?: InstagramProfile
 ): RedFlag[] {
   const flags: RedFlag[] = [];
 
@@ -21,6 +22,20 @@ export function analyzeConsistency(
   // Engagement ratio analysis
   const engagementFlag = analyzeEngagement(posts);
   if (engagementFlag) flags.push(engagementFlag);
+
+  // Hashtag analysis
+  const hashtagFlags = analyzeHashtags(posts);
+  flags.push(...hashtagFlags);
+
+  // Mention/tagging analysis
+  const mentionFlag = analyzeMentions(posts);
+  if (mentionFlag) flags.push(mentionFlag);
+
+  // Engagement rate vs followers (needs profile data)
+  if (profile) {
+    const engagementRateFlag = analyzeEngagementRate(posts, profile);
+    if (engagementRateFlag) flags.push(engagementRateFlag);
+  }
 
   // AI score consistency
   const aiConsistencyFlag = analyzeAIScoreConsistency(aiScores);
@@ -90,6 +105,123 @@ function analyzeCaptions(posts: InstagramPost[]): RedFlag[] {
   }
 
   return flags;
+}
+
+/**
+ * Analyze hashtag usage patterns
+ */
+function analyzeHashtags(posts: InstagramPost[]): RedFlag[] {
+  const flags: RedFlag[] = [];
+
+  if (posts.length === 0) {
+    return flags;
+  }
+
+  // Calculate average hashtags per post
+  const totalHashtags = posts.reduce((sum, p) => sum + (p.hashtags?.length || 0), 0);
+  const avgHashtags = totalHashtags / posts.length;
+
+  // Red flag: Excessive hashtags
+  if (avgHashtags > 25) {
+    flags.push({
+      type: "negative",
+      message: `Hashtag stuffing detected (${Math.round(avgHashtags)}/post). Strong indicator of bot behavior.`,
+    });
+  } else if (avgHashtags > 15) {
+    flags.push({
+      type: "negative",
+      message: `Uses excessive hashtags (avg ${Math.round(avgHashtags)}/post). Common spam behavior.`,
+    });
+  }
+
+  // Red flag: Spam/engagement-bait hashtags
+  const spamHashtags = [
+    "followme",
+    "follow4follow",
+    "f4f",
+    "like4like",
+    "l4l",
+    "likeforlike",
+    "followback",
+    "followforfollow",
+    "likeforlikes",
+    "likes4likes",
+  ];
+
+  const allHashtags = posts.flatMap((p) => p.hashtags || []);
+  const hasSpamHashtags = allHashtags.some((tag) =>
+    spamHashtags.some((spam) => tag.toLowerCase().includes(spam))
+  );
+
+  if (hasSpamHashtags) {
+    flags.push({
+      type: "negative",
+      message: "Uses engagement-bait hashtags (#follow4follow, #like4like). Bot behavior.",
+    });
+  }
+
+  return flags;
+}
+
+/**
+ * Analyze mention/tagging patterns
+ */
+function analyzeMentions(posts: InstagramPost[]): RedFlag | null {
+  if (posts.length === 0) {
+    return null;
+  }
+
+  // Calculate average mentions per post
+  const totalMentions = posts.reduce((sum, p) => sum + (p.mentions?.length || 0), 0);
+  const avgMentions = totalMentions / posts.length;
+
+  // Red flag: Mass tagging
+  if (avgMentions > 5) {
+    return {
+      type: "negative",
+      message: `Tags many accounts per post (avg ${Math.round(avgMentions)}). Spam-like behavior.`,
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Analyze engagement rate vs follower count
+ */
+function analyzeEngagementRate(
+  posts: InstagramPost[],
+  profile: InstagramProfile
+): RedFlag | null {
+  if (posts.length === 0 || profile.followerCount < 5000) {
+    return null;
+  }
+
+  // Calculate average engagement (likes + comments) per post
+  const totalLikes = posts.reduce((sum, p) => sum + p.likesCount, 0);
+  const totalComments = posts.reduce((sum, p) => sum + p.commentsCount, 0);
+  const avgEngagement = (totalLikes + totalComments) / posts.length;
+
+  // Calculate engagement rate as percentage
+  const engagementRate = (avgEngagement / profile.followerCount) * 100;
+
+  // Red flag: Very low engagement rate (possible bought followers)
+  if (engagementRate < 0.5 && profile.followerCount > 10000) {
+    return {
+      type: "negative",
+      message: `Very low engagement rate (${engagementRate.toFixed(2)}%) despite ${formatNumber(profile.followerCount)} followers. Possible bought followers.`,
+    };
+  }
+
+  // Red flag: Unusually high engagement rate (possible fake engagement)
+  if (engagementRate > 20 && profile.followerCount > 5000) {
+    return {
+      type: "negative",
+      message: `Unusually high engagement rate (${engagementRate.toFixed(1)}%). Possible fake engagement.`,
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -185,4 +317,17 @@ function calculateVariance(numbers: number[]): number {
   const mean = numbers.reduce((sum, n) => sum + n, 0) / numbers.length;
   const squaredDiffs = numbers.map((n) => Math.pow(n - mean, 2));
   return squaredDiffs.reduce((sum, d) => sum + d, 0) / numbers.length;
+}
+
+/**
+ * Format large numbers with K/M suffix
+ */
+function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return `${(num / 1000000).toFixed(1)}M`;
+  }
+  if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}K`;
+  }
+  return num.toString();
 }

@@ -113,6 +113,8 @@ function transformApifyProfile(data: ApifyInstagramProfile): InstagramProfile {
             timestamp: post.timestamp || new Date().toISOString(),
             likesCount: post.likesCount || 0,
             commentsCount: post.commentsCount || 0,
+            hashtags: post.hashtags || [],
+            mentions: post.mentions || [],
           });
         }
       }
@@ -127,6 +129,7 @@ function transformApifyProfile(data: ApifyInstagramProfile): InstagramProfile {
     followingCount: data.followsCount || 0,
     postCount: data.postsCount || 0,
     isPrivate: data.private || false,
+    verified: data.verified || false,
     posts: imagePosts.slice(0, 9), // Limit to 9 posts
   };
 }

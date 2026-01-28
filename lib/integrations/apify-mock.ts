@@ -14,6 +14,7 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
     followingCount: 500,
     postCount: 45,
     isPrivate: false,
+    verified: false,
     posts: [
       {
         id: "1",
@@ -22,6 +23,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 1).toISOString(),
         likesCount: 234,
         commentsCount: 12,
+        hashtags: ["beach", "sunny", "vacation"],
+        mentions: [],
       },
       {
         id: "2",
@@ -30,6 +33,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 3).toISOString(),
         likesCount: 189,
         commentsCount: 8,
+        hashtags: ["coffee", "morning"],
+        mentions: [],
       },
       {
         id: "3",
@@ -38,6 +43,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 5).toISOString(),
         likesCount: 456,
         commentsCount: 23,
+        hashtags: ["sunset", "nature", "photography"],
+        mentions: [],
       },
       {
         id: "4",
@@ -46,6 +53,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 7).toISOString(),
         likesCount: 567,
         commentsCount: 45,
+        hashtags: ["fashion", "style"],
+        mentions: [],
       },
       {
         id: "5",
@@ -54,6 +63,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 10).toISOString(),
         likesCount: 234,
         commentsCount: 15,
+        hashtags: ["weekend", "relax"],
+        mentions: [],
       },
       {
         id: "6",
@@ -62,6 +73,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 14).toISOString(),
         likesCount: 345,
         commentsCount: 18,
+        hashtags: ["throwback", "summer", "memories"],
+        mentions: [],
       },
       {
         id: "7",
@@ -70,6 +83,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 18).toISOString(),
         likesCount: 678,
         commentsCount: 34,
+        hashtags: ["selfie"],
+        mentions: [],
       },
       {
         id: "8",
@@ -78,6 +93,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 21).toISOString(),
         likesCount: 456,
         commentsCount: 28,
+        hashtags: ["ootd", "fashion", "style"],
+        mentions: [],
       },
       {
         id: "9",
@@ -86,6 +103,8 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
         timestamp: new Date(Date.now() - 86400000 * 25).toISOString(),
         likesCount: 789,
         commentsCount: 41,
+        hashtags: ["blessed", "grateful"],
+        mentions: [],
       },
     ],
   },
@@ -97,6 +116,7 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
     followingCount: 0,
     postCount: 0,
     isPrivate: true,
+    verified: false,
     posts: [],
   },
   noposts: {
@@ -107,6 +127,7 @@ const MOCK_PROFILES: Record<string, InstagramProfile> = {
     followingCount: 100,
     postCount: 0,
     isPrivate: false,
+    verified: false,
     posts: [],
   },
 };

@@ -50,32 +50,20 @@ export function EducationCard({ verdict }: EducationCardProps) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">
         {content.emoji} {content.title}
       </h3>
-      <motion.ul
-        className="space-y-2"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-30px" }}
-      >
+      <ul className="list-disc list-inside space-y-3">
         {content.tips.map((tip, index) => (
           <motion.li
             key={index}
-            className="flex items-start gap-2 text-gray-700"
+            className="text-base text-gray-700 leading-6"
             variants={popIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-30px" }}
           >
-            <motion.span
-              className="text-gray-400 mt-1"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <span aria-label="bullet point">&#x2022;</span>
-            </motion.span>
-            <span className="text-sm">{tip}</span>
+            {tip}
           </motion.li>
         ))}
-      </motion.ul>
+      </ul>
     </motion.div>
   );
 }

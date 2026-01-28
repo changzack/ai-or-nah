@@ -2,7 +2,7 @@ import { scrapeInstagramProfileWithRetry } from "./integrations/apify";
 import { analyzeImages, calculateAverageAIProbability } from "./integrations/ai-detection";
 import { analyzeProfileSignals } from "./scoring/profile-signals";
 import { analyzeConsistency } from "./scoring/consistency";
-import { getVerdict, getBottomLine, getImageAnalysisMessage } from "./constants";
+import { getVerdict, getImageAnalysisMessage } from "./constants";
 import { validateProfileForAnalysis, AIOrNahError } from "./errors";
 import { saveResult } from "./db/results";
 import { saveResultImages } from "./db/images";
@@ -111,14 +111,13 @@ export async function analyzeAccount(username: string): Promise<AnalysisResult |
     const profileFlags = analyzeProfileSignals(profile);
 
     // Step 5: Consistency analysis
-    const consistencyFlags = analyzeConsistency(profile.posts, aiScores);
+    const consistencyFlags = analyzeConsistency(profile.posts, aiScores, profile);
 
     // Step 6: Calculate final AI likelihood score (0-100)
     const aiLikelihood = calculateFinalScore(averageAIScore, profileFlags, consistencyFlags);
 
     // Step 7: Determine verdict
     const verdict = getVerdict(aiLikelihood);
-    const bottomLine = getBottomLine(verdict);
 
     console.log(
       `[Analyze] Complete: ${username} - ${aiLikelihood}% AI likelihood (${verdict})`
@@ -146,7 +145,6 @@ export async function analyzeAccount(username: string): Promise<AnalysisResult |
       imagesAnalyzedCount: aiScores.filter((s) => s.success).length,
       profileFlags,
       consistencyFlags,
-      bottomLine,
     });
 
     if (savedResult) {
@@ -181,7 +179,6 @@ export async function analyzeAccount(username: string): Promise<AnalysisResult |
       },
       profileFlags,
       consistencyFlags,
-      bottomLine,
       imageUrls: storedImageUrls, // Return stored URLs instead of Instagram CDN
       checkedAt: new Date().toISOString(),
       lastAccessedAt: new Date().toISOString(),

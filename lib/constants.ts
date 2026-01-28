@@ -52,21 +52,6 @@ export function getVerdictLabel(verdict: VerdictLevel): string {
 }
 
 /**
- * Get bottom line message per PRD
- */
-export function getBottomLine(verdict: VerdictLevel): string {
-  switch (verdict) {
-    case "real":
-      return "Looks legit. But stay cautious.";
-    case "unclear":
-      return "Hard to tell. Trust your instincts.";
-    case "likely_fake":
-    case "almost_definitely_fake":
-      return "This is AI-generated. Don't send money.";
-  }
-}
-
-/**
  * Get image analysis message based on score per PRD
  */
 export function getImageAnalysisMessage(averageScore: number): string {

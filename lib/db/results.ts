@@ -37,7 +37,6 @@ export async function saveResult(params: {
   imagesAnalyzedCount: number;
   profileFlags: RedFlag[];
   consistencyFlags: RedFlag[];
-  bottomLine: string;
 }): Promise<ResultRow | null> {
   const supabase = createServerClient();
 
@@ -51,7 +50,6 @@ export async function saveResult(params: {
       images_analyzed_count: params.imagesAnalyzedCount,
       profile_flags: params.profileFlags,
       consistency_flags: params.consistencyFlags,
-      bottom_line: params.bottomLine,
       checked_at: new Date().toISOString(),
       last_accessed_at: new Date().toISOString(),
       view_count: 0,

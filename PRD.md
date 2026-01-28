@@ -463,6 +463,304 @@ There is a proliferation of fake AI Instagram accounts featuring AI-generated mo
 
 ---
 
+## Phase 2: Monetization
+
+**Goal:** Implement a lightweight freemium model to generate revenue as a side hustle without requiring enterprise-level infrastructure.
+
+### Monetization Model Overview
+
+**Approach:** Credit-based system with email as durable identity (no passwords)
+
+| Tier | Access | Identity |
+|------|--------|----------|
+| Free | 3 checks lifetime | Device fingerprint + IP |
+| Paid | Credit packs | Email (via Stripe) |
+
+---
+
+### Free Tier
+
+**Allocation:**
+- 3 free checks per device (lifetime, not daily)
+- Tracked via device fingerprint + IP combination
+
+**Fingerprint Composition:**
+```
+hash(IP + userAgent + timezone + screenResolution + language + canvasFingerprint)
+```
+
+**Rationale:** Lifetime limit (vs daily) prevents gaming via VPN/waiting. Fingerprint + IP catches 80-90% of casual abuse.
+
+---
+
+### Credit System
+
+**Pricing Tiers:**
+
+| Pack | Price | Per Check | Notes |
+|------|-------|-----------|-------|
+| 5 checks | $2.99 | $0.60 | Entry point |
+| 15 checks | $6.99 | $0.47 | Anchor/default |
+| 50 checks | $14.99 | $0.30 | Best value |
+
+**Rules:**
+- 1 credit = 1 analysis
+- Credits never expire
+- Credits tied to email address (Stripe customer)
+- Balance visible in header when authenticated
+
+---
+
+### Identity & Authentication
+
+**Approach:** Email as identity, no passwords
+
+**Purchase Flow:**
+1. User hits free tier limit
+2. Selects credit pack
+3. Redirects to Stripe Checkout (hosted)
+4. Stripe collects email + payment
+5. Webhook creates/updates customer in Supabase
+6. Redirect back with success, session cookie set
+7. User continues with credits available
+
+**Returning Customer Flow:**
+1. User hits paywall, clicks "Already purchased?"
+2. Enters email address
+3. Receives 6-digit verification code (10-min expiry)
+4. Enters code, session restored
+5. Credits available for use
+
+**Session Management:**
+- Signed session cookie after verification
+- Cookie contains: email, customer_id, signature
+- Server validates on each request
+- No password storage, no reset flows
+
+---
+
+### Anti-Gaming Measures
+
+**Layered Protection:**
+
+| Layer | Method | Catches |
+|-------|--------|---------|
+| 1 | Device fingerprint | Same browser |
+| 2 | IP address | Same network |
+| 3 | Fingerprint + IP hash | Most casual users |
+| 4 | Email verification (paid) | Durable identity |
+
+**Future Enhancements (Not MVP):**
+- Disposable email detection (block tempmail, guerrillamail)
+- VPN/proxy detection (flag, don't block)
+- Velocity checks (many emails from same IP)
+
+---
+
+### User Experience
+
+#### Free Check Indicator
+- **Style:** Subtle (not prominent)
+- **Location:** Results page after first check
+- **Copy:** "2 free checks remaining"
+
+#### Paywall Screen
+- **Trigger:** When free checks exhausted AND user tries to analyze
+- **Behavior:** Hard gate (no analysis run, saves API costs)
+
+**Paywall Layout:**
+```
+┌─────────────────────────────────────┐
+│  You've used your free checks       │
+│                                     │
+│  Get more checks to continue        │
+│  analyzing Instagram accounts       │
+│                                     │
+│  [5 for $2.99]  [15 for $6.99]     │
+│           [50 for $14.99]           │
+│                                     │
+│  Already purchased? [Restore]       │
+└─────────────────────────────────────┘
+```
+
+#### Credit Display (Authenticated Users)
+- **Location:** Header, right side
+- **Display:** "[12 credits] 👤" badge
+- **On click:** Dropdown showing email, balance, "Buy more", "Sign out"
+
+#### Email Verification Screen
+```
+┌─────────────────────────────────────┐
+│  Restore your credits               │
+│                                     │
+│  Enter the email you used to        │
+│  purchase:                          │
+│                                     │
+│  [________________________]         │
+│  [Send verification code]           │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Check your email                   │
+│                                     │
+│  We sent a 6-digit code to          │
+│  z***@gmail.com                     │
+│                                     │
+│  [______]                           │
+│  [Verify]     Didn't get it? Resend │
+└─────────────────────────────────────┘
+```
+
+---
+
+### Database Schema Additions
+
+**New Tables:**
+
+```sql
+-- Customers (paid users)
+CREATE TABLE customers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT UNIQUE NOT NULL,
+  credits INTEGER NOT NULL DEFAULT 0,
+  stripe_customer_id TEXT UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Verification codes (email auth)
+CREATE TABLE verification_codes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL,
+  code TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Device fingerprints (free tier tracking)
+CREATE TABLE device_fingerprints (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  fingerprint_hash TEXT UNIQUE NOT NULL,
+  checks_used INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Purchase history (audit trail)
+CREATE TABLE purchases (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id UUID REFERENCES customers(id),
+  stripe_session_id TEXT UNIQUE NOT NULL,
+  credits_purchased INTEGER NOT NULL,
+  amount_cents INTEGER NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+---
+
+### API Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/checkout` | POST | Create Stripe Checkout session |
+| `/api/webhook` | POST | Handle Stripe webhook (payment success) |
+| `/api/auth/send-code` | POST | Send 6-digit verification code |
+| `/api/auth/verify` | POST | Verify code, create session |
+| `/api/auth/logout` | POST | Clear session cookie |
+| `/api/credits/balance` | GET | Get current credit balance |
+
+---
+
+### Stripe Integration
+
+**Required:**
+- Stripe account (standard)
+- Products created for each credit pack
+- Webhook endpoint for `checkout.session.completed`
+- Checkout session with `customer_email` pre-filled (if known)
+
+**Checkout Session Metadata:**
+- `credits`: Number of credits purchased
+- `redirect_username`: Username they were trying to check (for deep-link back)
+
+**Webhook Handling:**
+1. Verify webhook signature
+2. Extract customer email and credits from session
+3. Create or update customer record
+4. Add credits to balance
+5. Log purchase for audit
+
+---
+
+### FAQ Content
+
+**Location:** Footer link to `/faq`
+
+**Required Questions:**
+
+```markdown
+## How does AI or Nah work?
+We analyze Instagram profile images using AI detection
+technology and evaluate account patterns like posting
+frequency, engagement ratios, and bio characteristics.
+
+## How accurate is this?
+Our tool provides an estimate, not a definitive answer.
+AI detection is an evolving field. Use results as one
+data point, not absolute truth. For entertainment purposes.
+
+## Do I get free checks?
+Yes, you get 3 free checks. After that, you can purchase
+credit packs starting at $2.99.
+
+## How do credits work?
+1 credit = 1 account analysis. Credits never expire and
+are tied to your email address.
+
+## I purchased credits but can't access them
+Tap "Already purchased?" on the upgrade screen and enter
+the email you used at checkout. We'll send a verification
+code to restore access.
+
+## Can I get a refund?
+Contact us within 7 days of purchase if you're unsatisfied.
+We'll review on a case-by-case basis.
+
+## What data do you store?
+- Analysis results (cached 90 days)
+- Customer emails for purchased accounts
+- We don't store Instagram passwords or access your accounts
+
+## How do I contact support?
+Email: support@aiornah.ai
+```
+
+---
+
+### Implementation Priority
+
+1. **Database:** Add new tables (customers, verification_codes, device_fingerprints, purchases)
+2. **Fingerprinting:** Client-side fingerprint generation + server storage
+3. **Free tier gating:** Update rate limiting to use fingerprint instead of IP-only
+4. **Stripe integration:** Checkout session + webhook handler
+5. **Email verification:** Send code + verify endpoints
+6. **Session management:** Signed cookies, middleware for auth state
+7. **UI components:** Paywall screen, credit display, verification flow
+8. **FAQ page:** Static content page
+
+---
+
+### Privacy Policy Updates Required
+
+Add sections covering:
+- Payment data handling (Stripe processes, we store email + purchase history)
+- Device fingerprinting for rate limiting
+- Email usage (transactional only, no marketing without consent)
+
+---
+
 ## Open Questions & Risks
 
 ### Technical Risks

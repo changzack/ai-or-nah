@@ -115,34 +115,67 @@ export function MagnifyingGlassLoader({ username }: MagnifyingGlassLoaderProps) 
               fill="none"
               className="drop-shadow-lg"
             >
-              {/* Lens circle with transparency */}
+              {/* Glass lens with light blue tint */}
               <circle
                 cx="60"
                 cy="60"
                 r="45"
-                stroke="#8B5CF6"
-                strokeWidth="5"
-                fill="rgba(139, 92, 246, 0.1)"
+                fill="rgba(200, 220, 255, 0.15)"
               />
-              {/* Inner lens glint */}
+              {/* Metal rim */}
               <circle
                 cx="60"
                 cy="60"
-                r="38"
-                stroke="white"
-                strokeWidth="3"
+                r="45"
+                stroke="#4B5563"
+                strokeWidth="4"
                 fill="none"
-                opacity="0.5"
               />
-              {/* Handle */}
+              {/* Inner highlight for depth */}
+              <circle
+                cx="60"
+                cy="60"
+                r="40"
+                stroke="#9CA3AF"
+                strokeWidth="1.5"
+                fill="none"
+                opacity="0.6"
+              />
+              {/* Lens glint/reflection */}
+              <circle
+                cx="50"
+                cy="50"
+                r="12"
+                fill="white"
+                opacity="0.4"
+              />
+              <circle
+                cx="48"
+                cy="48"
+                r="6"
+                fill="white"
+                opacity="0.6"
+              />
+              {/* Handle - dark gray/black */}
               <line
                 x1="85"
                 y1="85"
                 x2="110"
                 y2="110"
-                stroke="#8B5CF6"
-                strokeWidth="6"
+                stroke="#374151"
+                strokeWidth="7"
                 strokeLinecap="round"
+              />
+              {/* Handle highlight for 3D effect */}
+              <line
+                x1="86"
+                y1="86"
+                x2="109"
+                y2="109"
+                stroke="#6B7280"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.5"
               />
             </svg>
           </motion.div>

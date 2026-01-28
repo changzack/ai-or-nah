@@ -36,15 +36,15 @@ export function ImageGrid({ imageUrls, imagesAnalyzed }: ImageGridProps) {
               className="object-cover"
               sizes="(max-width: 768px) 33vw, 150px"
             />
-            {/* Scan line overlay effect */}
+            {/* Blur reveal effect */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-b from-[#8B5CF6]/20 to-transparent pointer-events-none"
-              initial={{ y: "-100%" }}
-              animate={{ y: "200%" }}
+              className="absolute inset-0 backdrop-blur-xl bg-white/80 pointer-events-none"
+              initial={{ y: "0%" }}
+              animate={{ y: "100%" }}
               transition={{
-                duration: 1.5,
+                duration: 1.2,
                 delay: index * 0.1,
-                ease: "easeInOut",
+                ease: "easeOut",
               }}
             />
           </motion.div>

@@ -7,7 +7,6 @@ import { DesktopGate } from "@/components/DesktopGate";
 import { VerdictHero } from "@/components/results/VerdictHero";
 import { ImageGrid } from "@/components/results/ImageGrid";
 import { FlagsCard } from "@/components/results/FlagsCard";
-import { BottomLineCard } from "@/components/results/BottomLineCard";
 import { EducationCard } from "@/components/results/EducationCard";
 import { ShareButton } from "@/components/ShareButton";
 import { Sticker } from "@/components/ui/Sticker";
@@ -434,11 +433,6 @@ export default function CheckPage({
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {/* Bottom Line */}
-            <motion.div variants={fadeInUp} className="mb-4">
-              <BottomLineCard message={result.bottomLine} />
-            </motion.div>
 
             {/* Education */}
             <motion.div variants={fadeInUp} className="mb-4">

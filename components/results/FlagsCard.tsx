@@ -28,43 +28,20 @@ export function FlagsCard({ title, emoji, flags }: FlagsCardProps) {
         {emoji} {title}
       </h3>
 
-      <motion.div
-        className="space-y-3"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-30px" }}
-      >
+      <ul className="list-disc list-inside space-y-3">
         {flags.map((flag, index) => (
-          <motion.div
+          <motion.li
             key={index}
-            className="flex gap-3"
+            className="text-base text-gray-700 leading-6"
             variants={popIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-30px" }}
           >
-            <motion.span
-              className="text-lg flex-shrink-0 leading-6"
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 20,
-                delay: index * 0.1,
-              }}
-            >
-              {flag.type === "negative" ? (
-                <span aria-label="red flag">&#x274C;</span>
-              ) : (
-                <span aria-label="green check">&#x2705;</span>
-              )}
-            </motion.span>
-            <p className="text-base text-gray-700 leading-6 flex-1">
-              {flag.message}
-            </p>
-          </motion.div>
+            {flag.message}
+          </motion.li>
         ))}
-      </motion.div>
+      </ul>
     </motion.div>
   );
 }

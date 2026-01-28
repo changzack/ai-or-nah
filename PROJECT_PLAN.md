@@ -469,3 +469,381 @@ Cross-domain notes
 6. Domain 6 (tests)
 7. Domain 7 (legal pages)
 8. Domain 8 (brand redesign)
+9. Domain 9 (monetization - Phase 2)
+
+# Domain 9 — Monetization (Phase 2)
+Add freemium monetization with device fingerprinting, credit packs via Stripe, and email-based identity restoration.
+
+## Summary
+- **Free tier:** 3 lifetime checks per device (fingerprint + IP hash)
+- **Paid tier:** Credit packs ($2.99/5, $6.99/15, $14.99/50)
+- **Identity:** Email via Stripe, no passwords
+- **Key rule:** Credits only deducted on SUCCESSFUL analysis
+
+## New Dependencies
+```json
+{
+  "@fingerprintjs/fingerprintjs": "^4.2.0",
+  "stripe": "^14.0.0",
+  "resend": "^2.0.0",
+  "jose": "^5.2.0"
+}
+```
+
+## New Environment Variables
+```bash
+# Stripe
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+STRIPE_PRICE_SMALL=price_xxx
+STRIPE_PRICE_MEDIUM=price_xxx
+STRIPE_PRICE_LARGE=price_xxx
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+
+# Resend (email)
+RESEND_API_KEY=re_xxx
+
+# Session
+SESSION_SECRET=<32-char-random-string>
+```
+
+## Tasks
+
+### Phase A: Foundation
+
+1. Install new dependencies
+Files
+* Modify: `package.json`
+Dependencies
+* None
+Acceptance criteria
+* `npm install` succeeds with all new packages.
+
+2. Create database migration for monetization tables
+Files
+* Create: `supabase/migrations/003_monetization.sql`
+Dependencies
+* Domain 2 (existing schema)
+References
+* PRD: Phase 2 Database Schema
+Acceptance criteria
+* Tables: `customers`, `verification_codes`, `device_fingerprints`, `purchases`
+* Proper indexes and triggers for `updated_at`
+
+3. Update constants with monetization values
+Files
+* Modify: `lib/constants.ts`
+Dependencies
+* Task 1
+Acceptance criteria
+* `FREE_TIER.LIFETIME_CHECKS = 3`
+* `CREDIT_PACKS` with small/medium/large pricing
+* `SESSION` config (cookie name, expiry)
+
+4. Update types with new domain types
+Files
+* Modify: `lib/types.ts`
+Dependencies
+* Task 1
+Acceptance criteria
+* Types: `Customer`, `SessionPayload`, `PaywallResult`, `DeviceFingerprint`, `Purchase`, `VerificationCode`
+
+5. Update environment example
+Files
+* Modify: `.env.example`
+Dependencies
+* None
+Acceptance criteria
+* All new Stripe, Resend, and Session variables documented
+
+### Phase B: Database Layer
+
+6. Create customers database operations
+Files
+* Create: `lib/db/customers.ts`
+Dependencies
+* Task 2, Domain 2
+Acceptance criteria
+* Functions: `getCustomerByEmail`, `getCustomerById`, `createCustomer`, `addCredits`, `deductCredit`, `getCreditsBalance`
+
+7. Create fingerprints database operations
+Files
+* Create: `lib/db/fingerprints.ts`
+Dependencies
+* Task 2
+Acceptance criteria
+* Functions: `getDeviceChecks`, `incrementDeviceChecks`, `createOrGetDevice`
+
+8. Create purchases database operations
+Files
+* Create: `lib/db/purchases.ts`
+Dependencies
+* Task 2, Task 6
+Acceptance criteria
+* Functions: `recordPurchase`, `getPurchaseHistory`
+
+### Phase C: Auth Infrastructure
+
+9. Create session management with jose
+Files
+* Create: `lib/auth/session.ts`
+Dependencies
+* Tasks 3, 4
+References
+* PRD: Session Management (signed cookies)
+Acceptance criteria
+* Functions: `createSession`, `getSession`, `clearSession`
+* Uses jose for JWT signing/verification
+* Session stored in HTTP-only cookie
+
+10. Create email verification with Resend
+Files
+* Create: `lib/auth/verification.ts`
+Dependencies
+* Task 2, Domain 2
+References
+* PRD: Email Verification Flow
+Acceptance criteria
+* Functions: `sendVerificationCode`, `verifyCode`
+* 6-digit code, 10-minute expiry
+* Integrates with Resend API
+
+11. Create Stripe client and helpers
+Files
+* Create: `lib/stripe.ts`
+Dependencies
+* Task 3
+References
+* PRD: Stripe Integration
+Acceptance criteria
+* Stripe client initialization
+* Functions: `createCheckoutSession`, `getCheckoutSession`
+* Credit pack metadata handling
+
+12. Create client-side fingerprint wrapper
+Files
+* Create: `lib/fingerprint.ts`
+Dependencies
+* Task 1
+References
+* PRD: Anti-Gaming Measures
+Acceptance criteria
+* Wrapper around FingerprintJS
+* Returns stable hash for device identification
+
+### Phase D: API Endpoints
+
+13. Create send verification code endpoint
+Files
+* Create: `app/api/auth/send-code/route.ts`
+Dependencies
+* Task 10
+Acceptance criteria
+* POST endpoint accepting email
+* Sends 6-digit code via Resend
+* Rate limited to prevent abuse
+
+14. Create verify code endpoint
+Files
+* Create: `app/api/auth/verify/route.ts`
+Dependencies
+* Tasks 9, 10
+Acceptance criteria
+* POST endpoint accepting email + code
+* Creates session on success
+* Returns customer info
+
+15. Create logout endpoint
+Files
+* Create: `app/api/auth/logout/route.ts`
+Dependencies
+* Task 9
+Acceptance criteria
+* POST endpoint
+* Clears session cookie
+
+16. Create credits balance endpoint
+Files
+* Create: `app/api/credits/balance/route.ts`
+Dependencies
+* Tasks 6, 9
+Acceptance criteria
+* GET endpoint
+* Returns credit balance for authenticated user
+* Returns free checks remaining for anonymous user
+
+17. Create checkout session endpoint
+Files
+* Create: `app/api/checkout/route.ts`
+Dependencies
+* Task 11
+Acceptance criteria
+* POST endpoint accepting pack size
+* Creates Stripe Checkout session
+* Returns checkout URL
+
+18. Create Stripe webhook handler
+Files
+* Create: `app/api/webhook/route.ts`
+Dependencies
+* Tasks 6, 8, 11
+References
+* PRD: Webhook Handling
+Acceptance criteria
+* Handles `checkout.session.completed` event
+* Verifies webhook signature
+* Adds credits to customer account
+* Records purchase
+
+### Phase E: Core Flow Modification
+
+19. Modify analyze route for credit gating
+Files
+* Modify: `app/api/analyze/route.ts`
+Dependencies
+* Tasks 6, 7, 9
+References
+* PRD: Key rule - credits only on success
+Acceptance criteria
+* Pre-flight check: session OR fingerprint required
+* If authenticated: check credit balance
+* If anonymous: check device free checks
+* Return 402 with paywall status if exhausted
+* Deduct credit ONLY on successful analysis
+
+### Phase F: UI Components
+
+20. Create useAuth hook
+Files
+* Create: `hooks/useAuth.ts`
+Dependencies
+* Tasks 14, 15, 16
+Acceptance criteria
+* Manages auth state client-side
+* Functions: `login`, `logout`, `checkAuth`
+* Returns: `isAuthenticated`, `email`, `credits`
+
+21. Create useFingerprint hook
+Files
+* Create: `hooks/useFingerprint.ts`
+Dependencies
+* Task 12
+Acceptance criteria
+* Generates and caches device fingerprint
+* Returns: `fingerprint`, `isLoading`
+
+22. Create Paywall component
+Files
+* Create: `components/Paywall.tsx`
+Dependencies
+* Tasks 17, 20
+References
+* PRD: Paywall Screen layout
+Acceptance criteria
+* Shows "You've used your free checks" message
+* Displays 3 credit pack options with prices
+* "Already purchased?" link to restore flow
+* Opens Stripe Checkout on pack selection
+
+23. Create CreditBadge component
+Files
+* Create: `components/CreditBadge.tsx`
+Dependencies
+* Task 20
+References
+* PRD: Credit Display (Authenticated Users)
+Acceptance criteria
+* Shows "[N credits]" badge in header
+* Click opens dropdown: email, balance, "Buy more", "Sign out"
+
+24. Create EmailVerification component
+Files
+* Create: `components/auth/EmailVerification.tsx`
+Dependencies
+* Tasks 13, 14
+References
+* PRD: Email Verification Screen
+Acceptance criteria
+* Two-step flow: enter email → enter code
+* Masks email in second step (z***@gmail.com)
+* Resend code option
+
+25. Create FreeChecksIndicator component
+Files
+* Create: `components/FreeChecksIndicator.tsx`
+Dependencies
+* Task 21
+References
+* PRD: Free Check Indicator
+Acceptance criteria
+* Subtle indicator: "X free checks remaining"
+* Only shown after first check
+* Hidden when authenticated
+
+### Phase G: Page Integration
+
+26. Modify check page for paywall handling
+Files
+* Modify: `app/check/[username]/page.tsx`
+Dependencies
+* Tasks 19, 21, 22, 25
+Acceptance criteria
+* Sends fingerprint header with API request
+* Handles 402 paywall response
+* Shows Paywall component when triggered
+* Shows FreeChecksIndicator on results
+
+27. Modify layout for CreditBadge
+Files
+* Modify: `app/layout.tsx`
+Dependencies
+* Task 23
+Acceptance criteria
+* CreditBadge in header (right side)
+* Only visible when authenticated
+
+28. Modify Footer with FAQ link
+Files
+* Modify: `components/Footer.tsx`
+Dependencies
+* None
+Acceptance criteria
+* Add link to /faq page
+
+29. Create FAQ page
+Files
+* Create: `app/faq/page.tsx`
+Dependencies
+* None
+References
+* PRD: FAQ Content
+Acceptance criteria
+* All FAQ questions from PRD
+* Mobile-friendly layout
+* Link back to home
+
+## Stripe Setup (Manual, One-time)
+1. Create Stripe account
+2. Create 3 products: "5 Checks" ($2.99), "15 Checks" ($6.99), "50 Checks" ($14.99)
+3. Copy price IDs to env vars
+4. Add webhook endpoint: `https://aiornah.ai/api/webhook`
+5. Select event: `checkout.session.completed`
+6. Copy webhook signing secret
+
+## Verification Checklist
+- [ ] Fresh user can analyze without indicator
+- [ ] After 1st check, shows "2 free checks remaining"
+- [ ] After 3rd check, paywall appears on next attempt
+- [ ] Stripe Checkout opens with correct price
+- [ ] After payment, credits visible in header
+- [ ] Credits deduct only on successful analysis
+- [ ] Failed analysis (private account) does NOT deduct
+- [ ] Email verification restores credits on new device
+- [ ] Logout clears session
+- [ ] Mobile UI renders correctly
+
+## Notes
+- **Refunds:** Handle manually in Stripe dashboard
+- **Fingerprint stability:** Browser updates may reset (acceptable - user gets new free tier)
+- **Multi-device:** Each device gets 3 free checks (acceptable tradeoff)
+- **Rate limiting:** Old IP-based system deprecated once fingerprint system is live
