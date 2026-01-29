@@ -54,7 +54,8 @@ export type AnalysisResult = {
   imageUrls: string[];
   checkedAt: string;
   lastAccessedAt: string;
-  isCached: boolean;
+  isCached?: boolean; // Deprecated: use fromCache
+  fromCache?: boolean; // Whether result was served from cache
   freeChecksRemaining?: number; // For anonymous users
   creditsRemaining?: number; // For authenticated users
 };
