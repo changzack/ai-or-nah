@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
 import { CREDIT_PACKS } from "@/lib/constants";
 import type { CreditPackId } from "@/lib/constants";
+import { track } from "@/lib/analytics";
 
 type PaywallProps = {
   onClose?: () => void;
@@ -43,9 +44,26 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Track paywall view on mount
+  useEffect(() => {
+    track('Viewed Paywall', {
+      trigger: freeChecksUsed ? 'no_credits' : 'upgrade',
+      creditsRemaining: 0,
+    });
+  }, []);
+
   const handlePurchase = async (packId: CreditPackId) => {
     setPurchasing(true);
     setError(null);
+
+    const selectedPack = packs.find(p => p.id === packId);
+    if (selectedPack) {
+      track('Selected Package', {
+        package: packId,
+        price: selectedPack.price,
+        credits: selectedPack.credits,
+      });
+    }
 
     try {
       const response = await fetch("/api/checkout", {
@@ -59,15 +77,31 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
       const data = await response.json();
 
       if (data.status === "success" && data.url) {
+        // Track checkout start
+        const selectedPack = packs.find(p => p.id === packId);
+        if (selectedPack) {
+          track('Started Checkout', {
+            package: packId,
+            price: selectedPack.price,
+          });
+        }
         // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
         setError(data.message || "Failed to create checkout session");
         setPurchasing(false);
+        track('Failed Purchase', {
+          package: packId,
+          errorType: 'checkout_creation_failed',
+        });
       }
     } catch (err) {
       setError("Network error. Please try again.");
       setPurchasing(false);
+      track('Failed Purchase', {
+        package: packId,
+        errorType: 'network_error',
+      });
     }
   };
 

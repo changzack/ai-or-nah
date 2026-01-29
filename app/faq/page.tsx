@@ -1,12 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { DesktopGate } from "@/components/DesktopGate";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { track } from "@/lib/analytics";
 
 export default function FAQPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    track('Viewed FAQ');
+  }, []);
 
   const faqs = [
     {
@@ -106,9 +112,15 @@ export default function FAQPage() {
             <h2 className="text-lg font-bold text-gray-900 mb-2">
               Still have questions?
             </h2>
-            <p className="text-gray-700">
-              We're here to help! Reach out through our contact form.
+            <p className="text-gray-700 mb-3">
+              We're here to help! Reach out to us directly.
             </p>
+            <a
+              href="mailto:zack@aiornah.xyz"
+              className="inline-block text-[#8B5CF6] hover:text-[#7C3AED] font-medium underline"
+            >
+              zack@aiornah.xyz
+            </a>
           </div>
 
           {/* Back Button */}

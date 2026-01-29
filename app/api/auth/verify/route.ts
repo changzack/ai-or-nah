@@ -3,11 +3,12 @@ import { validateOrigin, createCsrfError } from "@/lib/auth/csrf";
 import { verifyCode } from "@/lib/auth/verification";
 import { createSession } from "@/lib/auth/session";
 import { getOrCreateCustomer } from "@/lib/db/customers";
+import { migrateChecksToCustomer } from "@/lib/db/user-checks";
 
 /**
  * Verify code and create session
  * POST /api/auth/verify
- * Body: { "email": "user@example.com", "code": "123456" }
+ * Body: { "email": "user@example.com", "code": "123456", "fingerprint"?: "device_fingerprint" }
  */
 export async function POST(request: Request) {
   // CSRF validation
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { email, code } = body;
+    const { email, code, fingerprint } = body;
 
     if (!email || !code) {
       return NextResponse.json(
@@ -70,6 +71,12 @@ export async function POST(request: Request) {
 
     // Create session
     await createSession(customer.email, customer.id);
+
+    // Migrate anonymous checks to customer account (if fingerprint provided)
+    if (fingerprint) {
+      console.log(`[verify] Migrating checks from fingerprint ${fingerprint} to customer ${customer.id}`);
+      await migrateChecksToCustomer(fingerprint, customer.id);
+    }
 
     return NextResponse.json({
       status: "success",

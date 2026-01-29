@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
 
 type EmailVerificationProps = {
@@ -12,6 +13,7 @@ type EmailVerificationProps = {
 
 export function EmailVerification({ onClose, onSuccess }: EmailVerificationProps) {
   const { login } = useAuth();
+  const { fingerprint } = useDeviceIdentity();
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -58,7 +60,7 @@ export function EmailVerification({ onClose, onSuccess }: EmailVerificationProps
     setError(null);
 
     try {
-      const result = await login(email, code);
+      const result = await login(email, code, fingerprint || undefined);
 
       if (result.success) {
         onSuccess?.();

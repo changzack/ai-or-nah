@@ -11,6 +11,7 @@ import {
   incrementDeviceChecks,
   getFreeChecksRemaining,
 } from "@/lib/db/fingerprints";
+import { hasUserCheckedUsername, recordUserCheck } from "@/lib/db/user-checks";
 import type { AnalysisResult, PaywallResponse } from "@/lib/types";
 
 /**
@@ -50,15 +51,72 @@ export async function POST(request: Request) {
 
     console.log(`[API] Checking cache for: ${username}`);
 
-    // Step 1: Check if user has access (credits or free checks) BEFORE anything else
+    // Step 0: Check if this specific user has already checked this specific username
     const session = await getSession();
     let customerId: string | null = null;
+    const userFingerprint = fingerprint || null;
+
+    if (session) {
+      customerId = session.customerId;
+    }
+
+    // Check if user has previously checked this username (same-user cache policy)
+    const hasCheckedBefore = await hasUserCheckedUsername(userFingerprint, customerId, username);
+
+    if (hasCheckedBefore) {
+      console.log(`[API] ✓ User has checked ${username} before - returning cached result without charge`);
+
+      // Get cached result (must exist since user checked before)
+      const cachedResult = await getCachedResult(username);
+
+      if (cachedResult) {
+        await updateResultAccess(cachedResult.id);
+        const images = await getResultImages(cachedResult.id);
+        const imageUrls = images.map((img) => img.image_url);
+
+        // Get current balances (but don't deduct)
+        let creditsRemaining: number | undefined;
+        let freeChecksRemaining: number | undefined;
+
+        if (customerId) {
+          const customer = await getCustomerById(customerId);
+          creditsRemaining = customer?.credits;
+        } else if (userFingerprint) {
+          freeChecksRemaining = await getFreeChecksRemaining(deviceToken || null, userFingerprint);
+        }
+
+        const result: AnalysisResult = {
+          status: "success",
+          username: cachedResult.username,
+          aiLikelihood: cachedResult.ai_likelihood_score,
+          verdict: cachedResult.verdict,
+          imageAnalysis: {
+            score: cachedResult.image_analysis_score,
+            count: cachedResult.images_analyzed_count,
+            message: getImageAnalysisMessage(cachedResult.image_analysis_score),
+          },
+          profileFlags: cachedResult.profile_flags as any[],
+          consistencyFlags: cachedResult.consistency_flags as any[],
+          imageUrls,
+          checkedAt: cachedResult.checked_at,
+          lastAccessedAt: new Date().toISOString(),
+          fromCache: true,
+          freeChecksRemaining,
+          creditsRemaining,
+        };
+
+        console.log(`[API] Returning same-user cached result (no charge) - freeChecks: ${freeChecksRemaining}, credits: ${creditsRemaining}`);
+        return NextResponse.json(result);
+      }
+    }
+
+    // Step 1: Check if user has access (credits or free checks) BEFORE anything else
     let shouldDeductCredit = false;
     let shouldDeductFreeCheck = false;
 
-    if (session) {
+    if (customerId) {
       // Authenticated user - check credits
-      const customer = await getCustomerById(session.customerId);
+      const customer = await getCustomerById(customerId);
       if (!customer || customer.credits <= 0) {
         const paywallResponse: PaywallResponse = {
           status: "paywall",
@@ -67,7 +125,6 @@ export async function POST(request: Request) {
         };
         return NextResponse.json(paywallResponse, { status: 402 });
       }
-      customerId = customer.id;
       shouldDeductCredit = true;
     } else {
       // Anonymous user - check free tier
@@ -111,6 +168,8 @@ export async function POST(request: Request) {
           console.warn("[API] Failed to deduct credit for cached result");
         } else {
           console.log("[API] ✓ Credit deducted successfully");
+          // Record this check for same-user cache policy
+          await recordUserCheck(userFingerprint, customerId, username);
         }
         // Get updated credits balance
         const customer = await getCustomerById(customerId);
@@ -118,6 +177,8 @@ export async function POST(request: Request) {
         console.log("[API] Updated credits balance:", creditsRemaining);
       } else if (shouldDeductFreeCheck && fingerprint) {
         await incrementDeviceChecks(deviceToken || null, fingerprint);
+        // Record this check for same-user cache policy
+        await recordUserCheck(userFingerprint, customerId, username);
         // Get remaining free checks after increment
         freeChecksRemaining = await getFreeChecksRemaining(deviceToken || null, fingerprint);
       }
@@ -145,7 +206,7 @@ export async function POST(request: Request) {
         imageUrls,
         checkedAt: cachedResult.checked_at,
         lastAccessedAt: new Date().toISOString(),
-        isCached: true,
+        fromCache: true,
         freeChecksRemaining,
         creditsRemaining,
       };
@@ -176,6 +237,8 @@ export async function POST(request: Request) {
         console.warn("[API] Failed to deduct credit, but analysis succeeded");
       } else {
         console.log("[API] ✓ Credit deducted successfully");
+        // Record this check for same-user cache policy
+        await recordUserCheck(userFingerprint, customerId, username);
       }
       // Get updated credits balance
       const customer = await getCustomerById(customerId);
@@ -184,6 +247,8 @@ export async function POST(request: Request) {
     } else if (shouldDeductFreeCheck && fingerprint) {
       // Increment free check count for anonymous user
       await incrementDeviceChecks(deviceToken || null, fingerprint);
+      // Record this check for same-user cache policy
+      await recordUserCheck(userFingerprint, customerId, username);
       // Get remaining free checks after increment
       freeChecksRemaining = await getFreeChecksRemaining(deviceToken || null, fingerprint);
     }

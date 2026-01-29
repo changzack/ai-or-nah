@@ -36,6 +36,7 @@ Primary conversion metrics:
 | `Viewed Privacy` | Privacy page loads | — |
 | `Viewed Terms` | Terms page loads | — |
 | `Viewed About` | About page loads | — |
+| `Viewed Contact` | Contact page loads | — |
 
 ### Core Action Events
 

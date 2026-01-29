@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useHaptic } from "@/hooks/useHaptic";
 import { triggerMiniConfetti, springTransition } from "@/lib/animations";
+import { track } from "@/lib/analytics";
 
 interface ShareButtonProps {
   username: string;
@@ -56,6 +57,16 @@ export function ShareButton({
     addRipple(e);
     haptic.light();
 
+    // Determine verdict for analytics
+    const verdict = aiLikelihood <= 30 ? 'real' : aiLikelihood <= 60 ? 'inconclusive' : aiLikelihood <= 80 ? 'likely_ai' : 'ai_generated';
+
+    // Track share button click
+    track('Clicked Share Button', {
+      username,
+      verdict,
+      platform: navigator.share ? 'native' : 'copy',
+    });
+
     // Check if native share is available (mobile)
     if (navigator.share) {
       try {
@@ -65,6 +76,11 @@ export function ShareButton({
           url: shareUrl,
         });
         celebrateSuccess(e);
+        track('Shared to Platform', {
+          username,
+          verdict,
+          platform: 'native',
+        });
       } catch (err) {
         // User cancelled or share failed
         if ((err as Error).name !== "AbortError") {
@@ -81,10 +97,15 @@ export function ShareButton({
   const fallbackCopyToClipboard = async (e: React.MouseEvent<HTMLButtonElement>) => {
     // Combine engaging text + URL for clipboard
     const clipboardContent = `${shareText}\n${shareUrl}`;
+    const verdict = aiLikelihood <= 30 ? 'real' : aiLikelihood <= 60 ? 'inconclusive' : aiLikelihood <= 80 ? 'likely_ai' : 'ai_generated';
 
     try {
       await navigator.clipboard.writeText(clipboardContent);
       celebrateSuccess(e);
+      track('Copied Share Link', {
+        username,
+        verdict,
+      });
     } catch (err) {
       console.error("Failed to copy:", err);
       // Manual fallback for older browsers

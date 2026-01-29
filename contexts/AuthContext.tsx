@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { track, identify, resetAnalytics } from "@/lib/analytics";
 
 type AuthState = {
   isAuthenticated: boolean;
@@ -10,7 +11,7 @@ type AuthState = {
 };
 
 type AuthContextType = AuthState & {
-  login: (email: string, code: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, code: string, fingerprint?: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -60,25 +61,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(
-    async (email: string, code: string): Promise<{ success: boolean; error?: string }> => {
+    async (email: string, code: string, fingerprint?: string): Promise<{ success: boolean; error?: string }> => {
       try {
         const response = await fetch("/api/auth/verify", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, code }),
+          body: JSON.stringify({ email, code, fingerprint }),
         });
 
         const data = await response.json();
 
         if (data.status === "success") {
           await refresh();
+
+          // Track successful authentication
+          track('Completed Auth', {
+            provider: 'email',
+            isNewUser: data.isNewUser || false,
+          });
+
+          // Identify user for analytics
+          identify(email, {
+            email,
+            authProvider: 'email',
+            createdAt: new Date().toISOString(),
+          });
+
           return { success: true };
         } else {
+          track('Failed Auth', {
+            provider: 'email',
+            errorType: 'verification_failed',
+          });
           return { success: false, error: data.message || "Verification failed" };
         }
       } catch (error) {
+        track('Failed Auth', {
+          provider: 'email',
+          errorType: 'network_error',
+        });
         return { success: false, error: "Network error. Please try again." };
       }
     },
@@ -90,6 +113,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetch("/api/auth/logout", {
         method: "POST",
       });
+
+      // Track sign out
+      track('Signed Out');
+
+      // Reset analytics
+      resetAnalytics();
 
       setState({
         isAuthenticated: false,

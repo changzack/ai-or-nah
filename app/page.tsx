@@ -17,6 +17,7 @@ import { HowItWorks } from "@/components/landing/HowItWorks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition, float } from "@/lib/animations";
+import { track } from "@/lib/analytics";
 
 function HomePageContent() {
   const router = useRouter();
@@ -28,6 +29,13 @@ function HomePageContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRateLimitNotice, setShowRateLimitNotice] = useState(false);
   const [freeChecksRemaining, setFreeChecksRemaining] = useState<number | null>(null);
+
+  // Track page view
+  useEffect(() => {
+    track('Viewed Home', {
+      source: searchParams.get('source') || 'direct',
+    });
+  }, []);
 
   // Check if user was redirected due to rate limit
   useEffect(() => {
@@ -98,8 +106,20 @@ function HomePageContent() {
 
     if (!username) {
       setError("Invalid Instagram username or URL. Try again.");
+      track('Invalid Username', {
+        username: input,
+        reason: 'invalid_format',
+      });
       return;
     }
+
+    // Track submission
+    track('Submitted Username', {
+      username,
+      isLoggedIn: isAuthenticated,
+      creditsRemaining: freeChecksRemaining,
+      source: 'homepage',
+    });
 
     // Navigate to check page
     setIsSubmitting(true);

@@ -22,6 +22,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
 import type { AnalysisResult, RateLimitResult, PaywallResponse } from "@/lib/types";
+import { track } from "@/lib/analytics";
 
 // Loading stages configuration
 const loadingStages = [
@@ -175,6 +176,12 @@ export default function CheckPage({
       const startTime = Date.now();
       const MINIMUM_LOADING_DURATION = 5000; // 5 seconds minimum
 
+      // Track analysis start
+      track('Started Analysis', {
+        username,
+        isFromCache: false, // Will be updated if cached
+      });
+
       // Progress through stages
       const stageInterval = setInterval(() => {
         setCurrentStage((prev) => {
@@ -236,6 +243,10 @@ export default function CheckPage({
         setPaywallData(data as PaywallResponse);
         setShowPaywall(true);
         setLoading(false);
+        track('Viewed Paywall', {
+          trigger: 'no_credits',
+          creditsRemaining: 0,
+        });
         return;
       }
 
@@ -243,14 +254,36 @@ export default function CheckPage({
       if (!response.ok || data.status === "error") {
         setError(data.message || "Failed to analyze account");
         setLoading(false);
+        track('Failed Analysis', {
+          username,
+          errorType: data.status || 'unknown',
+          errorMessage: data.message || 'Failed to analyze account',
+        });
         return;
       }
 
       // Success
       console.log("[Check Page] Setting result - freeChecks:", data.freeChecksRemaining, "credits:", data.creditsRemaining);
-      setResult(data as AnalysisResult);
+      const analysisResult = data as AnalysisResult;
+      setResult(analysisResult);
       setLoading(false);
       haptic.medium();
+
+      // Track successful analysis
+      track('Completed Analysis', {
+        username,
+        verdict: analysisResult.verdict,
+        confidenceScore: analysisResult.aiLikelihood,
+        isFromCache: analysisResult.fromCache || false,
+      });
+
+      // Track results page view
+      track('Viewed Results', {
+        username,
+        verdict: analysisResult.verdict,
+        isFromCache: analysisResult.fromCache || false,
+        source: 'check_page',
+      });
 
       // Refresh auth state to update credit badge
       if (isAuthenticated && data.creditsRemaining !== undefined) {

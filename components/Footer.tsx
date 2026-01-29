@@ -17,6 +17,13 @@ export function Footer() {
           {/* Legal Links */}
           <div className="flex items-center gap-4 text-sm flex-wrap justify-center">
             <Link
+              href="/about"
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+            >
+              About
+            </Link>
+            <span className="text-gray-300">•</span>
+            <Link
               href="/faq"
               className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
             >
@@ -35,6 +42,13 @@ export function Footer() {
               className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
             >
               Privacy Policy
+            </Link>
+            <span className="text-gray-300">•</span>
+            <Link
+              href="/contact"
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+            >
+              Contact Us
             </Link>
           </div>
         </div>
