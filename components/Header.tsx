@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { AnimatePresence } from "framer-motion";
 import { AuthButton } from "./AuthButton";
 import { Paywall } from "./Paywall";
@@ -35,11 +36,15 @@ export function Header({ showAuth = true }: HeaderProps) {
       <header className="bg-white border-b border-gray-200 py-4 px-5 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link
-            href="/"
-            className="text-xl font-bold text-gray-900 hover:text-[#8B5CF6] transition-colors"
-          >
-            AI or Nah
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/ai_or_nah_logo_no_bg_header.png"
+              alt="AI or Nah"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
 
           {/* Right side - Auth Button */}
