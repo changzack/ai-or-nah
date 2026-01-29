@@ -796,7 +796,7 @@ We'll review on a case-by-case basis.
 - We don't store Instagram passwords or access your accounts
 
 ## How do I contact support?
-Email: support@aiornah.ai
+Email: zack@aiornah.xyz
 ```
 
 ---
@@ -934,10 +934,10 @@ Must include:
   - "This tool provides probabilistic analysis for informational purposes only"
   - "Results are not definitive proof of AI generation or authenticity"
   - "AI or Nah is not affiliated with Instagram, Meta, or any analyzed accounts"
-- Contact information (support@aiornah.ai)
+- Contact information (zack@aiornah.xyz)
 
 **Contact Mechanism - Required**
-- Functional email inbox at support@aiornah.ai
+- Functional email inbox at zack@aiornah.xyz
 - Response time expectation stated on /about page
 
 **Disclaimer Visibility - Required**
@@ -975,12 +975,12 @@ All `/check/*` result pages must be non-indexable:
 
 **Refund Policy - Required**
 - Document 7-day refund window in Terms of Service
-- Process: User emails support@aiornah.ai within 7 days
+- Process: User emails zack@aiornah.xyz within 7 days
 - Manual review and Stripe refund if approved
 - No automated refund mechanism required for MVP
 
 **Support Inbox - Required**
-- Functional support@aiornah.ai inbox
+- Functional zack@aiornah.xyz inbox
 - Check at least daily during launch period
 - Template responses for common issues (can't access credits, refund requests)
 
@@ -1009,7 +1009,7 @@ When a user checks the same username multiple times:
 
 **Before Public Launch:**
 - [ ] /about page live with all required content
-- [ ] support@aiornah.ai inbox functional and monitored
+- [ ] zack@aiornah.xyz inbox functional and monitored
 - [ ] noindex on all /check/* pages
 - [ ] Analytics installed and tracking
 - [ ] Error monitoring installed and alerting

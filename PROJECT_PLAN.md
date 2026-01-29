@@ -1371,7 +1371,7 @@ Acceptance criteria
   - "probabilistic analysis for informational purposes only"
   - "not definitive proof of AI generation or authenticity"
   - "not affiliated with Instagram, Meta, or any analyzed accounts"
-* Contact: support@aiornah.ai
+* Contact: zack@aiornah.xyz
 * Unique page title and description
 * Linked from footer
 
@@ -1400,7 +1400,7 @@ Files
 Dependencies
 * None
 Acceptance criteria
-* support@aiornah.ai inbox functional
+* zack@aiornah.xyz inbox functional
 * Forwarding or monitoring configured
 * Template responses drafted for: refund requests, credit access issues
 
@@ -1452,7 +1452,7 @@ Dependencies
 Acceptance criteria
 * Refund policy section added:
   - 7-day window for refund requests
-  - Contact support@aiornah.ai
+  - Contact zack@aiornah.xyz
   - Manual review process
   - No automated refunds
 
@@ -1501,7 +1501,7 @@ Acceptance criteria
 
 ### Legal & Trust
 - [ ] /about page live with all required disclaimers
-- [ ] support@aiornah.ai inbox functional and monitored
+- [ ] zack@aiornah.xyz inbox functional and monitored
 - [ ] Disclaimer visible on results page
 - [ ] /about linked from footer
 
