@@ -25,16 +25,16 @@ export function ChecksRemainingIndicator({
   // Color scheme
   const bgColor = isCredits
     ? (isLow ? "bg-purple-50" : "bg-purple-50")
-    : (isLow ? "bg-orange-50" : "bg-blue-50");
+    : (isLow ? "bg-red-50" : "bg-blue-50");
   const borderColor = isCredits
     ? (isLow ? "border-purple-300" : "border-purple-200")
-    : (isLow ? "border-orange-200" : "border-blue-200");
+    : (isLow ? "border-red-300" : "border-blue-200");
   const textColor = isCredits
     ? (isLow ? "text-purple-900" : "text-purple-900")
-    : (isLow ? "text-orange-900" : "text-blue-900");
+    : (isLow ? "text-red-900" : "text-blue-900");
   const subTextColor = isCredits
     ? (isLow ? "text-purple-700" : "text-purple-700")
-    : (isLow ? "text-orange-700" : "text-blue-700");
+    : (isLow ? "text-red-700" : "text-blue-700");
 
   // Icon
   const icon = isCredits ? "💎" : "💎";
@@ -55,7 +55,7 @@ export function ChecksRemainingIndicator({
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
-      className={`${bgColor} border ${borderColor} rounded-xl p-4 mb-4`}
+      className={`${bgColor} border ${borderColor} rounded-xl p-4 mb-4 sticky top-4 z-20`}
     >
       <div className="flex items-center gap-3">
         <div className="text-2xl">{icon}</div>

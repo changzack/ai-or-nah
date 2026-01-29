@@ -15,17 +15,17 @@ export function FreeChecksIndicator({ remaining, total = 3 }: FreeChecksIndicato
 
   // Change color based on remaining checks
   const isLow = remaining <= 1;
-  const bgColor = isLow ? "bg-orange-50" : "bg-blue-50";
-  const borderColor = isLow ? "border-orange-200" : "border-blue-200";
-  const textColor = isLow ? "text-orange-900" : "text-blue-900";
-  const subTextColor = isLow ? "text-orange-700" : "text-blue-700";
+  const bgColor = isLow ? "bg-red-50" : "bg-blue-50";
+  const borderColor = isLow ? "border-red-300" : "border-blue-200";
+  const textColor = isLow ? "text-red-900" : "text-blue-900";
+  const subTextColor = isLow ? "text-red-700" : "text-blue-700";
 
   return (
     <motion.div
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
-      className={`${bgColor} border ${borderColor} rounded-xl p-4 mb-4`}
+      className={`${bgColor} border ${borderColor} rounded-xl p-4 mb-4 sticky top-4 z-20`}
     >
       <div className="flex items-center gap-3">
         <div className="text-2xl">💎</div>
