@@ -1002,7 +1002,7 @@ Acceptance criteria
 1. Create Stripe account
 2. Create 3 products: "5 Checks" ($2.99), "15 Checks" ($6.99), "50 Checks" ($14.99)
 3. Copy price IDs to env vars
-4. Add webhook endpoint: `https://aiornah.ai/api/webhook`
+4. Add webhook endpoint: `https://aiornah.xyz/api/webhook`
 5. Select event: `checkout.session.completed`
 6. Copy webhook signing secret
 
@@ -1144,7 +1144,7 @@ Acceptance criteria
 * Generates dynamic image showing: username, verdict percentage, verdict label
 * Uses brand colors (verdict-specific: green/yellow/red)
 * Falls back gracefully if generation fails
-* "aiornah.ai" branding in bottom-right
+* "aiornah.xyz" branding in bottom-right
 
 ### 7. ✅ Optimize share copy and metadata for results
 Files
@@ -1166,7 +1166,7 @@ Files
 Dependencies
 * None
 Acceptance criteria
-* Brand watermark "aiornah.ai" visible in bottom-right corner
+* Brand watermark "aiornah.xyz" visible in bottom-right corner
 * Visible when users screenshot the results
 
 ---
@@ -1508,7 +1508,7 @@ Acceptance criteria
 ### Indexation
 - [ ] /check/* pages have noindex in metadata
 - [ ] /check/* NOT in sitemap
-- [ ] Test: Google search `site:aiornah.ai/check` returns no results (after crawl)
+- [ ] Test: Google search `site:aiornah.xyz/check` returns no results (after crawl)
 
 ### Analytics & Monitoring
 - [ ] Analytics dashboard shows page views

@@ -36,7 +36,7 @@ AI_DETECTION_PROVIDER=sightengine
 ANALYZE_ALL_IMAGES=false
 
 # Site URL (Vercel will auto-set this, but you can override)
-NEXT_PUBLIC_SITE_URL=https://your-app.vercel.app
+NEXT_PUBLIC_SITE_URL=https://aiornah.xyz
 ```
 
 ### How to Add Variables in Vercel
@@ -85,7 +85,7 @@ vercel env add SUPABASE_SERVICE_ROLE_KEY production
 2. **Verify** the deployment:
    ```bash
    # Test the debug endpoint on your Vercel URL
-   curl "https://your-app.vercel.app/api/debug-scrape?username=instagram"
+   curl "https://aiornah.xyz/api/debug-scrape?username=instagram"
    ```
 
 ### Environment Variable Checklist
@@ -106,18 +106,18 @@ Before marking as complete, verify all variables are set:
 
 1. **Test Instagram scraping:**
    ```bash
-   curl "https://your-app.vercel.app/api/test-apify"
+   curl "https://aiornah.xyz/api/test-apify"
    ```
    Should return: `"Apify is configured and working!"`
 
 2. **Test AI detection:**
    ```bash
-   curl "https://your-app.vercel.app/api/test-ai-detection"
+   curl "https://aiornah.xyz/api/test-ai-detection"
    ```
    Should return success with test results
 
 3. **Test full analysis:**
-   Visit: `https://your-app.vercel.app`
+   Visit: `https://aiornah.xyz`
    Enter username: `soycatalinacruz`
    Should successfully analyze the account
 

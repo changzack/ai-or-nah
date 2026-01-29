@@ -5,7 +5,7 @@ AIorNAH PRD
 **Version:** 1.0  
 **Last Updated:** January 25, 2026  
 **Primary Audience:** Claude Code (AI Development Agent)  
-**Product URL:** aiornah.ai
+**Product URL:** https://aiornah.xyz
 
 ---
 
@@ -55,7 +55,7 @@ There is a proliferation of fake AI Instagram accounts featuring AI-generated mo
 
 ### Primary Flow: First-Time User
 
-1. User visits aiornah.ai on mobile
+1. User visits aiornah.xyz on mobile
 2. Sees simple landing page with input field and headline
 3. Enters Instagram username (or pastes URL)
 4. Sees loading animation with progress updates:
@@ -68,7 +68,7 @@ There is a proliferation of fake AI Instagram accounts featuring AI-generated mo
 
 ### Secondary Flow: Viewing Shared Result
 
-1. User clicks shared link (aiornah.ai/check/username)
+1. User clicks shared link (aiornah.xyz/check/username)
 2. Instantly sees cached results page
 3. Views verdict and breakdown
 4. Sees "Last checked: X days ago" timestamp
@@ -246,7 +246,7 @@ If organic search becomes meaningful (3+ months post-launch), revisit SEO conten
 #### G. Action Buttons
 - **"Share This Result"** - Primary action, prominent button
   - Opens native mobile share sheet
-  - Shares URL: aiornah.ai/check/username
+  - Shares URL: aiornah.xyz/check/username
 - **"Check Another Account"** - Secondary button
   - Returns to landing page input
 
@@ -257,7 +257,7 @@ If organic search becomes meaningful (3+ months post-launch), revisit SEO conten
 ### 4. Share Functionality
 
 **Requirements:**
-- Generate clean, shareable URL: `aiornah.ai/check/username`
+- Generate clean, shareable URL: `aiornah.xyz/check/username`
 - Implement Open Graph meta tags for rich link previews:
   - Title: "🤖 @username: 81% Likely AI - AI or Nah"
   - Description: "Check if your IG crush is real"
@@ -279,7 +279,7 @@ If organic search becomes meaningful (3+ months post-launch), revisit SEO conten
 - Every lookup result is stored in database
 - Results are cached indefinitely by default
 - Cached results are served instantly when same username is searched
-- URL structure supports direct access: `aiornah.ai/check/username`
+- URL structure supports direct access: `aiornah.xyz/check/username`
 
 **Auto-Cleanup Logic:**
 - Delete cached results after 90 days of inactivity (no new checks)
@@ -374,7 +374,7 @@ If organic search becomes meaningful (3+ months post-launch), revisit SEO conten
 **Desktop Handling:**
 - Detect desktop viewport on page load
 - Show centered message: "AI or Nah is currently mobile-only. Please visit on your phone."
-- Show QR code linking to aiornah.ai for easy mobile access
+- Show QR code linking to aiornah.xyz for easy mobile access
 - No functional features on desktop
 
 ---
@@ -444,7 +444,7 @@ If organic search becomes meaningful (3+ months post-launch), revisit SEO conten
 
 ### Flow 1: New User First Check (Fresh Scrape)
 ```
-1. User opens aiornah.ai on mobile
+1. User opens aiornah.xyz on mobile
 2. Sees landing page with input field
 3. Enters "suspiciousmodel123"
 4. Taps submit
@@ -462,7 +462,7 @@ If organic search becomes meaningful (3+ months post-launch), revisit SEO conten
 
 ### Flow 2: User Checks Cached Result
 ```
-1. User opens aiornah.ai
+1. User opens aiornah.xyz
 2. Enters username that was checked 3 days ago
 3. Brief loading animation (< 2 seconds)
 4. Results page loads instantly
@@ -473,7 +473,7 @@ If organic search becomes meaningful (3+ months post-launch), revisit SEO conten
 
 ### Flow 3: User Clicks Shared Link
 ```
-1. User receives text: "Check this out: aiornah.ai/check/suspiciousmodel123"
+1. User receives text: "Check this out: aiornah.xyz/check/suspiciousmodel123"
 2. Taps link on mobile
 3. Results page loads immediately (cached)
 4. Views full verdict and breakdown

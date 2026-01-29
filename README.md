@@ -5,7 +5,7 @@ AIorNah Readme.md
 
 A mobile-first web application that helps users verify whether Instagram accounts feature real people or AI-generated models. Built to combat the growing problem of fake AI Instagram accounts creating OnlyFans scams.
 
-**Live URL:** [aiornah.ai](https://aiornah.ai) *(coming soon)*
+**Live URL:** [aiornah.xyz](https://aiornah.xyz)
 
 ## Overview
 
