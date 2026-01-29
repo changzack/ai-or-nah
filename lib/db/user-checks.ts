@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from "../supabase/server";
 
 /**
  * Check if a user (anonymous or authenticated) has previously checked a username
@@ -13,6 +13,8 @@ export async function hasUserCheckedUsername(
   username: string
 ): Promise<boolean> {
   try {
+    const supabase = await createServerClient();
+
     // Build query based on whether user is authenticated
     let query = supabase
       .from('user_checks')
@@ -57,6 +59,8 @@ export async function recordUserCheck(
   username: string
 ): Promise<void> {
   try {
+    const supabase = await createServerClient();
+
     const { error } = await supabase
       .from('user_checks')
       .insert({
@@ -87,6 +91,8 @@ export async function migrateChecksToCustomer(
   customerId: string
 ): Promise<void> {
   try {
+    const supabase = await createServerClient();
+
     // Update all checks with this fingerprint to associate with customer
     // Use ON CONFLICT to handle cases where customer already has a check for that username
     const { error } = await supabase.rpc('migrate_user_checks', {
