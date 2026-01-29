@@ -26,7 +26,7 @@ export function HowItWorks() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.7 }}
-      className="mt-12 mb-8"
+      className="mb-8"
     >
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {steps.map((step, index) => (

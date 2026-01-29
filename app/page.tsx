@@ -255,7 +255,8 @@ function HomePageContent() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Detect AI-Generated Instagram Accounts
+                Detect AI-Generated
+                <br className="md:hidden" /> Instagram Accounts
               </motion.h1>
               <motion.p
                 className="text-lg text-gray-600"
