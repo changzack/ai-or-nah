@@ -64,7 +64,7 @@ export function ShareButton({
     track('Clicked Share Button', {
       username,
       verdict,
-      platform: navigator.share ? 'native' : 'copy',
+      platform: typeof navigator.share !== 'undefined' ? 'native' : 'copy',
     });
 
     // Check if native share is available (mobile)
