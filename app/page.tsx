@@ -12,6 +12,8 @@ import { DesktopGate } from "@/components/DesktopGate";
 import { Header } from "@/components/Header";
 import { FreeChecksIndicator } from "@/components/FreeChecksIndicator";
 import { Footer } from "@/components/Footer";
+import { TrustBar } from "@/components/landing/TrustBar";
+import { HowItWorks } from "@/components/landing/HowItWorks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition, float } from "@/lib/animations";
@@ -110,14 +112,14 @@ function HomePageContent() {
       <Header />
 
       <div className="min-h-screen flex flex-col">
-        <div className="flex-1 flex items-center justify-center px-5 py-6 relative">
+        <div className="flex-1 flex items-center justify-center px-5 md:px-8 lg:px-12 py-6 md:py-8 lg:py-12 relative">
           {/* Decorative stickers */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <motion.div
               variants={float}
               initial="initial"
               animate="animate"
-              className="absolute top-24 left-6"
+              className="absolute top-24 left-6 md:left-12 lg:left-20"
               style={{ transform: 'scaleX(-1)' }}
             >
               <Sticker emoji="👁️" size="md" rotation={-8} />
@@ -127,7 +129,7 @@ function HomePageContent() {
               initial="initial"
               animate="animate"
               transition={{ delay: 0.5 }}
-              className="absolute top-40 right-12"
+              className="absolute top-40 right-12 md:right-20 lg:right-32"
             >
               <Sticker emoji="🔍" size="md" rotation={8} />
             </motion.div>
@@ -136,7 +138,7 @@ function HomePageContent() {
               initial="initial"
               animate="animate"
               transition={{ delay: 1 }}
-              className="absolute bottom-40 left-12"
+              className="absolute bottom-40 left-12 md:left-20 lg:left-32"
             >
               <Sticker emoji="💫" size="md" rotation={15} />
             </motion.div>
@@ -145,14 +147,14 @@ function HomePageContent() {
               initial="initial"
               animate="animate"
               transition={{ delay: 1.5 }}
-              className="absolute bottom-32 right-8"
+              className="absolute bottom-32 right-8 md:right-16 lg:right-24"
             >
               <Sticker emoji="🚩" size="md" rotation={-8} />
             </motion.div>
           </div>
 
           <motion.div
-            className="w-full max-w-md relative z-10"
+            className="w-full max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl relative z-10"
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
@@ -247,21 +249,21 @@ function HomePageContent() {
                 />
               </motion.div>
 
-              <motion.p
-                className="text-2xl font-semibold text-gray-800 mb-1 -mt-8"
+              <motion.h1
+                className="text-2xl md:text-3xl font-bold text-gray-800 mb-1 -mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Check if your IG crush is real
-              </motion.p>
+                Detect AI-Generated Instagram Accounts
+              </motion.h1>
               <motion.p
                 className="text-lg text-gray-600"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Find out in 30 seconds
+                Check if your IG crush is real — find out in seconds
               </motion.p>
             </motion.div>
 
@@ -316,6 +318,9 @@ function HomePageContent() {
               </Button>
             </motion.form>
 
+            {/* Trust Signals */}
+            <TrustBar />
+
             {/* Supporting Copy */}
             <motion.div
               className="mt-8 mb-8 text-center space-y-2"
@@ -333,6 +338,9 @@ function HomePageContent() {
                 Check before you subscribe.
               </p>
             </motion.div>
+
+            {/* How It Works */}
+            <HowItWorks />
           </motion.div>
         </div>
 

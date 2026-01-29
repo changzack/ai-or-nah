@@ -11,8 +11,37 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "AI or Nah - Check if your IG crush is real",
-  description: "Quick verification tool to detect AI-generated Instagram accounts and OnlyFans scams.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aiornah.ai'),
+  title: {
+    default: "AI or Nah - Detect AI-Generated Instagram Accounts",
+    template: "%s | AI or Nah",
+  },
+  description: "Free tool to detect AI-generated Instagram accounts. Check if that suspicious profile is real or fake in seconds. Protect yourself from OnlyFans scams.",
+  openGraph: {
+    title: "AI or Nah - Detect AI-Generated Instagram Accounts",
+    description: "Free tool to check if Instagram accounts are real or AI-generated. Results in seconds.",
+    url: '/',
+    siteName: 'AI or Nah',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'AI or Nah - Detect AI-Generated Instagram Accounts',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "AI or Nah - Detect AI-Generated Instagram Accounts",
+    description: "Free tool to check if Instagram accounts are real or AI-generated.",
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

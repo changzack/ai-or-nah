@@ -142,6 +142,11 @@ export function VerdictHero({
           {getVerdictEmoji()} {getVerdictLabel()}
         </motion.h2>
       )}
+
+      {/* Watermark for screenshots */}
+      <div className="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
+        aiornah.ai
+      </div>
     </motion.div>
   );
 }

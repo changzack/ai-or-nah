@@ -1066,246 +1066,467 @@ Acceptance criteria
 - **CSRF protection:** Origin header validation on all state-changing POST endpoints
 - **Audit trail:** All credit changes logged in `credit_transactions` table
 
-# Domain 10 — Landing Page SEO & Content
-
-Transform the homepage from utility-only to a hybrid landing page with SEO-optimized content sections below the fold.
+# Domain 10 — Launch Optimization (SEO + Viral + Trust) ✅ COMPLETE
 
 ## Summary
-- Add scrollable content sections below hero for SEO
-- Fix critical technical SEO gaps (h1, sitemap, structured data)
-- Target organic search for AI detection queries
-- Preserve conversion path (utility above fold)
+Minimal technical SEO foundation + viral sharing optimization + lightweight trust-building content. Prioritizes the actual growth lever (social sharing) over speculative SEO content.
 
-## Tasks
+## Philosophy
+- Users arrive with intent (they have a suspicious account) — don't make them scroll through content
+- Growth comes from viral sharing, not Google rankings (new domain, no authority)
+- Trust-building should be concise, not content marketing
 
-### Phase A: Technical SEO Foundation
+---
 
-1. Add H1 tag to homepage
+## Phase A: Technical Foundation ✅
+
+### 1. ✅ Add H1 tag to homepage
 Files
 * Modify: `app/page.tsx`
 Dependencies
 * None
-References
-* PRD: Landing Page SEO (H1 requirement)
 Acceptance criteria
-* Homepage has single `<h1>` tag with primary keyword
-* Current large `<p>` headline converted to semantic `<h1>`
-* H1 text: "Detect AI-Generated Instagram Accounts Instantly"
+* Homepage has single `<h1>` tag
+* H1 text: "Detect AI-Generated Instagram Accounts"
+* Subheading: "Check if your IG crush is real — find out in seconds"
 
-2. Create sitemap.ts
+### 2. ✅ Create sitemap.ts
 Files
 * Create: `app/sitemap.ts`
 Dependencies
 * None
-References
-* PRD: SEO requirements
 Acceptance criteria
 * Dynamic sitemap includes: homepage (priority 1.0), /faq (0.7), /privacy (0.3), /terms (0.3)
+* Excludes /check/* pages (no indexing results)
 * Accessible at /sitemap.xml
-* Valid XML format
 
-3. Create robots.ts
+### 3. ✅ Create robots.ts
 Files
 * Create: `app/robots.ts`
 Dependencies
-* Task 2
+* None
 Acceptance criteria
-* Allows all crawlers
+* Allows crawlers on public pages
+* Disallows /check/* (result pages)
 * References sitemap URL
-* Accessible at /robots.txt
 
-4. Update root layout metadata
+### 4. ✅ Update root layout metadata
 Files
 * Modify: `app/layout.tsx`
 Dependencies
 * None
-References
-* PRD: Landing Page SEO (meta tags)
 Acceptance criteria
 * metadataBase set to production URL
-* Comprehensive title, description with keywords
+* Title, description with natural keyword inclusion
 * OpenGraph and Twitter card metadata
-* Canonical URL configuration
-* Keywords meta tag (AI detection, Instagram, fake account)
+* robots index/follow configuration
 
-5. Verify/create OG image
+### 5. ✅ Create homepage OG image generator
 Files
-* Verify/create: `public/og-image.png`
+* Create: `app/opengraph-image.tsx`
 Dependencies
 * None
 Acceptance criteria
-* OG image exists at 1200x630px
-* Referenced correctly in metadata
+* Generates 1200x630px OG image dynamically
+* Shows "AI or Nah" and tagline
+* Uses brand colors
 
-### Phase B: Content Sections
+---
 
-6. Create scroll indicator for hero
+## Phase B: Viral Sharing Optimization ✅
+
+### 6. ✅ Create dynamic OG images for results
 Files
+* Create: `app/check/[username]/opengraph-image.tsx`
+Dependencies
+* Phase A complete
+Acceptance criteria
+* Generates dynamic image showing: username, verdict percentage, verdict label
+* Uses brand colors (verdict-specific: green/yellow/red)
+* Falls back gracefully if generation fails
+* "aiornah.ai" branding in bottom-right
+
+### 7. ✅ Optimize share copy and metadata for results
+Files
+* Modify: `app/check/[username]/layout.tsx` (generateMetadata)
+* Modify: `components/ShareButton.tsx`
+Dependencies
+* Task 6
+Acceptance criteria
+* OG description: "I checked @username with AI or Nah. X% likely AI. See the full breakdown."
+* Share button uses verdict-specific engaging copy:
+  - ✅ "checks out as probably real" (low AI)
+  - 🤔 "Is @username real or AI?" (unclear)
+  - ⚠️ "looks sus!" (likely fake)
+  - 🤖 "I just exposed @username" (definitely AI)
+
+### 8. ✅ Design results page for screenshots
+Files
+* Modify: `components/results/VerdictHero.tsx`
+Dependencies
+* None
+Acceptance criteria
+* Brand watermark "aiornah.ai" visible in bottom-right corner
+* Visible when users screenshot the results
+
+---
+
+## Phase C: Trust-Building Content ✅
+
+### 9. ✅ Add trust signals bar below hero
+Files
+* Create: `components/landing/TrustBar.tsx`
 * Modify: `app/page.tsx`
 Dependencies
 * Phase A complete
 Acceptance criteria
-* Subtle "Learn how it works" indicator below hero
-* Smooth scroll on click
-* Animates to draw attention
+* Displays: "⚡ Results in seconds • 🔒 100% private • ✨ No account needed"
+* Subtle styling, doesn't compete with input form
+* Positioned after the hero CTA form
+* Mobile-friendly (wraps on small screens)
 
-7. Create social proof bar component
+### 10. ✅ Add "How it works" section
 Files
-* Create: `components/landing/SocialProofBar.tsx`
-* Modify: `app/page.tsx`
-Dependencies
-* Domain 2 (database)
-Acceptance criteria
-* Displays accounts analyzed count (from DB or static milestone)
-* Shows "Results in 30 seconds" and "100% private"
-* Styled consistent with brand
-
-8. Create "The Problem" section
-Files
-* Create: `components/landing/ProblemSection.tsx`
-* Modify: `app/page.tsx`
-Dependencies
-* Phase A Task 1 (heading hierarchy)
-Acceptance criteria
-* H2: "The AI Instagram Scam Epidemic"
-* 150-200 words educational content
-* Proper semantic `<section>` with id="problem"
-* Mobile-responsive layout
-
-9. Create "How It Works" section
-Files
-* Create: `components/landing/HowItWorksSection.tsx`
-* Modify: `app/page.tsx`
-Dependencies
-* Task 8
-Acceptance criteria
-* H2: "How AI or Nah Detects Fake Accounts"
-* 3-step visual process (H3 for each step)
-* Icons/illustrations for each step
-* Semantic section with id="how-it-works"
-
-10. Create "Red Flags" section
-Files
-* Create: `components/landing/RedFlagsSection.tsx`
+* Create: `components/landing/HowItWorks.tsx`
 * Modify: `app/page.tsx`
 Dependencies
 * Task 9
 Acceptance criteria
-* H2: "5 Red Flags of AI Instagram Accounts"
-* Checklist format with icons
-* H3 for each flag
-* Content matches PRD spec
-* Semantic section with id="red-flags"
+* 3 steps with icons:
+  1. 🔍 "Profile Analysis" — We scan posts, bio, and engagement patterns
+  2. 🤖 "AI Detection" — Each image is checked for AI-generated signs
+  3. 📊 "Your Verdict" — Get a clear score with detailed breakdown
+* Compact design, responsive grid (1 col mobile, 3 cols tablet+)
+* Below supporting copy, above footer
 
-11. Create inline FAQ section with accordion
-Files
-* Create: `components/landing/FAQSection.tsx`
-* Create: `components/ui/Accordion.tsx`
-* Modify: `app/page.tsx`
-Dependencies
-* Task 10
-Acceptance criteria
-* H2: "Frequently Asked Questions"
-* 5 questions in expandable accordion
-* FAQPage JSON-LD schema embedded
-* Link to full /faq page
-* Semantic section with id="faq"
+---
 
-12. Create final CTA section
-Files
-* Create: `components/landing/FinalCTASection.tsx`
-* Modify: `app/page.tsx`
-Dependencies
-* Task 11
-Acceptance criteria
-* H2: "Ready to Check an Account?"
-* Duplicate of hero input form
-* Semantic section with id="cta"
+## Files Summary
 
-### Phase C: Structured Data
+| Priority | File | Changes |
+|----------|------|---------|
+| 1 | `app/page.tsx` | Add H1, integrate TrustBar and HowItWorks |
+| 2 | `app/layout.tsx` | Root metadata, metadataBase |
+| 3 | `app/sitemap.ts` | Create dynamic sitemap |
+| 4 | `app/robots.ts` | Create robots.txt |
+| 5 | `app/check/[username]/opengraph-image.tsx` | Dynamic OG image generation |
+| 6 | `app/check/[username]/page.tsx` | Update generateMetadata for sharing |
+| 7 | `components/ShareButton.tsx` | Optimize share copy |
+| 8 | `components/results/VerdictHero.tsx` | Screenshot-friendly design |
+| 9 | `components/landing/TrustBar.tsx` | Create trust signals component |
+| 10 | `components/landing/HowItWorks.tsx` | Create how it works component |
+| 11 | `public/og-image.png` | Verify/optimize |
 
-13. Add WebSite JSON-LD schema to homepage
-Files
-* Modify: `app/page.tsx` or `app/layout.tsx`
-Dependencies
-* Phase B complete
-Acceptance criteria
-* WebSite schema with name, URL, description
-* SearchAction for direct username lookup
-* Valid per schema.org validator
+---
 
-14. Ensure FAQPage schema in FAQ section
-Files
-* Verify: `components/landing/FAQSection.tsx`
-Dependencies
-* Task 11
-Acceptance criteria
-* FAQPage schema with all 5 questions
-* mainEntity array properly formatted
-* Valid per Google Rich Results Test
+## What's NOT Included (Intentionally)
 
-### Phase D: Heading Hierarchy & Accessibility
+| Removed | Reason |
+|---------|--------|
+| "The Problem" section | Users already know the problem |
+| "Red Flags" checklist | SEO play, not conversion |
+| Inline FAQ accordion | Just link to /faq |
+| Final CTA section | Input is above fold |
+| FAQPage JSON-LD | Premature optimization |
+| WebSite JSON-LD | Premature optimization |
+| Heading hierarchy audit | Over-engineering |
+| Semantic sections with ARIA | Over-engineering for a simple page |
 
-15. Audit and fix heading hierarchy
-Files
-* Modify: `app/page.tsx`
-* Modify: All new section components
-Dependencies
-* Phase B complete
-Acceptance criteria
-* Single H1 at top
-* H2 for each major section
-* H3 for subsections (How It Works steps, Red Flags items)
-* No skipped levels
-
-16. Add semantic sections and ARIA
-Files
-* Modify: `app/page.tsx`
-* Modify: All new section components
-Dependencies
-* Task 15
-Acceptance criteria
-* Each content block wrapped in `<section>`
-* IDs on sections: problem, how-it-works, red-flags, faq, cta
-* aria-labelledby attributes referencing H2 ids
-
-## Cross-domain notes
-* Depends on Domain 1 (styling foundation)
-* Uses brand colors/typography from Domain 8
-* FAQ section references /faq page from Domain 9 Task 31
+---
 
 ## Verification Checklist
 
-### Technical SEO
-- [ ] H1 tag present on homepage (inspect element)
-- [ ] /sitemap.xml returns valid XML
-- [ ] /robots.txt returns valid content with sitemap reference
-- [ ] Meta tags render correctly (view source)
-- [ ] Canonical URL in head
-- [ ] OG image loads at /og-image.png
+### Technical
+- [ ] H1 tag present on homepage
+- [ ] /sitemap.xml returns valid XML (excludes /check/*)
+- [ ] /robots.txt disallows /check/*
+- [ ] Meta tags render correctly
 
-### Structured Data
-- [ ] WebSite schema validates at validator.schema.org
-- [ ] FAQPage schema validates
-- [ ] Google Rich Results Test passes
+### Viral Sharing
+- [ ] Dynamic OG image generates for results page
+- [ ] Shared link preview looks compelling in iMessage
+- [ ] Shared link preview looks good on Twitter
+- [ ] Screenshot of results page includes URL/branding
+- [ ] Share button copy is engaging
 
-### Content
-- [ ] All 6 sections render on homepage
-- [ ] Scroll indicator works
-- [ ] FAQ accordion expands/collapses
-- [ ] Final CTA form functional
+### Trust Content
+- [ ] Trust bar displays below hero
+- [ ] How it works section is visible on scroll
+- [ ] Both sections are mobile-friendly
+- [ ] Page still feels fast and focused
 
-### Mobile
-- [ ] All sections responsive at 375px width
-- [ ] No horizontal scroll
-- [ ] Touch targets adequate size
+---
 
-### Accessibility
-- [ ] Heading hierarchy logical (H1 -> H2 -> H3)
-- [ ] Screen reader navigation works
-- [ ] Color contrast passes WCAG AA
+## Success Metrics
 
-### Performance
-- [ ] PageSpeed Insights mobile score > 90
-- [ ] No layout shift from new content
-- [ ] Images optimized
+Track after launch:
+- Share rate (shares / results viewed)
+- Click-through from shared links
+- Screenshot mentions on social (manual tracking)
+
+If organic search becomes meaningful (3+ months), revisit SEO content investment.
+
+# Domain 11 — Desktop Experience
+
+Remove mobile-only restriction and make the app responsive for desktop screens.
+
+## Summary
+- Disable DesktopGate component to allow desktop access
+- Add responsive breakpoints (md:, lg:, xl:) to all pages and components
+- Preserve mobile experience unchanged
+
+## Breakpoint Strategy
+| Breakpoint | Width | Target Devices |
+|------------|-------|----------------|
+| Base (mobile) | < 768px | Phones |
+| `md:` | 768px+ | Tablets, small laptops |
+| `lg:` | 1024px+ | Laptops, desktops |
+| `xl:` | 1280px+ | Large desktops, ultrawide |
+
+## Tasks (All Complete ✅)
+
+### Phase 1: Foundation
+1. ✅ Disable DesktopGate - Return null unconditionally
+2. ✅ Update Footer - Add responsive padding (md, lg)
+
+### Phase 2: Core Pages
+3. ✅ Update Home Page - Container width, sticker positions, padding
+4. ✅ Update Results Page - Loading, results, and error containers
+
+### Phase 3: Secondary Pages
+5. ✅ Update Checkout Success - Container width responsive
+6. ✅ Update Checkout Cancelled - Container width responsive
+7. ✅ Update RateLimitError - Container width responsive
+
+### Phase 4: Content Pages
+8. ✅ Update FAQ Page - Responsive padding and container
+9. ✅ Update Privacy Page - Responsive padding and container
+10. ✅ Update Terms Page - Responsive padding and container
+
+## Files Modified
+| File | Changes |
+|------|---------|
+| `components/DesktopGate.tsx` | Returns null (disabled) |
+| `components/Footer.tsx` | Added md/lg padding |
+| `app/page.tsx` | Responsive container, sticker positions, padding |
+| `app/check/[username]/page.tsx` | Loading, results, error containers responsive |
+| `app/checkout/success/page.tsx` | Responsive container width, padding |
+| `app/checkout/cancelled/page.tsx` | Responsive container width, padding |
+| `components/RateLimitError.tsx` | Responsive container width, padding |
+| `app/faq/page.tsx` | Responsive padding, container cap at lg:max-w-4xl |
+| `app/privacy/page.tsx` | Responsive padding, container cap at lg:max-w-4xl |
+| `app/terms/page.tsx` | Responsive padding, container cap at lg:max-w-4xl |
+
+## Responsive Patterns Applied
+```css
+/* Form containers (narrow, centered) */
+max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl
+
+/* Results/content pages (wider) */
+max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl
+
+/* Text content pages (readable width cap) */
+max-w-3xl lg:max-w-4xl
+
+/* Horizontal padding */
+px-5 md:px-8 lg:px-12
+
+/* Vertical padding */
+py-8 md:py-10 lg:py-12
+```
+
+## Verification Checklist
+- [ ] Mobile layout unchanged at 375px
+- [ ] Tablet view works at 768px
+- [ ] Desktop view works at 1024px+
+- [ ] Large desktop view works at 1280px+
+- [ ] No horizontal scroll on any viewport
+- [ ] All pages accessible on desktop
+
+# Domain 11 — Launch Readiness
+
+Minimum requirements for public launch addressing legal, trust, observability, and UX gaps.
+
+## Summary
+- Legal/trust foundation (/about page, disclaimers, contact)
+- Result page noindex (prevent indexing of third-party judgments)
+- Analytics and error monitoring
+- Refund/support process
+- Same-user cache policy (don't double-charge)
+
+## Tasks
+
+### Phase A: Legal & Trust Foundation
+
+1. Create /about page
+Files
+* Create: `app/about/page.tsx`
+Dependencies
+* None
+Acceptance criteria
+* Explains what AI or Nah is and does
+* Explains why it was created (problem it solves)
+* High-level explanation of how it works (non-technical)
+* Contains all required disclaimers:
+  - "probabilistic analysis for informational purposes only"
+  - "not definitive proof of AI generation or authenticity"
+  - "not affiliated with Instagram, Meta, or any analyzed accounts"
+* Contact: support@aiornah.ai
+* Unique page title and description
+* Linked from footer
+
+2. Add disclaimer to results page
+Files
+* Modify: `app/check/[username]/page.tsx`
+Dependencies
+* None
+Acceptance criteria
+* Disclaimer text visible on results page (above or below verdict)
+* Text: "This analysis is probabilistic and for informational purposes only. Not affiliated with Instagram or Meta."
+* Styled to be visible but not intrusive
+
+3. Update footer with /about link
+Files
+* Modify: `components/Footer.tsx`
+Dependencies
+* Task 1
+Acceptance criteria
+* "About" link added to footer navigation
+* Links to /about page
+
+4. Set up support email
+Files
+* External (email provider setup)
+Dependencies
+* None
+Acceptance criteria
+* support@aiornah.ai inbox functional
+* Forwarding or monitoring configured
+* Template responses drafted for: refund requests, credit access issues
+
+### Phase B: Result Page Indexation
+
+5. Add noindex to result pages
+Files
+* Modify: `app/check/[username]/page.tsx`
+Dependencies
+* None
+Acceptance criteria
+* Metadata includes `robots: { index: false, follow: false }`
+* Result pages do NOT appear in sitemap
+* Google cannot index /check/* URLs
+
+### Phase C: Analytics & Observability
+
+6. Add privacy-friendly analytics
+Files
+* Modify: `app/layout.tsx`
+* Create: `components/Analytics.tsx` (if needed)
+Dependencies
+* External account (Plausible, Fathom, or similar)
+Acceptance criteria
+* Analytics script loaded on all pages
+* Tracking: page views, unique visitors
+* No PII collected
+* Dashboard accessible
+
+7. Add error monitoring
+Files
+* Modify: `app/layout.tsx` or create error boundary
+* Create: `lib/monitoring.ts` (Sentry init)
+Dependencies
+* External account (Sentry or similar)
+Acceptance criteria
+* Client-side errors captured
+* Server-side errors captured (API routes)
+* Alerts configured for error rate spikes
+* Source maps uploaded for readable stack traces
+
+### Phase D: Refund & Support Process
+
+8. Update Terms of Service with refund policy
+Files
+* Modify: `app/terms/page.tsx`
+Dependencies
+* None
+Acceptance criteria
+* Refund policy section added:
+  - 7-day window for refund requests
+  - Contact support@aiornah.ai
+  - Manual review process
+  - No automated refunds
+
+### Phase E: Same-User Cache Policy
+
+9. Create user-check tracking table
+Files
+* Create: `supabase/migrations/004_user_checks.sql`
+Dependencies
+* Domain 2 (database)
+Acceptance criteria
+* New table `user_checks`:
+  - `id` UUID primary key
+  - `device_fingerprint` TEXT (for anonymous users)
+  - `customer_id` UUID (for authenticated users, nullable)
+  - `username` TEXT (Instagram username checked)
+  - `first_checked_at` TIMESTAMPTZ
+  - `created_at` TIMESTAMPTZ
+* Unique constraint on (device_fingerprint, username) OR (customer_id, username)
+* Index on lookup columns
+
+10. Add user-check database operations
+Files
+* Create: `lib/db/user-checks.ts`
+Dependencies
+* Task 9
+Acceptance criteria
+* Functions:
+  - `hasUserCheckedUsername(deviceFingerprint, customerId, username)` → boolean
+  - `recordUserCheck(deviceFingerprint, customerId, username)` → void
+* Handles both anonymous (fingerprint) and authenticated (customer_id) users
+
+11. Modify analyze route for same-user cache policy
+Files
+* Modify: `app/api/analyze/route.ts`
+Dependencies
+* Tasks 9, 10
+Acceptance criteria
+* Before deducting credit, check if user has previously checked this username
+* If user has checked before: skip credit deduction, return cached result
+* If user has NOT checked before: deduct credit, record the check, return result
+* Works for both anonymous (device fingerprint) and authenticated users
+* Different users checking same cached username still pay
+
+## Verification Checklist
+
+### Legal & Trust
+- [ ] /about page live with all required disclaimers
+- [ ] support@aiornah.ai inbox functional and monitored
+- [ ] Disclaimer visible on results page
+- [ ] /about linked from footer
+
+### Indexation
+- [ ] /check/* pages have noindex in metadata
+- [ ] /check/* NOT in sitemap
+- [ ] Test: Google search `site:aiornah.ai/check` returns no results (after crawl)
+
+### Analytics & Monitoring
+- [ ] Analytics dashboard shows page views
+- [ ] Sentry captures test error
+- [ ] Alerts configured for error spikes
+
+### Refund Process
+- [ ] Refund policy in /terms page
+- [ ] Can process manual refund in Stripe dashboard
+
+### Same-User Cache
+- [ ] User A checks @username → charged 1 credit
+- [ ] User A checks @username again → NOT charged (same user, same username)
+- [ ] User B checks @username → charged 1 credit (different user)
+- [ ] Works for anonymous users (device fingerprint)
+- [ ] Works for authenticated users (customer_id)
+
+## Cross-domain notes
+* Task 1 (about page) may overlap with Domain 10 SEO trust requirements
+* Analytics/monitoring are operational tasks, not code-heavy
+* Email setup is external to codebase

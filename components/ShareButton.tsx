@@ -24,7 +24,21 @@ export function ShareButton({
 
   const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/check/${username}`;
   const shareTitle = `@${username}: ${aiLikelihood}% Likely AI - AI or Nah`;
-  const shareText = "Check if your IG crush is real";
+
+  // Generate verdict-specific share text
+  const getShareText = (): string => {
+    if (aiLikelihood <= 30) {
+      return `✅ @${username} checks out as probably real! I verified with AI or Nah`;
+    } else if (aiLikelihood <= 60) {
+      return `🤔 Is @${username} real or AI? The results are unclear... Check it out`;
+    } else if (aiLikelihood <= 80) {
+      return `⚠️ @${username} looks sus! ${aiLikelihood}% likely AI according to AI or Nah`;
+    } else {
+      return `🤖 I just exposed @${username} as ${aiLikelihood}% AI! Check for yourself`;
+    }
+  };
+
+  const shareText = getShareText();
 
   const addRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current) return;
@@ -65,14 +79,17 @@ export function ShareButton({
   };
 
   const fallbackCopyToClipboard = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Combine engaging text + URL for clipboard
+    const clipboardContent = `${shareText}\n${shareUrl}`;
+
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(clipboardContent);
       celebrateSuccess(e);
     } catch (err) {
       console.error("Failed to copy:", err);
       // Manual fallback for older browsers
       const textArea = document.createElement("textarea");
-      textArea.value = shareUrl;
+      textArea.value = clipboardContent;
       textArea.style.position = "fixed";
       textArea.style.left = "-999999px";
       document.body.appendChild(textArea);
@@ -196,7 +213,7 @@ export function ShareButton({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
             >
-              Link Copied!
+              Copied!
             </motion.span>
           ) : (
             <motion.span
@@ -239,7 +256,7 @@ export function ShareButton({
                   d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </motion.svg>
-              <span className="font-medium">Link copied! Share with friends</span>
+              <span className="font-medium">Copied! Ready to share</span>
             </div>
           </motion.div>
         )}

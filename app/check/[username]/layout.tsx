@@ -35,7 +35,7 @@ export async function generateMetadata({
   }
 
   const title = `🤖 @${username}: ${aiLikelihood}% Likely AI - AI or Nah`;
-  const description = "Check if your IG crush is real";
+  const description = `I checked @${username} with AI or Nah. ${aiLikelihood}% likely AI. See the full breakdown.`;
   const url = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/check/${username}`;
 
   return {
