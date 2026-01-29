@@ -37,7 +37,7 @@ export function ChecksRemainingIndicator({
     : (isLow ? "text-orange-700" : "text-blue-700");
 
   // Icon
-  const icon = isCredits ? "💎" : "⚡";
+  const icon = isCredits ? "💎" : "💎";
 
   // Messages
   const mainText = isCredits
@@ -48,7 +48,7 @@ export function ChecksRemainingIndicator({
     ? (isLow ? "Running low! Purchase more to keep checking" : "Check deducted successfully")
     : (remaining === total
         ? "Try it out before purchasing credits"
-        : "Purchase credits for unlimited checks");
+        : "Purchase credits for additional checks");
 
   return (
     <motion.div

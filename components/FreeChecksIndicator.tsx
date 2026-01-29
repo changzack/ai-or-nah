@@ -28,7 +28,7 @@ export function FreeChecksIndicator({ remaining, total = 3 }: FreeChecksIndicato
       className={`${bgColor} border ${borderColor} rounded-xl p-4 mb-4`}
     >
       <div className="flex items-center gap-3">
-        <div className="text-2xl">⚡</div>
+        <div className="text-2xl">💎</div>
         <div className="flex-1">
           <p className={`text-sm font-medium ${textColor}`}>
             {remaining} free check{remaining === 1 ? "" : "s"} remaining
@@ -36,7 +36,7 @@ export function FreeChecksIndicator({ remaining, total = 3 }: FreeChecksIndicato
           <p className={`text-xs ${subTextColor} mt-1`}>
             {remaining === total
               ? "Try it out before purchasing credits"
-              : "Purchase credits for unlimited checks"}
+              : "Purchase credits for additional checks"}
           </p>
         </div>
       </div>
