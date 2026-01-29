@@ -41,8 +41,8 @@ export function RateLimitError({ resetsAt, showBackButton = true }: RateLimitErr
   }, [resetsAt]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
-      <div className="w-full max-w-md text-center">
+    <div className="min-h-screen flex items-center justify-center px-5 md:px-8 lg:px-12 bg-[#FDF6E9]">
+      <div className="w-full max-w-md md:max-w-lg lg:max-w-xl text-center">
         {/* Icon */}
         <div className="mb-6">
           <div className="w-20 h-20 bg-[#FF6B6B]/10 rounded-full flex items-center justify-center mx-auto">

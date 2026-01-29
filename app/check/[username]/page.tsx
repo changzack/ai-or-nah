@@ -268,12 +268,12 @@ export default function CheckPage({
       <>
         <DesktopGate />
         <Header />
-        <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
+        <div className="min-h-screen flex items-center justify-center px-5 md:px-8 lg:px-12 bg-[#FDF6E9]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="w-full max-w-sm"
+            className="w-full max-w-sm md:max-w-md lg:max-w-lg"
           >
             <MagnifyingGlassLoader username={username} />
             <motion.p
@@ -373,12 +373,12 @@ export default function CheckPage({
       <>
         <DesktopGate />
         <Header />
-        <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
+        <div className="min-h-screen flex items-center justify-center px-5 md:px-8 lg:px-12 bg-[#FDF6E9]">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-md text-center"
+            className="w-full max-w-md md:max-w-lg lg:max-w-xl text-center"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -424,7 +424,7 @@ export default function CheckPage({
           <Sticker emoji="🚩" size="sm" rotation={-8} className="absolute top-96 right-12" />
         </div>
 
-        <div className="max-w-2xl mx-auto px-5 py-8 relative z-10">
+        <div className="max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-10 lg:py-12 relative z-10">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}

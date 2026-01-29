@@ -11,12 +11,12 @@ export default function CheckoutCancelledPage() {
   return (
     <>
       <DesktopGate />
-      <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
+      <div className="min-h-screen flex items-center justify-center px-5 md:px-8 lg:px-12 bg-[#FDF6E9]">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          className="w-full max-w-md text-center"
+          className="w-full max-w-md md:max-w-lg lg:max-w-xl text-center"
         >
           <motion.div variants={fadeInUp}>
             <motion.div

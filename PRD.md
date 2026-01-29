@@ -99,78 +99,67 @@ There is a proliferation of fake AI Instagram accounts featuring AI-generated mo
 - Show error if input is empty
 - Show error if format is invalid
 
-### 1b. Landing Page SEO & Content Strategy
+### 1b. Launch Optimization (SEO + Viral + Trust)
 
-**Purpose:** Capture organic search traffic while maintaining conversion-optimized utility above the fold.
+**Purpose:** Minimal technical SEO foundation + viral sharing optimization + lightweight trust-building. Prioritizes social sharing (the actual growth lever) over speculative SEO content.
 
-**Business Goals:**
-- Rank for AI detection and Instagram scam-related search queries
-- Build trust and credibility for skeptical first-time visitors
-- Provide genuine educational value (shareable content)
-- Maintain fast path-to-action for ready-to-convert users
+**Philosophy:**
+- Users arrive with intent (they have a suspicious account) — don't make them scroll through content
+- Growth comes from viral sharing, not Google rankings (new domain, no authority)
+- Trust-building should be concise, not content marketing
 
-**Target Keywords:**
-
-| Priority | Keywords |
-|----------|----------|
-| Primary | "AI instagram detector", "check if instagram is real", "fake instagram account checker" |
-| Secondary | "how to spot AI generated photos", "AI generated instagram models", "OnlyFans scam instagram" |
-| Long-tail | "how to tell if instagram model is AI generated", "detect AI photos instagram" |
-
-**Page Structure (Hybrid Layout):**
-
-The homepage uses a "utility first, education below" layout:
+**Page Structure:**
 
 1. **Above the Fold (Hero)**
    - Logo, H1 headline, input form, CTA button
-   - Scroll indicator to signal more content below
    - Goal: Immediate utility for ready users
 
-2. **Below the Fold (SEO Content)**
-   - Social proof bar (accounts analyzed counter)
-   - "The Problem" section - educational content about AI scams
-   - "How It Works" section - 3-step process explanation
-   - "Red Flags" section - user education checklist
-   - Inline FAQ section - common questions with schema markup
-   - Final CTA - repeated input form
+2. **Below the Fold (Minimal)**
+   - Trust signals bar: "Results in seconds • 100% private • No account needed"
+   - How it works: 3 compact steps with icons (~50 words total)
+   - Footer with links to FAQ, Terms, Privacy
 
-**Content Requirements:**
-
-**Social Proof Bar:**
-- Display: "[X,XXX] accounts analyzed | Results in 30 seconds | 100% private"
-- Pull count from database or use milestone number
-
-**The Problem Section:**
-- H2: "The AI Instagram Scam Epidemic"
-- 150-200 words explaining the scam pattern
-- Targets: "AI generated instagram", "instagram scam", "fake OnlyFans"
+**Trust Signals Bar:**
+- Display: "Results in seconds • 100% private • No account needed"
+- No fake account counts at launch — only add when real
+- Subtle styling, doesn't compete with input form
 
 **How It Works Section:**
-- H2: "How AI or Nah Detects Fake Accounts"
-- 3 steps: Profile Analysis -> AI Image Detection -> Pattern Matching
-- Brief, confidence-building explanation
+- 3 steps with icons (no H2 required, visual hierarchy only):
+  1. 🔍 "Profile Analysis" — We scan posts, bio, and engagement patterns
+  2. 🤖 "AI Detection" — Each image is checked for AI-generated signs
+  3. 📊 "Your Verdict" — Get a clear score with detailed breakdown
+- Compact design, confidence-building without content bloat
 
-**Red Flags Section:**
-- H2: "5 Red Flags of AI Instagram Accounts"
-- Checklist format (featured snippet opportunity)
-- Flags: Flawless skin, identical poses, no friends, generic captions, suspicious engagement
-- Genuinely useful standalone content
+**Viral Sharing Optimization:**
 
-**Inline FAQ Section:**
-- H2: "Frequently Asked Questions"
-- 5 key questions in expandable accordion
-- Questions: Accuracy, pricing, data access, analysis time, private accounts
-- FAQPage schema markup for rich results
+This is the primary growth lever. Optimize for shares, not SEO.
 
-**Final CTA Section:**
-- H2: "Ready to Check an Account?"
-- Duplicate input form for users who scrolled
+- **Dynamic OG images:** Results pages generate images showing username + verdict (e.g., "🤖 @username: 87% Likely AI")
+- **Engaging share copy:** OG title/description that makes people want to click
+- **Screenshot-friendly design:** Verdict hero looks good when screenshotted, includes brand/URL
+- **Share button copy:** Engaging text, not just "Share"
 
-**Content Guidelines:**
-- Tone: Casual, direct, slightly irreverent (matches brand)
-- Length: ~800-1000 words total new content
-- Keywords: Natural integration, no stuffing
-- Mobile-first: All sections must work well on small screens
+**Technical SEO (Basics Only):**
+- Single H1 tag on homepage
+- sitemap.xml (excludes /check/* result pages)
+- robots.txt (disallows /check/*)
+- Root metadata with title, description, OG tags
+- OG image at 1200x630px
+
+**What's NOT Included (Intentionally):**
+
+| Removed | Reason |
+|---------|--------|
+| "The Problem" section | Users already know the problem |
+| "Red Flags" checklist | SEO play, not conversion |
+| Inline FAQ accordion | Just link to /faq |
+| Final CTA section | Input is above fold |
+| FAQPage JSON-LD | Premature optimization |
+| WebSite JSON-LD | Premature optimization |
+
+**Future Consideration:**
+If organic search becomes meaningful (3+ months post-launch), revisit SEO content investment based on actual data.
 
 ### 2. Loading Experience
 
@@ -926,6 +915,108 @@ Add sections covering:
 **Low AI Likelihood (0-30%):**
 - "✅ Probably Real (23%)"
 - Bottom line: "Looks legit based on our analysis. But stay cautious online."
+
+---
+
+## Launch Readiness Requirements
+
+This section defines minimum requirements for public launch, addressing legal, trust, observability, and user experience gaps.
+
+### 1. Legal & Trust Foundation
+
+**About Page (/about) - Required**
+
+Must include:
+- What AI or Nah is and does (1-2 paragraphs)
+- Why it was created (problem it solves)
+- How it works (high-level, non-technical explanation)
+- Disclaimers:
+  - "This tool provides probabilistic analysis for informational purposes only"
+  - "Results are not definitive proof of AI generation or authenticity"
+  - "AI or Nah is not affiliated with Instagram, Meta, or any analyzed accounts"
+- Contact information (support@aiornah.ai)
+
+**Contact Mechanism - Required**
+- Functional email inbox at support@aiornah.ai
+- Response time expectation stated on /about page
+
+**Disclaimer Visibility - Required**
+- Results page must display disclaimer prominently
+- Disclaimer text: "This analysis is probabilistic and for informational purposes only. Not affiliated with Instagram or Meta."
+
+---
+
+### 2. Result Page Indexation
+
+**noindex Directive - Required**
+
+All `/check/*` result pages must be non-indexable:
+- Add `robots: { index: false, follow: false }` metadata
+- Exclude from sitemap
+- Rationale: Publishing third-party profile judgments creates legal/reputation risk
+
+---
+
+### 3. Analytics & Observability
+
+**Product Analytics - Required**
+- Implement privacy-friendly analytics (Plausible, Fathom, or similar)
+- Track: page views, unique visitors, conversion funnel
+- No personally identifiable information collected
+
+**Error Monitoring - Required**
+- Implement error tracking (Sentry or similar)
+- Capture: JavaScript errors, API failures, unhandled exceptions
+- Alert on error rate spikes
+
+---
+
+### 4. Refund & Support Process
+
+**Refund Policy - Required**
+- Document 7-day refund window in Terms of Service
+- Process: User emails support@aiornah.ai within 7 days
+- Manual review and Stripe refund if approved
+- No automated refund mechanism required for MVP
+
+**Support Inbox - Required**
+- Functional support@aiornah.ai inbox
+- Check at least daily during launch period
+- Template responses for common issues (can't access credits, refund requests)
+
+---
+
+### 5. Credit Deduction for Cached Results
+
+**Same-User Cache Policy - Required**
+
+When a user checks the same username multiple times:
+- First check: Deduct 1 credit (or 1 free check)
+- Subsequent checks by SAME user for SAME username: Free (no credit deduction)
+- Different user checking same cached username: Still deducts credit
+
+**Implementation:**
+- Track user-username pairs that have been charged
+- For anonymous users: Use device fingerprint + username
+- For authenticated users: Use customer_id + username
+- Store in new table or add column to existing structure
+
+**Rationale:** Prevents frustration when users re-check an account (e.g., to share results or revisit). Different users still pay because they haven't seen the result before.
+
+---
+
+### 6. Launch Checklist
+
+**Before Public Launch:**
+- [ ] /about page live with all required content
+- [ ] support@aiornah.ai inbox functional and monitored
+- [ ] noindex on all /check/* pages
+- [ ] Analytics installed and tracking
+- [ ] Error monitoring installed and alerting
+- [ ] Refund policy documented in /terms
+- [ ] Same-user cache policy implemented
+- [ ] Test Stripe webhook with real payment
+- [ ] Disclaimer visible on results page
 
 ---
 

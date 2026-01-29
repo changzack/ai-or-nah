@@ -10,8 +10,8 @@ export default function TermsPage() {
     <>
       <DesktopGate />
 
-      <div className="min-h-screen bg-gray-50 py-12 px-5">
-        <div className="max-w-3xl mx-auto">
+      <div className="min-h-screen bg-gray-50 py-12 md:py-16 lg:py-20 px-5 md:px-8 lg:px-12">
+        <div className="max-w-3xl lg:max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
             <button

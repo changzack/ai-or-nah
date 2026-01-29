@@ -110,7 +110,7 @@ function CheckoutSuccessContent() {
   return (
     <>
       <DesktopGate />
-      <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
+      <div className="min-h-screen flex items-center justify-center px-5 md:px-8 lg:px-12 bg-[#FDF6E9]">
         <AnimatePresence mode="wait">
           {loading && (
             <motion.div
@@ -134,7 +134,7 @@ function CheckoutSuccessContent() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md text-center"
+              className="w-full max-w-md md:max-w-lg lg:max-w-xl text-center"
             >
               <div className="text-6xl mb-4">⚠️</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">
@@ -156,7 +156,7 @@ function CheckoutSuccessContent() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md text-center"
+              className="w-full max-w-md md:max-w-lg lg:max-w-xl text-center"
             >
               <motion.div
                 initial={{ scale: 0 }}
@@ -194,7 +194,7 @@ function CheckoutSuccessContent() {
 export default function CheckoutSuccessPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
+      <div className="min-h-screen flex items-center justify-center px-5 md:px-8 lg:px-12 bg-[#FDF6E9]">
         <div className="text-6xl">⏳</div>
       </div>
     }>

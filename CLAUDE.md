@@ -48,3 +48,80 @@ This project uses a **three-tier planning system**:
 - Components in `/components`, organized by feature (e.g., `/components/results/`)
 - API routes in `/app/api/`
 - Utility functions in `/lib/`
+
+## Analytics Instrumentation (Amplitude)
+
+**IMPORTANT:** When implementing new features, pages, or user interactions, you MUST consider and implement appropriate analytics events. This is a default requirement for all development work.
+
+### Tracking Plan Maintenance (REQUIRED)
+
+`/docs/TRACKING_PLAN.md` is the **source of truth** for all analytics events. You MUST update this file whenever you:
+- **Add** a new analytics event
+- **Modify** an existing event (name, properties, trigger conditions)
+- **Remove** an event that is no longer used
+
+Update the tracking plan **in the same commit** as the code change to keep them in sync.
+
+### When to Add Events
+
+Add analytics events for:
+- **Page views** - Track when users land on new pages/routes
+- **User actions** - Button clicks, form submissions, interactions
+- **Funnel steps** - Any action that moves users through conversion flows
+- **Feature usage** - When users engage with specific features
+- **Errors** - Failed operations, API errors, validation failures
+- **State changes** - Auth state, purchase completions, significant UI changes
+
+### Event Naming Convention
+
+Use **Title Case** with **Verb + Noun** pattern:
+```
+✓ "Viewed Home"
+✓ "Submitted Username"
+✓ "Completed Purchase"
+✓ "Clicked Share Button"
+✗ "home_page_view"
+✗ "submitUsername"
+```
+
+### Property Naming Convention
+
+Use **camelCase** for all event and user properties:
+```typescript
+amplitude.track('Submitted Username', {
+  username: 'example_user',
+  isLoggedIn: true,
+  checkCount: 3,
+  source: 'homepage'
+});
+```
+
+### Implementation Pattern
+
+Analytics utility location: `/lib/analytics.ts`
+
+```typescript
+// Always use the centralized track function
+import { track } from '@/lib/analytics';
+
+// In components/pages:
+track('Event Name', { property: 'value' });
+```
+
+### Standard Properties
+
+Include these properties when relevant:
+- `source` - Where the action originated (e.g., 'homepage', 'results_page')
+- `username` - The Instagram username being checked (when applicable)
+- `isLoggedIn` - User's auth state
+- `hasCredits` - Whether user has remaining credits
+
+### Identity Management
+
+- Anonymous users: Amplitude auto-generates device ID
+- On auth: Call `identify()` with user email to merge sessions
+- User properties to set on auth: `email`, `authProvider`, `createdAt`
+
+### Reference: Tracking Plan
+
+See `/docs/TRACKING_PLAN.md` for the complete list of events, properties, and implementation notes.
