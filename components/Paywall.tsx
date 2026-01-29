@@ -118,9 +118,33 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={springTransition}
-        className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto relative"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close button */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        )}
+
         <motion.div variants={staggerContainer} initial="hidden" animate="visible">
           {/* Header */}
           <motion.div variants={fadeInUp} className="text-center mb-6">
@@ -201,8 +225,20 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
             </motion.div>
           )}
 
+          {/* Maybe Later button */}
+          {onClose && (
+            <motion.div variants={fadeInUp} className="mt-4">
+              <button
+                onClick={onClose}
+                className="w-full py-3 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+              >
+                Maybe Later
+              </button>
+            </motion.div>
+          )}
+
           {/* Disclaimer */}
-          <motion.div variants={fadeInUp} className="mt-6 text-center">
+          <motion.div variants={fadeInUp} className="mt-4 text-center">
             <p className="text-xs text-gray-500">
               Credits never expire. Secure payment via Stripe.
             </p>

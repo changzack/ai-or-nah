@@ -382,6 +382,10 @@ export default function CheckPage({
         <Header />
         <Paywall
           freeChecksUsed={paywallData?.freeChecksUsed}
+          onClose={() => {
+            track('Dismissed Paywall');
+            router.push('/');
+          }}
           onShowEmailVerification={() => {
             setShowPaywall(false);
             setShowEmailVerification(true);

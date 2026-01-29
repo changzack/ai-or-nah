@@ -52,6 +52,7 @@ Primary conversion metrics:
 | Event Name | Trigger | Properties |
 |------------|---------|------------|
 | `Viewed Paywall` | Paywall shown | `trigger`, `creditsRemaining` |
+| `Dismissed Paywall` | User closes paywall without purchasing | — |
 | `Selected Package` | User selects a credit package | `package`, `price`, `credits` |
 | `Started Checkout` | User initiates Stripe checkout | `package`, `price` |
 | `Completed Purchase` | Stripe webhook confirms payment | `package`, `price`, `credits`, `transactionId` |
