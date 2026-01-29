@@ -80,7 +80,7 @@ export default function PrivacyPage() {
                     We automatically collect:
                   </p>
                   <ul className="list-disc pl-6 space-y-1 text-base text-gray-700">
-                    <li><strong>IP Address:</strong> Used to enforce rate limits (3 checks per day)</li>
+                    <li><strong>Device Fingerprint:</strong> Browser-based fingerprint to track free tier usage (no IP address included)</li>
                     <li><strong>Usage Data:</strong> Timestamps of when you checked accounts</li>
                     <li><strong>Technical Data:</strong> Browser type, device type (for mobile-only enforcement)</li>
                   </ul>
@@ -88,7 +88,17 @@ export default function PrivacyPage() {
 
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    2.3 Publicly Available Data
+                    2.3 Payment Information
+                  </h3>
+                  <p className="text-base text-gray-700 leading-relaxed">
+                    If you purchase credits, we collect your email address for account access. Payment information
+                    (credit card details) is processed directly by Stripe and never stored on our servers.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">
+                    2.4 Publicly Available Data
                   </h3>
                   <p className="text-base text-gray-700 leading-relaxed">
                     When you submit an Instagram username, we retrieve publicly available information from that
@@ -110,7 +120,9 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc pl-6 space-y-2 text-base text-gray-700">
                 <li>Provide and operate the Service (AI-generated image detection)</li>
-                <li>Enforce rate limits (3 checks per IP per day)</li>
+                <li>Enforce free tier limits (3 lifetime checks per device)</li>
+                <li>Process payments and manage credit balances</li>
+                <li>Send verification codes for passwordless authentication</li>
                 <li>Cache analysis results to improve performance and reduce API costs</li>
                 <li>Monitor and analyze usage patterns to improve the Service</li>
                 <li>Detect and prevent abuse or violations of our Terms of Service</li>
@@ -132,8 +144,16 @@ export default function PrivacyPage() {
                   to avoid hotlinking. These images are deleted when their associated analysis result expires.
                 </p>
                 <p>
-                  <strong>Rate Limit Data:</strong> IP addresses and check counts are stored only for rate limiting
-                  purposes and reset daily at midnight PST.
+                  <strong>Device Fingerprints:</strong> Browser fingerprints are stored to track free tier usage.
+                  These are retained indefinitely to prevent abuse.
+                </p>
+                <p>
+                  <strong>Customer Accounts:</strong> If you purchase credits, your email and credit balance are
+                  stored indefinitely. You can request deletion by contacting us.
+                </p>
+                <p>
+                  <strong>Verification Codes:</strong> Email verification codes expire after 10 minutes and are
+                  automatically deleted.
                 </p>
               </div>
             </section>
@@ -153,8 +173,14 @@ export default function PrivacyPage() {
                 <ul className="list-disc pl-6 space-y-2">
                   <li>
                     <strong>Service Providers:</strong> We use third-party services (Apify for Instagram scraping,
-                    Sightengine for AI detection, Supabase for data storage) to operate the Service. These providers
-                    may access data necessary to perform their functions.
+                    Sightengine for AI detection, Supabase for data storage, Stripe for payment processing,
+                    Resend for email delivery) to operate the Service. These providers may access data necessary
+                    to perform their functions.
+                  </li>
+                  <li>
+                    <strong>Payment Processor:</strong> When you purchase credits, Stripe processes your payment
+                    information. We never see or store your credit card details. Stripe's privacy policy applies
+                    to payment data.
                   </li>
                   <li>
                     <strong>Public Results:</strong> Analysis results are publicly accessible via shareable URLs
@@ -174,8 +200,10 @@ export default function PrivacyPage() {
                 6. Cookies and Tracking
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
-                We use minimal cookies for essential functionality (session management, rate limiting). We do NOT
-                use tracking cookies for advertising or analytics purposes.
+                We use minimal cookies for essential functionality. Our session cookie (aion_session) is used
+                for passwordless authentication and expires after 30 days. We also use localStorage to store
+                a device token for free tier tracking. We do NOT use tracking cookies for advertising or analytics
+                purposes.
               </p>
             </section>
 

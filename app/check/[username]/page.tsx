@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { DesktopGate } from "@/components/DesktopGate";
+import { Header } from "@/components/Header";
 import { VerdictHero } from "@/components/results/VerdictHero";
 import { ImageGrid } from "@/components/results/ImageGrid";
 import { FlagsCard } from "@/components/results/FlagsCard";
@@ -11,11 +12,16 @@ import { EducationCard } from "@/components/results/EducationCard";
 import { ShareButton } from "@/components/ShareButton";
 import { Sticker } from "@/components/ui/Sticker";
 import { RateLimitError } from "@/components/RateLimitError";
+import { Paywall } from "@/components/Paywall";
+import { EmailVerification } from "@/components/auth/EmailVerification";
+import { ChecksRemainingIndicator } from "@/components/ChecksRemainingIndicator";
 import { Footer } from "@/components/Footer";
 import { MagnifyingGlassLoader } from "@/components/MagnifyingGlassLoader";
 import { useHaptic } from "@/hooks/useHaptic";
+import { useAuth } from "@/contexts/AuthContext";
+import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
-import type { AnalysisResult, RateLimitResult } from "@/lib/types";
+import type { AnalysisResult, RateLimitResult, PaywallResponse } from "@/lib/types";
 
 // Loading stages configuration
 const loadingStages = [
@@ -141,15 +147,23 @@ export default function CheckPage({
   const { username } = use(params);
   const router = useRouter();
   const haptic = useHaptic();
+  const { isAuthenticated, refresh: refreshAuth } = useAuth();
+  const { fingerprint, deviceToken, isLoading: deviceLoading } = useDeviceIdentity();
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rateLimited, setRateLimited] = useState<RateLimitResult | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [paywallData, setPaywallData] = useState<PaywallResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentStage, setCurrentStage] = useState(0);
 
   useEffect(() => {
-    analyzeUsername();
-  }, [username]);
+    // Wait for device identity to load before analyzing
+    if (!deviceLoading) {
+      analyzeUsername();
+    }
+  }, [username, deviceLoading, fingerprint, deviceToken]);
 
   const analyzeUsername = async () => {
     try {
@@ -177,7 +191,11 @@ export default function CheckPage({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({
+          username,
+          fingerprint,
+          deviceToken,
+        }),
       });
 
       clearInterval(stageInterval);
@@ -189,6 +207,10 @@ export default function CheckPage({
       }
 
       const data = await response.json();
+
+      // Debug: Log the response data
+      console.log("[Check Page] API Response:", data);
+      console.log("[Check Page] Free checks remaining:", data.freeChecksRemaining);
 
       // Calculate elapsed time and ensure minimum duration
       const elapsedTime = Date.now() - startTime;
@@ -209,6 +231,14 @@ export default function CheckPage({
         return;
       }
 
+      // Check if paywall
+      if (data.status === "paywall" || response.status === 402) {
+        setPaywallData(data as PaywallResponse);
+        setShowPaywall(true);
+        setLoading(false);
+        return;
+      }
+
       // Check for other errors
       if (!response.ok || data.status === "error") {
         setError(data.message || "Failed to analyze account");
@@ -217,9 +247,16 @@ export default function CheckPage({
       }
 
       // Success
+      console.log("[Check Page] Setting result - freeChecks:", data.freeChecksRemaining, "credits:", data.creditsRemaining);
       setResult(data as AnalysisResult);
       setLoading(false);
       haptic.medium();
+
+      // Refresh auth state to update credit badge
+      if (isAuthenticated && data.creditsRemaining !== undefined) {
+        console.log("[Check Page] Refreshing auth state after credit deduction");
+        await refreshAuth();
+      }
     } catch (err) {
       setError("Something went wrong. Please try again.");
       setLoading(false);
@@ -230,6 +267,7 @@ export default function CheckPage({
     return (
       <>
         <DesktopGate />
+        <Header />
         <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -298,7 +336,34 @@ export default function CheckPage({
     return (
       <>
         <DesktopGate />
+        <Header />
         <RateLimitError resetsAt={rateLimited.resetsAt} />
+      </>
+    );
+  }
+
+  if (showPaywall) {
+    return (
+      <>
+        <DesktopGate />
+        <Header />
+        <Paywall
+          freeChecksUsed={paywallData?.freeChecksUsed}
+          onShowEmailVerification={() => {
+            setShowPaywall(false);
+            setShowEmailVerification(true);
+          }}
+        />
+        {showEmailVerification && (
+          <EmailVerification
+            onClose={() => setShowEmailVerification(false)}
+            onSuccess={() => {
+              setShowEmailVerification(false);
+              refreshAuth();
+              router.push(`/check/${username}`);
+            }}
+          />
+        )}
       </>
     );
   }
@@ -307,6 +372,7 @@ export default function CheckPage({
     return (
       <>
         <DesktopGate />
+        <Header />
         <div className="min-h-screen flex items-center justify-center px-5 bg-[#FDF6E9]">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -348,6 +414,7 @@ export default function CheckPage({
   return (
     <>
       <DesktopGate />
+      <Header />
 
       <div className="min-h-screen bg-[#FDF6E9] pb-20 relative">
         {/* Decorative stickers */}
@@ -374,6 +441,33 @@ export default function CheckPage({
               <span aria-label="back arrow">&#x2190;</span> Back
             </motion.button>
           </motion.div>
+
+          {/* Checks Remaining Indicator (for all users) */}
+          {(() => {
+            // Show for authenticated users with credits
+            if (isAuthenticated && result.creditsRemaining !== undefined) {
+              console.log("[Check Page] Showing credit indicator:", result.creditsRemaining);
+              return (
+                <ChecksRemainingIndicator
+                  type="credits"
+                  remaining={result.creditsRemaining}
+                />
+              );
+            }
+
+            // Show for anonymous users with free checks
+            if (!isAuthenticated && result.freeChecksRemaining !== undefined) {
+              console.log("[Check Page] Showing free checks indicator:", result.freeChecksRemaining);
+              return (
+                <ChecksRemainingIndicator
+                  type="free"
+                  remaining={result.freeChecksRemaining}
+                />
+              );
+            }
+
+            return null;
+          })()}
 
           {/* Verdict Hero */}
           <VerdictHero

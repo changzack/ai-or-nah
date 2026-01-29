@@ -15,7 +15,14 @@ export function Footer() {
           </div>
 
           {/* Legal Links */}
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-4 text-sm flex-wrap justify-center">
+            <Link
+              href="/faq"
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+            >
+              FAQ
+            </Link>
+            <span className="text-gray-300">•</span>
             <Link
               href="/terms"
               className="text-gray-600 hover:text-gray-900 font-medium transition-colors"

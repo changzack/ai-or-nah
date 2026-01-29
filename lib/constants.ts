@@ -1,5 +1,33 @@
 import type { VerdictLevel } from "./types";
 
+// Free tier limits
+export const FREE_TIER = {
+  LIFETIME_CHECKS: 3,
+} as const;
+
+// Credit pack definitions
+export const CREDIT_PACKS = {
+  SMALL: { id: 'small', credits: 5, priceCents: 299, priceId: process.env.STRIPE_PRICE_SMALL },
+  MEDIUM: { id: 'medium', credits: 15, priceCents: 699, priceId: process.env.STRIPE_PRICE_MEDIUM },
+  LARGE: { id: 'large', credits: 50, priceCents: 1499, priceId: process.env.STRIPE_PRICE_LARGE },
+} as const;
+
+export type CreditPackId = keyof typeof CREDIT_PACKS;
+
+// Session configuration
+export const SESSION = {
+  COOKIE_NAME: 'aion_session',
+  EXPIRY_DAYS: 30,
+} as const;
+
+// Verification code configuration
+export const VERIFICATION = {
+  CODE_LENGTH: 6,
+  EXPIRY_MINUTES: 10,
+  MAX_SENDS_PER_HOUR: 3,
+  MAX_ATTEMPTS_PER_CODE: 5,
+} as const;
+
 // Verdict thresholds per PRD
 export const VERDICT_THRESHOLDS = {
   REAL_MAX: 30,

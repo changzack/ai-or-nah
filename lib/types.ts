@@ -55,6 +55,8 @@ export type AnalysisResult = {
   checkedAt: string;
   lastAccessedAt: string;
   isCached: boolean;
+  freeChecksRemaining?: number; // For anonymous users
+  creditsRemaining?: number; // For authenticated users
 };
 
 export type ErrorResult = {
@@ -112,3 +114,82 @@ export type AIImageScore = {
 
 /** @deprecated Use AIImageScore instead. Maintained for backward compatibility. */
 export type HiveImageScore = AIImageScore;
+
+// Monetization types
+
+export type CustomerRow = {
+  id: string;
+  email: string;
+  credits: number;
+  stripe_customer_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Customer = {
+  id: string;
+  email: string;
+  credits: number;
+  stripeCustomerId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type DeviceFingerprintRow = {
+  id: string;
+  fingerprint_hash: string;
+  device_token: string | null;
+  checks_used: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DeviceFingerprint = {
+  id: string;
+  fingerprintHash: string;
+  deviceToken: string | null;
+  checksUsed: number;
+};
+
+export type VerificationCodeRow = {
+  id: string;
+  email: string;
+  code: string;
+  attempts: number;
+  expires_at: string;
+  used_at: string | null;
+  created_at: string;
+};
+
+export type PurchaseRow = {
+  id: string;
+  customer_id: string;
+  stripe_session_id: string;
+  credits_purchased: number;
+  amount_cents: number;
+  created_at: string;
+};
+
+export type CreditTransactionReason = 'purchase' | 'analysis' | 'refund' | 'admin_grant';
+
+export type CreditTransactionRow = {
+  id: string;
+  customer_id: string;
+  amount: number;
+  reason: CreditTransactionReason;
+  result_id: string | null;
+  created_at: string;
+};
+
+export type SessionPayload = {
+  email: string;
+  customerId: string;
+  exp: number;
+};
+
+export type PaywallResponse = {
+  status: 'paywall';
+  freeChecksUsed?: number;
+  creditsRemaining?: number;
+  message: string;
+};

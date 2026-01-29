@@ -115,22 +115,57 @@ export default function TermsPage() {
               </div>
             </section>
 
-            {/* Rate Limits */}
+            {/* Free Tier and Credits */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                5. Rate Limits
+                5. Free Tier and Credits
               </h2>
-              <p className="text-base text-gray-700 leading-relaxed">
-                The Service imposes a limit of 3 fresh account checks per IP address per day (resets at midnight PST).
-                Viewing previously analyzed accounts does not count against this limit. We reserve the right to modify
-                these limits at any time.
-              </p>
+              <div className="space-y-3 text-base text-gray-700 leading-relaxed">
+                <p>
+                  <strong>Free Tier:</strong> Every user receives 3 free lifetime checks per device. Free checks are
+                  tracked using browser fingerprinting and localStorage tokens. Once exhausted, you must purchase
+                  credits to continue.
+                </p>
+                <p>
+                  <strong>Credits:</strong> Credits can be purchased in packs ($2.99/5, $6.99/15, $14.99/50).
+                  Each successful analysis consumes 1 credit. Credits never expire and are tied to your email address.
+                </p>
+                <p>
+                  <strong>Deduction Policy:</strong> Credits are ONLY deducted when an analysis succeeds. Failed
+                  analyses (account not found, private account, scraping errors, etc.) do not consume credits.
+                </p>
+              </div>
+            </section>
+
+            {/* Refund Policy */}
+            <section>
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                6. Refund Policy
+              </h2>
+              <div className="space-y-3 text-base text-gray-700 leading-relaxed">
+                <p>
+                  Due to the instant, digital nature of our service, we generally do not offer refunds for credit
+                  purchases. All sales are final once credits are delivered to your account.
+                </p>
+                <p>
+                  However, we will provide refunds or credit adjustments in the following cases:
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Technical errors that prevented you from using purchased credits</li>
+                  <li>Duplicate charges or billing errors</li>
+                  <li>Service outages that consumed credits without providing results</li>
+                </ul>
+                <p>
+                  To request a refund or credit adjustment, contact us with your purchase details within 7 days
+                  of the transaction.
+                </p>
+              </div>
             </section>
 
             {/* Limitation of Liability */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                6. Limitation of Liability
+                7. Limitation of Liability
               </h2>
               <div className="space-y-3 text-base text-gray-700 leading-relaxed">
                 <p>
@@ -153,7 +188,7 @@ export default function TermsPage() {
             {/* Third-Party Services */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                7. Third-Party Services
+                8. Third-Party Services
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
                 The Service uses third-party APIs and services (including Instagram scraping and AI detection services).
@@ -165,7 +200,7 @@ export default function TermsPage() {
             {/* Intellectual Property */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                8. Intellectual Property
+                9. Intellectual Property
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
                 All content, features, and functionality of the Service (excluding user-submitted content and
@@ -177,7 +212,7 @@ export default function TermsPage() {
             {/* Changes to Terms */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                9. Changes to Terms
+                10. Changes to Terms
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
                 We reserve the right to modify these Terms of Service at any time. Changes will be effective
@@ -189,7 +224,7 @@ export default function TermsPage() {
             {/* Termination */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                10. Termination
+                11. Termination
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
                 We reserve the right to terminate or suspend access to the Service immediately, without prior
@@ -200,7 +235,7 @@ export default function TermsPage() {
             {/* Governing Law */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                11. Governing Law
+                12. Governing Law
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
                 These Terms shall be governed by and construed in accordance with the laws of the United States,
@@ -211,7 +246,7 @@ export default function TermsPage() {
             {/* Contact */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                12. Contact
+                13. Contact
               </h2>
               <p className="text-base text-gray-700 leading-relaxed">
                 If you have questions about these Terms, please contact us through our website.

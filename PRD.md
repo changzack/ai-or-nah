@@ -99,6 +99,79 @@ There is a proliferation of fake AI Instagram accounts featuring AI-generated mo
 - Show error if input is empty
 - Show error if format is invalid
 
+### 1b. Landing Page SEO & Content Strategy
+
+**Purpose:** Capture organic search traffic while maintaining conversion-optimized utility above the fold.
+
+**Business Goals:**
+- Rank for AI detection and Instagram scam-related search queries
+- Build trust and credibility for skeptical first-time visitors
+- Provide genuine educational value (shareable content)
+- Maintain fast path-to-action for ready-to-convert users
+
+**Target Keywords:**
+
+| Priority | Keywords |
+|----------|----------|
+| Primary | "AI instagram detector", "check if instagram is real", "fake instagram account checker" |
+| Secondary | "how to spot AI generated photos", "AI generated instagram models", "OnlyFans scam instagram" |
+| Long-tail | "how to tell if instagram model is AI generated", "detect AI photos instagram" |
+
+**Page Structure (Hybrid Layout):**
+
+The homepage uses a "utility first, education below" layout:
+
+1. **Above the Fold (Hero)**
+   - Logo, H1 headline, input form, CTA button
+   - Scroll indicator to signal more content below
+   - Goal: Immediate utility for ready users
+
+2. **Below the Fold (SEO Content)**
+   - Social proof bar (accounts analyzed counter)
+   - "The Problem" section - educational content about AI scams
+   - "How It Works" section - 3-step process explanation
+   - "Red Flags" section - user education checklist
+   - Inline FAQ section - common questions with schema markup
+   - Final CTA - repeated input form
+
+**Content Requirements:**
+
+**Social Proof Bar:**
+- Display: "[X,XXX] accounts analyzed | Results in 30 seconds | 100% private"
+- Pull count from database or use milestone number
+
+**The Problem Section:**
+- H2: "The AI Instagram Scam Epidemic"
+- 150-200 words explaining the scam pattern
+- Targets: "AI generated instagram", "instagram scam", "fake OnlyFans"
+
+**How It Works Section:**
+- H2: "How AI or Nah Detects Fake Accounts"
+- 3 steps: Profile Analysis -> AI Image Detection -> Pattern Matching
+- Brief, confidence-building explanation
+
+**Red Flags Section:**
+- H2: "5 Red Flags of AI Instagram Accounts"
+- Checklist format (featured snippet opportunity)
+- Flags: Flawless skin, identical poses, no friends, generic captions, suspicious engagement
+- Genuinely useful standalone content
+
+**Inline FAQ Section:**
+- H2: "Frequently Asked Questions"
+- 5 key questions in expandable accordion
+- Questions: Accuracy, pricing, data access, analysis time, private accounts
+- FAQPage schema markup for rich results
+
+**Final CTA Section:**
+- H2: "Ready to Check an Account?"
+- Duplicate input form for users who scrolled
+
+**Content Guidelines:**
+- Tone: Casual, direct, slightly irreverent (matches brand)
+- Length: ~800-1000 words total new content
+- Keywords: Natural integration, no stuffing
+- Mobile-first: All sections must work well on small screens
+
 ### 2. Loading Experience
 
 **Purpose:** Keep user engaged during 30-60 second analysis

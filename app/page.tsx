@@ -9,16 +9,23 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Sticker } from "@/components/ui/Sticker";
 import { DesktopGate } from "@/components/DesktopGate";
+import { Header } from "@/components/Header";
+import { FreeChecksIndicator } from "@/components/FreeChecksIndicator";
 import { Footer } from "@/components/Footer";
+import { useAuth } from "@/contexts/AuthContext";
+import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition, float } from "@/lib/animations";
 
 function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { fingerprint, deviceToken, isLoading: deviceLoading } = useDeviceIdentity();
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRateLimitNotice, setShowRateLimitNotice] = useState(false);
+  const [freeChecksRemaining, setFreeChecksRemaining] = useState<number | null>(null);
 
   // Check if user was redirected due to rate limit
   useEffect(() => {
@@ -31,6 +38,48 @@ function HomePageContent() {
       return () => clearTimeout(timeout);
     }
   }, [searchParams]);
+
+  // Fetch free checks remaining for anonymous users
+  const fetchFreeChecks = async () => {
+    if (isAuthenticated || authLoading || deviceLoading) {
+      return;
+    }
+
+    if (fingerprint) {
+      try {
+        const response = await fetch("/api/device/checks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fingerprint, deviceToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFreeChecksRemaining(data.freeChecksRemaining);
+        }
+      } catch (error) {
+        console.error("Error fetching free checks:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchFreeChecks();
+  }, [isAuthenticated, authLoading, deviceLoading, fingerprint, deviceToken]);
+
+  // Refresh free checks when page becomes visible (user navigates back)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && !isAuthenticated) {
+        fetchFreeChecks();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isAuthenticated, fingerprint, deviceToken, authLoading, deviceLoading]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -58,6 +107,7 @@ function HomePageContent() {
   return (
     <>
       <DesktopGate />
+      <Header />
 
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 flex items-center justify-center px-5 py-6 relative">
@@ -166,6 +216,18 @@ function HomePageContent() {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Free Checks Indicator (for anonymous users) */}
+            {!authLoading && !isAuthenticated && freeChecksRemaining !== null && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mb-6"
+              >
+                <FreeChecksIndicator remaining={freeChecksRemaining} />
+              </motion.div>
+            )}
 
             {/* Header */}
             <motion.div variants={fadeInUp} className="text-center mb-10">
