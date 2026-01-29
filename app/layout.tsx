@@ -52,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} antialiased`}>
+      <body className={`${jakarta.variable} antialiased`} suppressHydrationWarning>
         <AnalyticsProvider>
           <AuthProvider>
             {children}
