@@ -4,12 +4,17 @@ import { verifyWebhookSignature } from "@/lib/stripe";
 import { getOrCreateCustomer, addCredits, updateStripeCustomerId } from "@/lib/db/customers";
 import { recordPurchase } from "@/lib/db/purchases";
 
+// Disable body parsing so we can get raw body for signature verification
+export const runtime = 'nodejs';
+
 /**
  * Stripe webhook handler
  * POST /api/webhook
  * Handles checkout.session.completed events
  */
 export async function POST(request: Request) {
+  console.log("[webhook] Received webhook request");
+  console.log("[webhook] Headers:", Object.fromEntries(request.headers.entries()));
   try {
     const body = await request.text();
     const headersList = await headers();
