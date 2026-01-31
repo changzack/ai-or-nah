@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { AnalysisResult } from "@/lib/types";
+import { getSupabaseServer } from "@/lib/supabase/server";
 
 export async function generateMetadata({
   params,
@@ -8,32 +9,32 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { username } = await params;
 
-  // Fetch cached result to get AI likelihood for metadata
-  // This is a lightweight read-only operation
+  // Fetch cached result directly from database for metadata
+  // This is more reliable than HTTP fetch and runs server-side
   let aiLikelihood: number | null = null;
   let verdict = "unclear";
   let hasResult = false;
 
   try {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const response = await fetch(
-      `${siteUrl}/api/results/${username}`,
-      {
-        method: "GET",
-        cache: "no-store",
-      }
-    );
+    const supabase = getSupabaseServer();
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data.status === "success") {
-        aiLikelihood = data.aiLikelihood;
-        verdict = data.verdict;
-        hasResult = true;
-      }
+    // Query the database directly for the cached result
+    const { data: cachedResult, error } = await supabase
+      .from("results")
+      .select("ai_likelihood, verdict")
+      .eq("username", username.toLowerCase())
+      .single();
+
+    if (!error && cachedResult) {
+      aiLikelihood = cachedResult.ai_likelihood;
+      verdict = cachedResult.verdict;
+      hasResult = true;
+      console.log(`[Metadata] Found cached result for @${username}: ${aiLikelihood}% (${verdict})`);
+    } else {
+      console.log(`[Metadata] No cached result found for @${username}`);
     }
   } catch (err) {
-    console.error("Failed to fetch metadata:", err);
+    console.error("[Metadata] Error fetching cached result:", err);
   }
 
   // Generate title and description based on whether we have a result
