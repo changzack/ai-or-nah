@@ -221,6 +221,7 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
                 </div>
               </motion.button>
             ))}
+          </motion.div>
 
           {/* Error */}
           <AnimatePresence>
