@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabaseServer } from "@/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 
 /**
  * GET endpoint to fetch cached analysis results (read-only)
@@ -19,7 +19,7 @@ export async function GET(
       );
     }
 
-    const supabase = getSupabaseServer();
+    const supabase = createServerClient();
 
     // Fetch cached result
     const { data: cachedResult, error } = await supabase

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { AnalysisResult } from "@/lib/types";
-import { getSupabaseServer } from "@/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 
 export async function generateMetadata({
   params,
@@ -16,7 +16,7 @@ export async function generateMetadata({
   let hasResult = false;
 
   try {
-    const supabase = getSupabaseServer();
+    const supabase = createServerClient();
 
     // Query the database directly for the cached result
     const { data: cachedResult, error } = await supabase
