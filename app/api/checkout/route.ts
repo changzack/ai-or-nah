@@ -34,6 +34,12 @@ export async function POST(request: Request) {
     const session = await getSession();
 
     // Create Stripe Checkout session
+    console.log("[checkout] Creating checkout session:", {
+      packId,
+      hasEmail: !!session?.email,
+      hasCustomerId: !!session?.customerId,
+    });
+
     const checkoutSession = await createCheckoutSession({
       packId: packId as CreditPackId,
       customerEmail: session?.email,
@@ -41,6 +47,7 @@ export async function POST(request: Request) {
     });
 
     if (!checkoutSession) {
+      console.error("[checkout] Failed to create checkout session - createCheckoutSession returned null");
       return NextResponse.json(
         {
           status: "error",
@@ -50,6 +57,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    console.log("[checkout] Successfully created checkout session:", checkoutSession.id);
 
     return NextResponse.json({
       status: "success",

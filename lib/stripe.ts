@@ -26,16 +26,30 @@ export function getStripe(): Stripe {
  * Get credit pack configuration by ID from database
  */
 export async function getCreditPack(packId: string) {
+  console.log(`[stripe] getCreditPack called with packId: ${packId}`);
+
   const product = await getProduct(packId.toLowerCase());
   if (!product) {
+    console.error(`[stripe] Product not found in database for packId: ${packId}`);
     return null;
   }
+
+  console.log(`[stripe] Found product:`, {
+    id: product.id,
+    name: product.name,
+    credits: product.credits,
+    price_cents: product.price_cents,
+    has_test_id: !!product.stripe_price_id_test,
+    has_live_id: !!product.stripe_price_id_live,
+  });
 
   const priceId = getStripePriceId(product);
   if (!priceId) {
     console.error(`[stripe] No price ID found for product ${packId} in current environment`);
     return null;
   }
+
+  console.log(`[stripe] Returning pack with priceId: ${priceId}`);
 
   return {
     id: product.id,
@@ -53,12 +67,28 @@ export async function createCheckoutSession(params: {
   customerEmail?: string;
   customerId?: string;
 }): Promise<Stripe.Checkout.Session | null> {
+  console.log("[stripe] createCheckoutSession called:", {
+    packId: params.packId,
+    hasEmail: !!params.customerEmail,
+    hasCustomerId: !!params.customerId,
+  });
+
   const pack = await getCreditPack(params.packId);
 
   if (!pack || !pack.priceId) {
-    console.error("[stripe] Invalid pack ID or missing price ID:", params.packId);
+    console.error("[stripe] Invalid pack ID or missing price ID:", {
+      packId: params.packId,
+      hasPack: !!pack,
+      priceId: pack?.priceId,
+    });
     return null;
   }
+
+  console.log("[stripe] Creating Stripe checkout session with:", {
+    priceId: pack.priceId,
+    credits: pack.credits,
+    priceCents: pack.priceCents,
+  });
 
   try {
     const stripe = getStripe();
@@ -81,6 +111,7 @@ export async function createCheckoutSession(params: {
       },
     });
 
+    console.log("[stripe] Successfully created Stripe session:", session.id);
     return session;
   } catch (error) {
     console.error("[stripe] Error creating checkout session:", error);
