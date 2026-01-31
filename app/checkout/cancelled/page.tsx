@@ -1,12 +1,18 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { DesktopGate } from "@/components/DesktopGate";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
+import { track } from "@/lib/analytics";
 
 export default function CheckoutCancelledPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    track('Cancelled Checkout');
+  }, []);
 
   return (
     <>

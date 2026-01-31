@@ -1,10 +1,16 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DesktopGate } from "@/components/DesktopGate";
+import { track } from "@/lib/analytics";
 
 export default function PrivacyPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    track('Viewed Privacy');
+  }, []);
 
   return (
     <>

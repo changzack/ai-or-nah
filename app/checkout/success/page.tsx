@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { DesktopGate } from "@/components/DesktopGate";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
+import { track } from "@/lib/analytics";
 
 function CheckoutSuccessContent() {
   const router = useRouter();
@@ -105,6 +106,16 @@ function CheckoutSuccessContent() {
 
     initSession();
   }, [sessionId]);
+
+  // Track successful purchase
+  useEffect(() => {
+    if (!loading && !error && credits !== null) {
+      track('Completed Purchase', {
+        credits,
+        source: 'checkout_redirect'
+      });
+    }
+  }, [loading, error, credits]);
 
   // Single return with conditional rendering
   return (

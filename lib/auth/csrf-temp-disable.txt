@@ -1,0 +1,18 @@
+TEMPORARY CSRF DISABLE INSTRUCTIONS
+====================================
+
+If you need to unblock email login RIGHT NOW while we debug,
+you can temporarily disable CSRF for the send-code endpoint.
+
+WARNING: Only do this temporarily! Re-enable CSRF once the issue is fixed.
+
+In app/api/auth/send-code/route.ts, comment out the CSRF check:
+
+// CSRF validation
+// if (!validateOrigin(request)) {
+//   return createCsrfError();
+// }
+
+This will let emails send while we figure out the origin mismatch.
+
+REMEMBER TO RE-ENABLE THIS AFTER FIXING!

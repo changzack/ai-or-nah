@@ -56,6 +56,7 @@ Primary conversion metrics:
 | `Selected Package` | User selects a credit package | `package`, `price`, `credits` |
 | `Started Checkout` | User initiates Stripe checkout | `package`, `price` |
 | `Completed Purchase` | Stripe webhook confirms payment | `package`, `price`, `credits`, `transactionId` |
+| `Cancelled Checkout` | User cancels checkout and returns | — |
 | `Failed Purchase` | Payment fails | `package`, `errorType` |
 | `Used Credit` | Credit deducted for analysis | `creditsRemaining`, `username` |
 | `Used Free Check` | Free check deducted (anonymous) | `freeChecksRemaining`, `username` |
