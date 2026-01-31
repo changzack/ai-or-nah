@@ -26,30 +26,17 @@ export function getStripe(): Stripe {
  * Get credit pack configuration by ID from database
  */
 export async function getCreditPack(packId: string) {
-  console.log(`[stripe] getCreditPack called with packId: ${packId}`);
-
   const product = await getProduct(packId.toLowerCase());
   if (!product) {
-    console.error(`[stripe] Product not found in database for packId: ${packId}`);
+    console.error(`[stripe] Product not found: ${packId}`);
     return null;
   }
-
-  console.log(`[stripe] Found product:`, {
-    id: product.id,
-    name: product.name,
-    credits: product.credits,
-    price_cents: product.price_cents,
-    has_test_id: !!product.stripe_price_id_test,
-    has_live_id: !!product.stripe_price_id_live,
-  });
 
   const priceId = getStripePriceId(product);
   if (!priceId) {
-    console.error(`[stripe] No price ID found for product ${packId} in current environment`);
+    console.error(`[stripe] No price ID for product: ${packId}`);
     return null;
   }
-
-  console.log(`[stripe] Returning pack with priceId: ${priceId}`);
 
   return {
     id: product.id,
@@ -67,28 +54,12 @@ export async function createCheckoutSession(params: {
   customerEmail?: string;
   customerId?: string;
 }): Promise<Stripe.Checkout.Session | null> {
-  console.log("[stripe] createCheckoutSession called:", {
-    packId: params.packId,
-    hasEmail: !!params.customerEmail,
-    hasCustomerId: !!params.customerId,
-  });
-
   const pack = await getCreditPack(params.packId);
 
   if (!pack || !pack.priceId) {
-    console.error("[stripe] Invalid pack ID or missing price ID:", {
-      packId: params.packId,
-      hasPack: !!pack,
-      priceId: pack?.priceId,
-    });
+    console.error("[stripe] Invalid pack or missing price ID");
     return null;
   }
-
-  console.log("[stripe] Creating Stripe checkout session with:", {
-    priceId: pack.priceId,
-    credits: pack.credits,
-    priceCents: pack.priceCents,
-  });
 
   try {
     const stripe = getStripe();
@@ -111,10 +82,9 @@ export async function createCheckoutSession(params: {
       },
     });
 
-    console.log("[stripe] Successfully created Stripe session:", session.id);
     return session;
   } catch (error) {
-    console.error("[stripe] Error creating checkout session:", error);
+    console.error("[stripe] Checkout session creation failed");
     return null;
   }
 }
@@ -130,7 +100,7 @@ export async function getCheckoutSession(
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     return session;
   } catch (error) {
-    console.error("[stripe] Error retrieving checkout session:", error);
+    console.error("[stripe] Session retrieval failed");
     return null;
   }
 }
@@ -154,7 +124,7 @@ export function verifyWebhookSignature(
     const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
     return event;
   } catch (error) {
-    console.error("[stripe] Webhook signature verification failed:", error);
+    console.error("[stripe] Webhook signature verification failed");
     return null;
   }
 }

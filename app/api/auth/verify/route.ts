@@ -74,7 +74,6 @@ export async function POST(request: Request) {
 
     // Migrate anonymous checks to customer account (if fingerprint provided)
     if (fingerprint) {
-      console.log(`[verify] Migrating checks from fingerprint ${fingerprint} to customer ${customer.id}`);
       await migrateChecksToCustomer(fingerprint, customer.id);
     }
 

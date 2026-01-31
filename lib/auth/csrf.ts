@@ -35,14 +35,8 @@ export function validateOrigin(request: Request): boolean {
 
   const isValid = allowedOrigins.includes(origin);
 
-  // Log for debugging (helps troubleshoot production issues)
-  console.log("[csrf] Validating origin:", origin);
-  console.log("[csrf] Allowed origins:", allowedOrigins);
-  console.log("[csrf] NEXT_PUBLIC_SITE_URL:", siteUrl);
-  console.log("[csrf] Valid:", isValid);
-
   if (!isValid) {
-    console.error("[csrf] ❌ Origin validation failed");
+    console.error("[csrf] Origin validation failed");
   }
 
   return isValid;

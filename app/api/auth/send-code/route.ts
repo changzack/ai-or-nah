@@ -64,17 +64,13 @@ export async function POST(request: Request) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       const fromEmail = process.env.RESEND_FROM_EMAIL || "noreply@aiornah.xyz";
 
-      console.log("[send-code] Sending email to:", email, "from:", fromEmail);
-
-      const result = await resend.emails.send({
+      await resend.emails.send({
         from: fromEmail,
         to: email,
         subject: emailContent.subject,
         html: emailContent.html,
         text: emailContent.text,
       });
-
-      console.log("[send-code] Email sent successfully:", result);
     } catch (emailError) {
       console.error("[send-code] Error sending email:", emailError);
       console.error("[send-code] Email error details:", JSON.stringify(emailError, null, 2));

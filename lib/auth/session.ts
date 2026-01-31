@@ -7,9 +7,16 @@ import type { SessionPayload } from "../types";
  * Session management using JWT stored in HTTP-only cookies
  */
 
-const SECRET_KEY = new TextEncoder().encode(
-  process.env.SESSION_SECRET || "default-secret-key-change-me"
-);
+const getSecretKey = () => {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) {
+    throw new Error("SESSION_SECRET environment variable is required");
+  }
+  if (secret.length < 32) {
+    throw new Error("SESSION_SECRET must be at least 32 characters");
+  }
+  return new TextEncoder().encode(secret);
+};
 
 /**
  * Create a session for a customer
@@ -30,7 +37,7 @@ export async function createSession(
   const token = await new SignJWT(payload as any)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(payload.exp)
-    .sign(SECRET_KEY);
+    .sign(getSecretKey());
 
   // Set HTTP-only cookie
   (await cookies()).set(SESSION.COOKIE_NAME, token, {
@@ -55,7 +62,7 @@ export async function getSession(): Promise<SessionPayload | null> {
   }
 
   try {
-    const { payload } = await jwtVerify(token, SECRET_KEY);
+    const { payload } = await jwtVerify(token, getSecretKey());
     return payload as SessionPayload;
   } catch (error) {
     console.error("[session] Invalid or expired session:", error);

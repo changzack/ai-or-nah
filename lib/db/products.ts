@@ -61,26 +61,12 @@ export function getStripePriceId(product: Product): string | null {
   const isProduction = process.env.NODE_ENV === "production" &&
                        process.env.NEXT_PUBLIC_SITE_URL?.includes("aiornah.xyz");
 
-  console.log("[products] Environment detection:", {
-    NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-    isProduction,
-    product_id: product.id,
-    has_test_id: !!product.stripe_price_id_test,
-    has_live_id: !!product.stripe_price_id_live,
-  });
-
   const priceId = isProduction
     ? product.stripe_price_id_live
     : product.stripe_price_id_test;
 
   if (!priceId) {
-    console.error("[products] No price ID found!", {
-      product_id: product.id,
-      isProduction,
-      test_id: product.stripe_price_id_test,
-      live_id: product.stripe_price_id_live,
-    });
+    console.error("[products] No price ID for product:", product.id);
   }
 
   return priceId;

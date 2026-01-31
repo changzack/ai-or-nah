@@ -30,8 +30,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("[stripe-session] Verifying session:", sessionId);
-
     // Get the Stripe session
     const stripeSession = await getCheckoutSession(sessionId);
     if (!stripeSession) {
@@ -73,8 +71,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("[stripe-session] Creating session for:", customerEmail);
-
     // Get or create customer
     const customer = await getOrCreateCustomer(customerEmail);
     if (!customer) {
@@ -90,11 +86,6 @@ export async function POST(request: Request) {
 
     // Create authenticated session
     await createSession(customer.email, customer.id);
-
-    console.log(
-      "[stripe-session] Session created, credits:",
-      customer.credits
-    );
 
     return NextResponse.json({
       status: "success",
