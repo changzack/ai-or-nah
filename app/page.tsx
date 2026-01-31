@@ -13,6 +13,7 @@ import { Header } from "@/components/Header";
 import { FreeChecksIndicator } from "@/components/FreeChecksIndicator";
 import { Footer } from "@/components/Footer";
 import { TrustBar } from "@/components/landing/TrustBar";
+import { WhyUseSection } from "@/components/landing/WhyUseSection";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
@@ -270,7 +271,7 @@ function HomePageContent() {
               </motion.div>
 
               <motion.h1
-                className="text-2xl md:text-3xl font-bold text-gray-800 mb-1 -mt-8"
+                className="text-2xl md:text-3xl font-bold text-gray-800 -mt-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -278,14 +279,6 @@ function HomePageContent() {
                 Detect AI-Generated
                 <br className="md:hidden" /> Instagram Accounts
               </motion.h1>
-              <motion.p
-                className="text-lg text-gray-600"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                Check if your IG crush is real — find out in seconds
-              </motion.p>
             </motion.div>
 
             {/* Input Form */}
@@ -342,23 +335,8 @@ function HomePageContent() {
             {/* Trust Signals */}
             <TrustBar />
 
-            {/* Supporting Copy */}
-            <motion.div
-              className="mt-8 mb-8 text-center space-y-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              <p className="text-base text-gray-600">
-                Don&apos;t get catfished.
-              </p>
-              <p className="text-base text-gray-600">
-                Verify before you slide into DMs.
-              </p>
-              <p className="text-base text-gray-600">
-                Check before you subscribe.
-              </p>
-            </motion.div>
+            {/* Why Use Section */}
+            <WhyUseSection />
 
             {/* How It Works */}
             <HowItWorks />

@@ -6,17 +6,17 @@ const steps = [
   {
     icon: "🔍",
     title: "Profile Analysis",
-    description: "We scan posts, bio, and engagement patterns",
+    description: "We scan their posts, bio, and engagement patterns",
   },
   {
     icon: "🤖",
     title: "AI Detection",
-    description: "Each image is checked for AI-generated signs",
+    description: "Advanced AI checks each image for generated content",
   },
   {
     icon: "📊",
-    title: "Your Verdict",
-    description: "Get a clear score with detailed breakdown",
+    title: "Detailed Verdict",
+    description: "Get a clear percentage score with full breakdown",
   },
 ];
 
@@ -25,16 +25,25 @@ export function HowItWorks() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.7 }}
+      transition={{ duration: 0.5, delay: 0.8 }}
       className="mb-8"
     >
+      <h2 className="text-xl font-bold text-gray-900 text-center mb-6">
+        How It Works
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {steps.map((step, index) => (
-          <div key={index} className="text-center">
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
+            className="text-center"
+          >
             <div className="text-3xl mb-2">{step.icon}</div>
             <h3 className="font-semibold text-gray-900 mb-1">{step.title}</h3>
             <p className="text-sm text-gray-600">{step.description}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </motion.div>
