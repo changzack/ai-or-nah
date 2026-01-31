@@ -7,17 +7,6 @@ import { recordPurchase } from "@/lib/db/purchases";
 export const runtime = 'nodejs';
 
 /**
- * Test handler to verify route is accessible
- */
-export async function GET() {
-  return NextResponse.json({
-    status: "ok",
-    message: "Webhook endpoint is accessible",
-    timestamp: new Date().toISOString()
-  });
-}
-
-/**
  * Stripe webhook handler
  * POST /api/webhook
  * Handles checkout.session.completed events
