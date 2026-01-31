@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
-import { CREDIT_PACKS } from "@/lib/constants";
 import type { CreditPackId } from "@/lib/constants";
 import { track } from "@/lib/analytics";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,37 +13,56 @@ type PaywallProps = {
   onShowEmailVerification?: () => void;
 };
 
-const packs = [
-  {
-    id: "small" as CreditPackId,
-    name: "Starter",
-    credits: CREDIT_PACKS.SMALL.credits,
-    price: CREDIT_PACKS.SMALL.priceCents / 100,
-    pricePerCheck: (CREDIT_PACKS.SMALL.priceCents / CREDIT_PACKS.SMALL.credits / 100).toFixed(2),
-    popular: false,
-  },
-  {
-    id: "medium" as CreditPackId,
-    name: "Popular",
-    credits: CREDIT_PACKS.MEDIUM.credits,
-    price: CREDIT_PACKS.MEDIUM.priceCents / 100,
-    pricePerCheck: (CREDIT_PACKS.MEDIUM.priceCents / CREDIT_PACKS.MEDIUM.credits / 100).toFixed(2),
-    popular: true,
-  },
-  {
-    id: "large" as CreditPackId,
-    name: "Best Value",
-    credits: CREDIT_PACKS.LARGE.credits,
-    price: CREDIT_PACKS.LARGE.priceCents / 100,
-    pricePerCheck: (CREDIT_PACKS.LARGE.priceCents / CREDIT_PACKS.LARGE.credits / 100).toFixed(2),
-    popular: false,
-  },
-];
+type ProductPack = {
+  id: string;
+  name: string;
+  credits: number;
+  price: number;
+  pricePerCheck: string;
+  popular?: boolean;
+};
+
+const PACK_DISPLAY_NAMES: Record<string, { name: string; popular: boolean }> = {
+  small: { name: "Starter", popular: false },
+  medium: { name: "Popular", popular: true },
+  large: { name: "Best Value", popular: false },
+};
 
 export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: PaywallProps) {
   const { isAuthenticated, email } = useAuth();
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [packs, setPacks] = useState<ProductPack[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+
+        if (data.status === "success") {
+          const formattedPacks = data.products.map((product: any) => ({
+            id: product.id,
+            name: PACK_DISPLAY_NAMES[product.id]?.name || product.name,
+            credits: product.credits,
+            price: product.price,
+            pricePerCheck: product.pricePerCheck,
+            popular: PACK_DISPLAY_NAMES[product.id]?.popular || false,
+          }));
+          setPacks(formattedPacks);
+        }
+      } catch (err) {
+        console.error("[paywall] Error fetching products:", err);
+        setError("Failed to load pricing. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Track paywall view on mount
   useEffect(() => {
@@ -163,7 +181,12 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
 
           {/* Credit Packs */}
           <motion.div variants={fadeInUp} className="space-y-3 mb-6">
-            {packs.map((pack) => (
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="w-8 h-8 border-2 border-[#8B5CF6] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className="text-sm text-gray-500 mt-2">Loading pricing...</p>
+              </div>
+            ) : packs.map((pack) => (
               <motion.button
                 key={pack.id}
                 onClick={() => handlePurchase(pack.id)}
@@ -198,7 +221,6 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
                 </div>
               </motion.button>
             ))}
-          </motion.div>
 
           {/* Error */}
           <AnimatePresence>

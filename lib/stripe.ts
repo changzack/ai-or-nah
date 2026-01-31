@@ -1,5 +1,6 @@
 import Stripe from "stripe";
-import { CREDIT_PACKS, type CreditPackId } from "./constants";
+import { type CreditPackId } from "./constants";
+import { getProduct, getStripePriceId } from "./db/products";
 
 /**
  * Stripe client and utilities for payment processing
@@ -22,14 +23,26 @@ export function getStripe(): Stripe {
 }
 
 /**
- * Get credit pack configuration by ID
+ * Get credit pack configuration by ID from database
  */
-export function getCreditPack(packId: string) {
-  const pack = CREDIT_PACKS[packId.toUpperCase() as Uppercase<CreditPackId>];
-  if (!pack) {
+export async function getCreditPack(packId: string) {
+  const product = await getProduct(packId.toLowerCase());
+  if (!product) {
     return null;
   }
-  return pack;
+
+  const priceId = getStripePriceId(product);
+  if (!priceId) {
+    console.error(`[stripe] No price ID found for product ${packId} in current environment`);
+    return null;
+  }
+
+  return {
+    id: product.id,
+    credits: product.credits,
+    priceCents: product.price_cents,
+    priceId,
+  };
 }
 
 /**
@@ -40,7 +53,7 @@ export async function createCheckoutSession(params: {
   customerEmail?: string;
   customerId?: string;
 }): Promise<Stripe.Checkout.Session | null> {
-  const pack = getCreditPack(params.packId);
+  const pack = await getCreditPack(params.packId);
 
   if (!pack || !pack.priceId) {
     console.error("[stripe] Invalid pack ID or missing price ID:", params.packId);

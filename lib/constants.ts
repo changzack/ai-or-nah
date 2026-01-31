@@ -5,14 +5,18 @@ export const FREE_TIER = {
   LIFETIME_CHECKS: 3,
 } as const;
 
-// Credit pack definitions
-export const CREDIT_PACKS = {
-  SMALL: { id: 'small', credits: 5, priceCents: 299, priceId: process.env.STRIPE_PRICE_SMALL },
-  MEDIUM: { id: 'medium', credits: 15, priceCents: 699, priceId: process.env.STRIPE_PRICE_MEDIUM },
-  LARGE: { id: 'large', credits: 50, priceCents: 1499, priceId: process.env.STRIPE_PRICE_LARGE },
-} as const;
+// Credit pack type definition
+// Note: Actual product configuration is now stored in Supabase products table
+// See lib/db/products.ts for querying products
+export type CreditPackId = "small" | "medium" | "large";
 
-export type CreditPackId = keyof typeof CREDIT_PACKS;
+// Legacy constant for backward compatibility (values only, no Stripe IDs)
+// Use getProduct() from lib/db/products.ts for full product data
+export const CREDIT_PACK_INFO = {
+  SMALL: { id: 'small' as CreditPackId, credits: 5, priceCents: 299 },
+  MEDIUM: { id: 'medium' as CreditPackId, credits: 15, priceCents: 699 },
+  LARGE: { id: 'large' as CreditPackId, credits: 50, priceCents: 1499 },
+} as const;
 
 // Session configuration
 export const SESSION = {
