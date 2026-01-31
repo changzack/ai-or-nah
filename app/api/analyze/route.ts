@@ -221,8 +221,8 @@ export async function POST(request: Request) {
     const result = await analyzeAccount(username);
 
     if (result.status === "error") {
-      // Don't deduct on error
-      return NextResponse.json(result, { status: 404 });
+      // Don't deduct on error - explicitly tell the user they weren't charged
+      return NextResponse.json({ ...result, charged: false }, { status: 404 });
     }
 
     // Step 4: Deduct credit/free check ONLY on success (not on error)

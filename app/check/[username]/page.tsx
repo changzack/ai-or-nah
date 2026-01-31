@@ -423,12 +423,38 @@ export default function CheckPage({
               transition={{ type: "spring", stiffness: 300, delay: 0.1 }}
               className="text-6xl mb-4"
             >
-              <span aria-label="warning">&#x26A0;&#xFE0F;</span>
+              😔
             </motion.div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              couldn't analyze account
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              we're sorry, we couldn't analyze this account
             </h2>
-            <p className="text-gray-600 mb-6">{error}</p>
+
+            <div className="bg-white rounded-xl p-5 mb-5 text-left" style={{ boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)" }}>
+              <p className="text-gray-700 font-medium mb-3">This could be because:</p>
+              <ul className="text-gray-600 space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400">•</span>
+                  <span>The account is private or restricted</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400">•</span>
+                  <span>Instagram is temporarily blocking access</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400">•</span>
+                  <span>The account doesn't have enough photos</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400">•</span>
+                  <span>Something else on our end</span>
+                </li>
+              </ul>
+            </div>
+
+            <p className="text-[#A8D5BA] font-medium mb-6">
+              ✓ Don't worry — you weren't charged for this check.
+            </p>
+
             <motion.button
               onClick={() => router.push("/")}
               className="bg-[#FF6B6B] text-white px-6 py-3 rounded-full font-bold hover:bg-[#E85555] transition-colors"

@@ -145,7 +145,7 @@ export function VerdictHero({
 
       {/* Watermark for screenshots */}
       <div className="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
-        aiornah.ai
+        aiornah.xyz
       </div>
     </motion.div>
   );

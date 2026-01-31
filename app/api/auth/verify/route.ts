@@ -70,11 +70,29 @@ export async function POST(request: Request) {
     }
 
     // Create session
-    await createSession(customer.email, customer.id);
+    try {
+      await createSession(customer.email, customer.id);
+    } catch (sessionError) {
+      console.error("[verify] Error creating session:", sessionError);
+      return NextResponse.json(
+        {
+          status: "error",
+          error: "session_creation_failed",
+          message: "Failed to create session. Please try again.",
+        },
+        { status: 500 }
+      );
+    }
 
     // Migrate anonymous checks to customer account (if fingerprint provided)
+    // This is non-critical, so we don't fail verification if it errors
     if (fingerprint) {
-      await migrateChecksToCustomer(fingerprint, customer.id);
+      try {
+        await migrateChecksToCustomer(fingerprint, customer.id);
+      } catch (migrateError) {
+        console.error("[verify] Error migrating checks (non-critical):", migrateError);
+        // Continue anyway - migration is not critical for login
+      }
     }
 
     return NextResponse.json({
