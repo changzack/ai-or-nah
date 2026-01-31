@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { verifyWebhookSignature } from "@/lib/stripe";
 import { getOrCreateCustomer, addCredits, updateStripeCustomerId } from "@/lib/db/customers";
 import { recordPurchase } from "@/lib/db/purchases";
@@ -25,11 +24,16 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   console.log("[webhook] Received webhook request");
-  console.log("[webhook] Headers:", Object.fromEntries(request.headers.entries()));
+  console.log("[webhook] Method:", request.method);
+
   try {
+    // Get signature from request headers directly
+    const signature = request.headers.get("stripe-signature");
+    console.log("[webhook] Has signature:", !!signature);
+
+    // Get raw body for signature verification
     const body = await request.text();
-    const headersList = await headers();
-    const signature = headersList.get("stripe-signature");
+    console.log("[webhook] Body length:", body.length);
 
     if (!signature) {
       return NextResponse.json(
