@@ -14,7 +14,7 @@ type PaywallProps = {
 };
 
 type ProductPack = {
-  id: string;
+  id: CreditPackId;
   name: string;
   credits: number;
   price: number;
