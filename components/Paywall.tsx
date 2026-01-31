@@ -6,6 +6,7 @@ import { fadeInUp, staggerContainer, springTransition } from "@/lib/animations";
 import { CREDIT_PACKS } from "@/lib/constants";
 import type { CreditPackId } from "@/lib/constants";
 import { track } from "@/lib/analytics";
+import { useAuth } from "@/contexts/AuthContext";
 
 type PaywallProps = {
   onClose?: () => void;
@@ -41,6 +42,7 @@ const packs = [
 ];
 
 export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: PaywallProps) {
+  const { isAuthenticated, email } = useAuth();
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -212,8 +214,8 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
             )}
           </AnimatePresence>
 
-          {/* Already purchased */}
-          {onShowEmailVerification && (
+          {/* Already purchased / Sign in */}
+          {onShowEmailVerification && !isAuthenticated && (
             <motion.div variants={fadeInUp} className="text-center pt-4 border-t border-gray-200">
               <p className="text-sm text-gray-600 mb-2">Already purchased credits?</p>
               <button
@@ -222,6 +224,18 @@ export function Paywall({ onClose, freeChecksUsed, onShowEmailVerification }: Pa
               >
                 Sign in with email
               </button>
+            </motion.div>
+          )}
+
+          {/* Show signed in status */}
+          {isAuthenticated && email && (
+            <motion.div variants={fadeInUp} className="text-center pt-4 border-t border-gray-200">
+              <p className="text-sm text-gray-600">
+                ✓ Signed in as <span className="font-medium text-gray-900">{email}</span>
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Select a package above to purchase more credits
+              </p>
             </motion.div>
           )}
 
