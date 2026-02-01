@@ -1,14 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import type { VerdictLevel } from "@/lib/types";
-import { useCountUp } from "@/hooks/useCountUp";
 import { useHaptic } from "@/hooks/useHaptic";
-import {
-  slamIn,
-  fadeInUp,
-} from "@/lib/animations";
+import { slamIn } from "@/lib/animations";
+import { AIDetectionMeter } from "./AIDetectionMeter";
 
 interface VerdictHeroProps {
   aiLikelihood: number;
@@ -24,20 +21,11 @@ export function VerdictHero({
   const [showVerdict, setShowVerdict] = useState(false);
   const haptic = useHaptic();
 
-  // Animated percentage counter
-  const displayPercent = useCountUp(aiLikelihood, {
-    duration: 2000,
-    delay: 300,
-  });
-
-  // Show verdict label after count completes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowVerdict(true);
-      haptic.heavy();
-    }, 2300);
-    return () => clearTimeout(timer);
-  }, []);
+  // Handle meter animation completion
+  const handleAnimationComplete = () => {
+    setShowVerdict(true);
+    haptic.heavy();
+  };
 
   const getVerdictColor = () => {
     if (aiLikelihood <= 30) return "text-[#A8D5BA]";
@@ -97,39 +85,21 @@ export function VerdictHero({
         👩
       </motion.div>
 
-      {/* AI Likelihood Score label at the top */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="text-sm font-bold text-gray-600 mb-2 uppercase tracking-wide"
-      >
-        AI Likelihood Score
-      </motion.p>
-
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="text-base font-bold text-gray-900 mb-4"
+        className="text-2xl font-bold text-gray-900 mb-4"
       >
         @{username}
       </motion.p>
 
-      {/* Animated percentage */}
-      <motion.div
-        className={`text-7xl font-bold mb-4 ${getVerdictColor()}`}
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 200,
-          damping: 15,
-          delay: 0.1,
-        }}
-      >
-        {displayPercent}%
-      </motion.div>
+      {/* AI Detection Meter */}
+      <AIDetectionMeter
+        aiLikelihood={aiLikelihood}
+        onAnimationComplete={handleAnimationComplete}
+        className="mb-4"
+      />
 
       {/* Verdict label slams in after count completes */}
       {showVerdict && (

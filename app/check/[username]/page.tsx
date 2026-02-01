@@ -426,12 +426,12 @@ export default function CheckPage({
               😔
             </motion.div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              we're sorry, we couldn't analyze this account
+              We're Sorry, We Couldn't Analyze This Account
             </h2>
 
-            <div className="bg-white rounded-xl p-5 mb-5 text-left" style={{ boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)" }}>
-              <p className="text-gray-700 font-medium mb-3">This could be because:</p>
-              <ul className="text-gray-600 space-y-2">
+            <div className="bg-white rounded-xl p-5 mb-6 text-left" style={{ boxShadow: "0 4px 24px rgba(0, 0, 0, 0.08)" }}>
+              <p className="text-gray-700 font-medium mb-4">This could be because:</p>
+              <ul className="text-gray-600 space-y-3">
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400">•</span>
                   <span>The account is private or restricted</span>
@@ -449,11 +449,10 @@ export default function CheckPage({
                   <span>Something else on our end</span>
                 </li>
               </ul>
+              <p className="text-gray-700 font-medium mt-5">
+                Don't worry — you weren't charged for this check 😊
+              </p>
             </div>
-
-            <p className="text-[#A8D5BA] font-medium mb-6">
-              ✓ Don't worry — you weren't charged for this check.
-            </p>
 
             <motion.button
               onClick={() => router.push("/")}
