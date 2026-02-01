@@ -17,7 +17,7 @@ export function TrustBar() {
       <span className="text-gray-300">·</span>
       <span className="flex items-center gap-1">
         <span>⚡</span>
-        <span>10 seconds</span>
+        <span>Results in Seconds</span>
       </span>
       <span className="text-gray-300">·</span>
       <span className="flex items-center gap-1">
