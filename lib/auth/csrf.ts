@@ -58,3 +58,18 @@ export function createCsrfError(): Response {
     }
   );
 }
+
+/**
+ * Validate request origin and return error response if invalid
+ * Returns null if validation passes
+ *
+ * @example
+ * const csrfError = checkCsrf(request);
+ * if (csrfError) return csrfError;
+ */
+export function checkCsrf(request: Request): Response | null {
+  if (!validateOrigin(request)) {
+    return createCsrfError();
+  }
+  return null;
+}

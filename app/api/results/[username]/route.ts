@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
+import { errorResponse, CommonErrors } from "@/lib/api/responses";
 
 /**
  * GET endpoint to fetch cached analysis results (read-only)
@@ -13,10 +14,7 @@ export async function GET(
     const { username } = await params;
 
     if (!username) {
-      return NextResponse.json(
-        { status: "error", message: "Username is required" },
-        { status: 400 }
-      );
+      return CommonErrors.missingParameter("username");
     }
 
     const supabase = createServerClient();
@@ -29,10 +27,7 @@ export async function GET(
       .single();
 
     if (error || !cachedResult) {
-      return NextResponse.json(
-        { status: "error", message: "Result not found" },
-        { status: 404 }
-      );
+      return CommonErrors.notFound("Result not found");
     }
 
     // Return the cached result
@@ -45,9 +40,6 @@ export async function GET(
     });
   } catch (error) {
     console.error("[results-api] Error:", error);
-    return NextResponse.json(
-      { status: "error", message: "Internal server error" },
-      { status: 500 }
-    );
+    return CommonErrors.internalError();
   }
 }

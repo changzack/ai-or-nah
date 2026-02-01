@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { getCustomerById } from "@/lib/db/customers";
+import { CommonErrors } from "@/lib/api/responses";
 
 /**
  * Get credits balance endpoint
@@ -24,14 +25,7 @@ export async function GET() {
     // Get customer credits
     const customer = await getCustomerById(session.customerId);
     if (!customer) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "customer_not_found",
-          message: "Customer account not found",
-        },
-        { status: 404 }
-      );
+      return CommonErrors.notFound("Customer account not found");
     }
 
     return NextResponse.json({
@@ -42,13 +36,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error("[credits/balance] Error:", error);
-    return NextResponse.json(
-      {
-        status: "error",
-        error: "internal_error",
-        message: "Something went wrong. Please try again.",
-      },
-      { status: 500 }
-    );
+    return CommonErrors.internalError("Something went wrong. Please try again.");
   }
 }

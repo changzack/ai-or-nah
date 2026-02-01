@@ -85,14 +85,6 @@ export function getVerdictLabel(verdict: VerdictLevel): string {
 
 /**
  * Get image analysis message based on score per PRD
+ * Re-exported from utils to maintain backward compatibility
  */
-export function getImageAnalysisMessage(averageScore: number): string {
-  const score = averageScore * 100; // Convert 0-1 to 0-100
-  if (score >= 80) {
-    return "Our AI detection system flagged these images as highly likely to be AI-generated.";
-  } else if (score >= 50) {
-    return "Our AI detection system found suspicious patterns in these images.";
-  } else {
-    return "These images appear to be authentic photographs.";
-  }
-}
+export { getImageAnalysisMessage } from "./utils/analysis";

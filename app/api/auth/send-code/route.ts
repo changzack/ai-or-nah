@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { validateOrigin, createCsrfError } from "@/lib/auth/csrf";
 import { checkSendRateLimit, createVerificationCode } from "@/lib/auth/verification";
 import { getVerificationCodeEmail } from "@/lib/email/templates";
+import { errorResponse, CommonErrors } from "@/lib/api/responses";
 
 /**
  * Send verification code endpoint
@@ -20,14 +21,7 @@ export async function POST(request: Request) {
     const { email } = body;
 
     if (!email || typeof email !== "string" || !email.includes("@")) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "invalid_email",
-          message: "Please provide a valid email address",
-        },
-        { status: 400 }
-      );
+      return CommonErrors.invalidEmail("Please provide a valid email address");
     }
 
     // Check rate limit
@@ -47,13 +41,10 @@ export async function POST(request: Request) {
     // Create verification code
     const code = await createVerificationCode(email);
     if (!code) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "code_creation_failed",
-          message: "Failed to create verification code. Please try again.",
-        },
-        { status: 500 }
+      return errorResponse(
+        "code_creation_failed",
+        "Failed to create verification code. Please try again.",
+        500
       );
     }
 
@@ -74,13 +65,10 @@ export async function POST(request: Request) {
     } catch (emailError) {
       console.error("[send-code] Error sending email:", emailError);
       console.error("[send-code] Email error details:", JSON.stringify(emailError, null, 2));
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "email_send_failed",
-          message: "Failed to send verification email. Please try again.",
-        },
-        { status: 500 }
+      return errorResponse(
+        "email_send_failed",
+        "Failed to send verification email. Please try again.",
+        500
       );
     }
 
@@ -90,13 +78,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("[send-code] Error:", error);
-    return NextResponse.json(
-      {
-        status: "error",
-        error: "internal_error",
-        message: "Something went wrong. Please try again.",
-      },
-      { status: 500 }
-    );
+    return CommonErrors.internalError("Something went wrong. Please try again.");
   }
 }

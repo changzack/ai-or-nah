@@ -3,6 +3,7 @@ import { validateOrigin, createCsrfError } from "@/lib/auth/csrf";
 import { getSession } from "@/lib/auth/session";
 import { createCheckoutSession } from "@/lib/stripe";
 import type { CreditPackId } from "@/lib/constants";
+import { errorResponse, CommonErrors } from "@/lib/api/responses";
 
 /**
  * Create Stripe Checkout session
@@ -20,14 +21,7 @@ export async function POST(request: Request) {
     const { packId } = body;
 
     if (!packId || !["small", "medium", "large"].includes(packId)) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "invalid_pack",
-          message: "Please select a valid credit pack",
-        },
-        { status: 400 }
-      );
+      return errorResponse("invalid_pack", "Please select a valid credit pack", 400);
     }
 
     // Get session for customer info (optional)
@@ -42,14 +36,7 @@ export async function POST(request: Request) {
 
     if (!checkoutSession) {
       console.error("[checkout] Failed to create checkout session");
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "checkout_failed",
-          message: "Failed to create checkout session. Please try again.",
-        },
-        { status: 500 }
-      );
+      return errorResponse("checkout_failed", "Failed to create checkout session. Please try again.", 500);
     }
 
     return NextResponse.json({
@@ -59,13 +46,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("[checkout] Error:", error);
-    return NextResponse.json(
-      {
-        status: "error",
-        error: "internal_error",
-        message: "Something went wrong. Please try again.",
-      },
-      { status: 500 }
-    );
+    return CommonErrors.internalError("Something went wrong. Please try again.");
   }
 }

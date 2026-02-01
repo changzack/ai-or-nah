@@ -4,6 +4,7 @@ import { verifyCode } from "@/lib/auth/verification";
 import { createSession } from "@/lib/auth/session";
 import { getOrCreateCustomer } from "@/lib/db/customers";
 import { migrateChecksToCustomer } from "@/lib/db/user-checks";
+import { errorResponse, CommonErrors } from "@/lib/api/responses";
 
 /**
  * Verify code and create session
@@ -21,52 +22,24 @@ export async function POST(request: Request) {
     const { email, code, fingerprint } = body;
 
     if (!email || !code) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "missing_fields",
-          message: "Please provide both email and code",
-        },
-        { status: 400 }
-      );
+      return errorResponse("missing_fields", "Please provide both email and code", 400);
     }
 
     // Verify code
     const result = await verifyCode(email, code);
 
     if (result.attemptsExceeded) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "attempts_exceeded",
-          message: "Too many incorrect attempts. Please request a new code.",
-        },
-        { status: 429 }
-      );
+      return errorResponse("attempts_exceeded", "Too many incorrect attempts. Please request a new code.", 429);
     }
 
     if (!result.valid) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "invalid_code",
-          message: "Invalid or expired code. Please try again.",
-        },
-        { status: 401 }
-      );
+      return CommonErrors.invalidCode("Invalid or expired code. Please try again.");
     }
 
     // Get or create customer
     const customer = await getOrCreateCustomer(email);
     if (!customer) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "customer_creation_failed",
-          message: "Failed to create customer account. Please try again.",
-        },
-        { status: 500 }
-      );
+      return errorResponse("customer_creation_failed", "Failed to create customer account. Please try again.", 500);
     }
 
     // Create session
@@ -74,14 +47,7 @@ export async function POST(request: Request) {
       await createSession(customer.email, customer.id);
     } catch (sessionError) {
       console.error("[verify] Error creating session:", sessionError);
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "session_creation_failed",
-          message: "Failed to create session. Please try again.",
-        },
-        { status: 500 }
-      );
+      return errorResponse("session_creation_failed", "Failed to create session. Please try again.", 500);
     }
 
     // Migrate anonymous checks to customer account (if fingerprint provided)
@@ -105,13 +71,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("[verify] Error:", error);
-    return NextResponse.json(
-      {
-        status: "error",
-        error: "internal_error",
-        message: "Something went wrong. Please try again.",
-      },
-      { status: 500 }
-    );
+    return CommonErrors.internalError("Something went wrong. Please try again.");
   }
 }

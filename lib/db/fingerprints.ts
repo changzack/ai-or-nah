@@ -1,6 +1,7 @@
 import { createServerClient } from "../supabase/server";
 import type { DeviceFingerprintRow, DeviceFingerprint } from "../types";
 import { FREE_TIER } from "../constants";
+import { querySingle, insertSingle, executeUpdate } from "./utils";
 
 /**
  * Database operations for device_fingerprints table
@@ -27,17 +28,11 @@ export async function getDeviceByToken(
 ): Promise<DeviceFingerprint | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("device_fingerprints")
-    .select("*")
-    .eq("device_token", deviceToken)
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return toDeviceFingerprint(data as DeviceFingerprintRow);
+  return querySingle<DeviceFingerprintRow, DeviceFingerprint>(
+    supabase.from("device_fingerprints").select("*").eq("device_token", deviceToken),
+    toDeviceFingerprint,
+    "[fingerprints]"
+  );
 }
 
 /**
@@ -48,6 +43,7 @@ export async function getDeviceByFingerprint(
 ): Promise<DeviceFingerprint | null> {
   const supabase = createServerClient();
 
+  // Note: Using maybeSingle() instead of single() to avoid error if not found
   const { data, error } = await supabase
     .from("device_fingerprints")
     .select("*")
@@ -91,22 +87,15 @@ export async function createDevice(
 ): Promise<DeviceFingerprint | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("device_fingerprints")
-    .insert({
+  return insertSingle<DeviceFingerprintRow, DeviceFingerprint>(
+    supabase.from("device_fingerprints").insert({
       fingerprint_hash: fingerprintHash,
       device_token: deviceToken || null,
       checks_used: 0,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("[fingerprints] Error creating device:", error);
-    return null;
-  }
-
-  return toDeviceFingerprint(data as DeviceFingerprintRow);
+    }),
+    toDeviceFingerprint,
+    "[fingerprints]"
+  );
 }
 
 /**
@@ -141,17 +130,10 @@ export async function linkTokenToDevice(
 ): Promise<boolean> {
   const supabase = createServerClient();
 
-  const { error } = await supabase
-    .from("device_fingerprints")
-    .update({ device_token: deviceToken })
-    .eq("id", deviceId);
-
-  if (error) {
-    console.error("[fingerprints] Error linking token to device:", error);
-    return false;
-  }
-
-  return true;
+  return executeUpdate(
+    supabase.from("device_fingerprints").update({ device_token: deviceToken }).eq("id", deviceId),
+    "[fingerprints]"
+  );
 }
 
 /**
@@ -203,18 +185,16 @@ export async function incrementDeviceChecks(
 
   const supabase = createServerClient();
 
-  const { error } = await supabase
-    .from("device_fingerprints")
-    .update({ checks_used: device.checksUsed + 1 })
-    .eq("id", device.id);
+  const success = await executeUpdate(
+    supabase.from("device_fingerprints").update({ checks_used: device.checksUsed + 1 }).eq("id", device.id),
+    "[fingerprints]"
+  );
 
-  if (error) {
-    console.error("[fingerprints] Error incrementing check count:", error);
-    return false;
+  if (success) {
+    console.log(`[fingerprints] Successfully incremented checks to ${device.checksUsed + 1}`);
   }
 
-  console.log(`[fingerprints] Successfully incremented checks to ${device.checksUsed + 1}`);
-  return true;
+  return success;
 }
 
 /**

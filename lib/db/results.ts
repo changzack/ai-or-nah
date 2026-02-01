@@ -1,5 +1,6 @@
 import { createServerClient } from "../supabase/server";
 import type { ResultRow, RedFlag, VerdictLevel } from "../types";
+import { querySingle, insertSingle, executeUpdate } from "./utils";
 
 /**
  * Database operations for results table
@@ -13,17 +14,11 @@ export async function getCachedResult(
 ): Promise<ResultRow | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("results")
-    .select("*")
-    .eq("username", username.toLowerCase())
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return data as ResultRow;
+  return querySingle<ResultRow>(
+    supabase.from("results").select("*").eq("username", username.toLowerCase()),
+    undefined,
+    "[results]"
+  );
 }
 
 /**
@@ -40,9 +35,8 @@ export async function saveResult(params: {
 }): Promise<ResultRow | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("results")
-    .insert({
+  return insertSingle<ResultRow>(
+    supabase.from("results").insert({
       username: params.username.toLowerCase(),
       ai_likelihood_score: params.aiLikelihoodScore,
       verdict: params.verdict,
@@ -54,16 +48,10 @@ export async function saveResult(params: {
       checked_at: new Date().toISOString(),
       last_accessed_at: new Date().toISOString(),
       view_count: 0,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error saving result:", error);
-    return null;
-  }
-
-  return data as ResultRow;
+    }),
+    undefined,
+    "[results]"
+  );
 }
 
 /**
@@ -74,15 +62,13 @@ export async function updateResultAccess(
 ): Promise<boolean> {
   const supabase = createServerClient();
 
-  const { error } = await supabase
-    .from("results")
-    .update({
+  return executeUpdate(
+    supabase.from("results").update({
       last_accessed_at: new Date().toISOString(),
       view_count: supabase.rpc("increment", { row_id: resultId }),
-    })
-    .eq("id", resultId);
-
-  return !error;
+    }).eq("id", resultId),
+    "[results]"
+  );
 }
 
 /**
@@ -94,6 +80,7 @@ export async function deleteStaleResults(daysInactive = 90): Promise<number> {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - daysInactive);
 
+  // Note: Using raw query here because we need the count of deleted rows
   const { data, error } = await supabase
     .from("results")
     .delete()
@@ -101,7 +88,7 @@ export async function deleteStaleResults(daysInactive = 90): Promise<number> {
     .select("id");
 
   if (error) {
-    console.error("Error deleting stale results:", error);
+    console.error("[results] Error deleting stale results:", error);
     return 0;
   }
 

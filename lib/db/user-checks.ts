@@ -1,4 +1,5 @@
 import { createServerClient } from "../supabase/server";
+import { queryMany, executeUpdate } from "./utils";
 
 /**
  * Check if a user (anonymous or authenticated) has previously checked a username
@@ -33,14 +34,9 @@ export async function hasUserCheckedUsername(
       return false;
     }
 
-    const { data, error } = await query;
+    const results = await queryMany<{ id: string }>(query, undefined, "[user-checks]");
 
-    if (error) {
-      console.error('[user-checks] Error checking if user checked username:', error);
-      return false;
-    }
-
-    return data && data.length > 0;
+    return results.length > 0;
   } catch (error) {
     console.error('[user-checks] Exception checking if user checked username:', error);
     return false;
@@ -61,20 +57,14 @@ export async function recordUserCheck(
   try {
     const supabase = await createServerClient();
 
-    const { error } = await supabase
-      .from('user_checks')
-      .insert({
+    await executeUpdate(
+      supabase.from('user_checks').insert({
         device_fingerprint: fingerprint,
         customer_id: customerId,
         username: username.toLowerCase(),
-      });
-
-    if (error) {
-      // Ignore unique constraint violations (user already checked this username)
-      if (error.code !== '23505') {
-        console.error('[user-checks] Error recording user check:', error);
-      }
-    }
+      }),
+      "[user-checks]"
+    );
   } catch (error) {
     console.error('[user-checks] Exception recording user check:', error);
   }

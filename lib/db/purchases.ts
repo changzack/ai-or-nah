@@ -1,5 +1,6 @@
 import { createServerClient } from "../supabase/server";
 import type { PurchaseRow } from "../types";
+import { querySingle, queryMany, executeUpdate } from "./utils";
 
 /**
  * Database operations for purchases table
@@ -30,21 +31,15 @@ export async function recordPurchase(params: {
   }
 
   // Insert new purchase
-  const { error } = await supabase
-    .from("purchases")
-    .insert({
+  return executeUpdate(
+    supabase.from("purchases").insert({
       customer_id: params.customerId,
       stripe_session_id: params.stripeSessionId,
       credits_purchased: params.creditsPurchased,
       amount_cents: params.amountCents,
-    });
-
-  if (error) {
-    console.error("[purchases] Error recording purchase:", error);
-    return false;
-  }
-
-  return true;
+    }),
+    "[purchases]"
+  );
 }
 
 /**
@@ -55,17 +50,11 @@ export async function getPurchaseBySessionId(
 ): Promise<PurchaseRow | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("purchases")
-    .select("*")
-    .eq("stripe_session_id", stripeSessionId)
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return data as PurchaseRow;
+  return querySingle<PurchaseRow>(
+    supabase.from("purchases").select("*").eq("stripe_session_id", stripeSessionId),
+    undefined,
+    "[purchases]"
+  );
 }
 
 /**
@@ -76,17 +65,11 @@ export async function getPurchaseHistory(
 ): Promise<PurchaseRow[]> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("purchases")
-    .select("*")
-    .eq("customer_id", customerId)
-    .order("created_at", { ascending: false });
-
-  if (error || !data) {
-    return [];
-  }
-
-  return data as PurchaseRow[];
+  return queryMany<PurchaseRow>(
+    supabase.from("purchases").select("*").eq("customer_id", customerId).order("created_at", { ascending: false }),
+    undefined,
+    "[purchases]"
+  );
 }
 
 /**
@@ -97,16 +80,13 @@ export async function getTotalCreditsPurchased(
 ): Promise<number> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("purchases")
-    .select("credits_purchased")
-    .eq("customer_id", customerId);
+  const purchases = await queryMany<{ credits_purchased: number }>(
+    supabase.from("purchases").select("credits_purchased").eq("customer_id", customerId),
+    undefined,
+    "[purchases]"
+  );
 
-  if (error || !data) {
-    return 0;
-  }
-
-  return data.reduce((sum, purchase) => sum + purchase.credits_purchased, 0);
+  return purchases.reduce((sum, purchase) => sum + purchase.credits_purchased, 0);
 }
 
 /**
@@ -117,14 +97,11 @@ export async function getTotalAmountSpent(
 ): Promise<number> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("purchases")
-    .select("amount_cents")
-    .eq("customer_id", customerId);
+  const purchases = await queryMany<{ amount_cents: number }>(
+    supabase.from("purchases").select("amount_cents").eq("customer_id", customerId),
+    undefined,
+    "[purchases]"
+  );
 
-  if (error || !data) {
-    return 0;
-  }
-
-  return data.reduce((sum, purchase) => sum + purchase.amount_cents, 0);
+  return purchases.reduce((sum, purchase) => sum + purchase.amount_cents, 0);
 }

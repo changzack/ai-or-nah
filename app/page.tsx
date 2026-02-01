@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Sticker } from "@/components/ui/Sticker";
 import { DesktopGate } from "@/components/DesktopGate";
 import { Header } from "@/components/Header";
-import { FreeChecksIndicator } from "@/components/FreeChecksIndicator";
+import { ChecksRemainingIndicator } from "@/components/ChecksRemainingIndicator";
 import { Footer } from "@/components/Footer";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { WhyUseSection } from "@/components/landing/WhyUseSection";
@@ -248,7 +248,7 @@ function HomePageContent() {
                 transition={{ duration: 0.3 }}
                 className="mb-6"
               >
-                <FreeChecksIndicator remaining={freeChecksRemaining} />
+                <ChecksRemainingIndicator type="free" remaining={freeChecksRemaining} />
               </motion.div>
             )}
 

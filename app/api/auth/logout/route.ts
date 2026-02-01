@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { validateOrigin, createCsrfError } from "@/lib/auth/csrf";
 import { clearSession } from "@/lib/auth/session";
+import { CommonErrors } from "@/lib/api/responses";
 
 /**
  * Logout endpoint
@@ -21,13 +22,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("[logout] Error:", error);
-    return NextResponse.json(
-      {
-        status: "error",
-        error: "internal_error",
-        message: "Something went wrong. Please try again.",
-      },
-      { status: 500 }
-    );
+    return CommonErrors.internalError("Something went wrong. Please try again.");
   }
 }

@@ -1,5 +1,6 @@
 import { createServerClient } from "../supabase/server";
 import type { CustomerRow, Customer, CreditTransactionReason } from "../types";
+import { querySingle, insertSingle, executeUpdate } from "./utils";
 
 /**
  * Database operations for customers table
@@ -25,17 +26,11 @@ function toCustomer(row: CustomerRow): Customer {
 export async function getCustomerByEmail(email: string): Promise<Customer | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("customers")
-    .select("*")
-    .eq("email", email.toLowerCase())
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return toCustomer(data as CustomerRow);
+  return querySingle<CustomerRow, Customer>(
+    supabase.from("customers").select("*").eq("email", email.toLowerCase()),
+    toCustomer,
+    "[customers]"
+  );
 }
 
 /**
@@ -44,17 +39,11 @@ export async function getCustomerByEmail(email: string): Promise<Customer | null
 export async function getCustomerById(customerId: string): Promise<Customer | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("customers")
-    .select("*")
-    .eq("id", customerId)
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return toCustomer(data as CustomerRow);
+  return querySingle<CustomerRow, Customer>(
+    supabase.from("customers").select("*").eq("id", customerId),
+    toCustomer,
+    "[customers]"
+  );
 }
 
 /**
@@ -67,22 +56,15 @@ export async function createCustomer(params: {
 }): Promise<Customer | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("customers")
-    .insert({
+  return insertSingle<CustomerRow, Customer>(
+    supabase.from("customers").insert({
       email: params.email.toLowerCase(),
       stripe_customer_id: params.stripeCustomerId || null,
       credits: params.credits || 0,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("[customers] Error creating customer:", error);
-    return null;
-  }
-
-  return toCustomer(data as CustomerRow);
+    }),
+    toCustomer,
+    "[customers]"
+  );
 }
 
 /**
@@ -105,17 +87,10 @@ export async function updateStripeCustomerId(
 ): Promise<boolean> {
   const supabase = createServerClient();
 
-  const { error } = await supabase
-    .from("customers")
-    .update({ stripe_customer_id: stripeCustomerId })
-    .eq("id", customerId);
-
-  if (error) {
-    console.error("[customers] Error updating stripe customer ID:", error);
-    return false;
-  }
-
-  return true;
+  return executeUpdate(
+    supabase.from("customers").update({ stripe_customer_id: stripeCustomerId }).eq("id", customerId),
+    "[customers]"
+  );
 }
 
 /**
@@ -243,15 +218,11 @@ export async function deductCredit(
 export async function getCreditsBalance(customerId: string): Promise<number> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("customers")
-    .select("credits")
-    .eq("id", customerId)
-    .single();
+  const result = await querySingle<{ credits: number }>(
+    supabase.from("customers").select("credits").eq("id", customerId),
+    undefined,
+    "[customers]"
+  );
 
-  if (error || !data) {
-    return 0;
-  }
-
-  return data.credits;
+  return result?.credits ?? 0;
 }

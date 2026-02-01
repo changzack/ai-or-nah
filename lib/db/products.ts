@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { querySingle, queryMany } from "./utils";
 
 export type Product = {
   id: string;
@@ -19,18 +20,17 @@ export type CreditPackId = "small" | "medium" | "large";
 export async function getProducts(): Promise<Product[]> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("active", true)
-    .order("display_order", { ascending: true });
+  const products = await queryMany<Product>(
+    supabase.from("products").select("*").eq("active", true).order("display_order", { ascending: true }),
+    undefined,
+    "[products]"
+  );
 
-  if (error) {
-    console.error("[products] Error fetching products:", error);
+  if (products.length === 0) {
     throw new Error("Failed to fetch products");
   }
 
-  return data || [];
+  return products;
 }
 
 /**
@@ -39,19 +39,11 @@ export async function getProducts(): Promise<Product[]> {
 export async function getProduct(productId: string): Promise<Product | null> {
   const supabase = createServerClient();
 
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", productId)
-    .eq("active", true)
-    .single();
-
-  if (error) {
-    console.error(`[products] Error fetching product ${productId}:`, error);
-    return null;
-  }
-
-  return data;
+  return querySingle<Product>(
+    supabase.from("products").select("*").eq("id", productId).eq("active", true),
+    undefined,
+    "[products]"
+  );
 }
 
 /**

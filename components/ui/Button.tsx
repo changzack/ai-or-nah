@@ -7,7 +7,7 @@ import { useHaptic } from "@/hooks/useHaptic";
 
 interface ButtonProps
   extends Omit<HTMLMotionProps<"button">, "children" | "disabled"> {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "purple";
   size?: "default" | "large";
   fullWidth?: boolean;
   children: React.ReactNode;
@@ -34,6 +34,8 @@ export function Button({
       "bg-[#FF6B6B] hover:bg-[#E85555] active:bg-[#D14444] text-white shadow-sm shadow-[#FF6B6B]/20",
     secondary:
       "bg-transparent border-2 border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white active:bg-[#000000] text-[#1A1A1A]",
+    purple:
+      "bg-[#8B5CF6] hover:bg-[#7C3AED] active:bg-[#6D28D9] text-white shadow-sm shadow-[#8B5CF6]/20",
   };
 
   const sizeClasses = {

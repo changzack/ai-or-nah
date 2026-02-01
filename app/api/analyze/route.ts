@@ -12,7 +12,9 @@ import {
   getFreeChecksRemaining,
 } from "@/lib/db/fingerprints";
 import { hasUserCheckedUsername, recordUserCheck } from "@/lib/db/user-checks";
+import { getImageAnalysisMessage } from "@/lib/utils/analysis";
 import type { AnalysisResult, PaywallResponse } from "@/lib/types";
+import { CommonErrors } from "@/lib/api/responses";
 
 /**
  * Main analysis endpoint
@@ -25,28 +27,14 @@ export async function POST(request: Request) {
     const { username: rawUsername, fingerprint, deviceToken } = body;
 
     if (!rawUsername) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "invalid_username",
-          message: "Please provide a username",
-        },
-        { status: 400 }
-      );
+      return CommonErrors.invalidUsername("Please provide a username");
     }
 
     // Parse and validate username
     const username = parseInstagramUsername(rawUsername);
 
     if (!username) {
-      return NextResponse.json(
-        {
-          status: "error",
-          error: "invalid_username",
-          message: "Invalid Instagram username or URL. Try again.",
-        },
-        { status: 400 }
-      );
+      return CommonErrors.invalidUsername("Invalid Instagram username or URL. Try again.");
     }
 
     console.log(`[API] Checking cache for: ${username}`);
@@ -129,14 +117,7 @@ export async function POST(request: Request) {
     } else {
       // Anonymous user - check free tier
       if (!fingerprint) {
-        return NextResponse.json(
-          {
-            status: "error",
-            error: "missing_fingerprint",
-            message: "Device fingerprint required",
-          },
-          { status: 400 }
-        );
+        return CommonErrors.missingParameter("fingerprint");
       }
 
       const hasFree = await hasFreeChecks(deviceToken || null, fingerprint);
@@ -264,21 +245,9 @@ export async function POST(request: Request) {
     return NextResponse.json(resultWithChecks);
   } catch (error) {
     console.error("[API] Error:", error);
-    return NextResponse.json(
-      {
-        status: "error",
-        error: "analysis_failed",
-        message: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
+    return CommonErrors.internalError(
+      error instanceof Error ? error.message : "Unknown error"
     );
   }
 }
 
-// Helper to get image analysis message (duplicated from constants to avoid circular imports)
-function getImageAnalysisMessage(score: number): string {
-  if (score < 0.3) return "The faces in these photos look pretty natural to me.";
-  if (score < 0.6) return "Some of these photos have that AI-generated vibe, but it's hard to say for sure.";
-  if (score < 0.8) return "Most of these faces have telltale signs of AI generation.";
-  return "These photos are almost certainly AI-generated. The patterns are unmistakable.";
-}

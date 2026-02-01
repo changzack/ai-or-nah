@@ -1,5 +1,6 @@
 import { createServerClient } from "../supabase/server";
 import { RATE_LIMIT } from "../constants";
+import { querySingle } from "./utils";
 
 /**
  * Database operations for IP rate limiting
@@ -48,14 +49,13 @@ export async function checkRateLimit(
   const today = getPSTDate();
 
   // Get or create rate limit record
-  const { data, error } = await supabase
-    .from("ip_rate_limits")
-    .select("*")
-    .eq("ip_address", ipAddress)
-    .eq("reset_date", today)
-    .single();
+  const data = await querySingle<{ check_count: number }>(
+    supabase.from("ip_rate_limits").select("*").eq("ip_address", ipAddress).eq("reset_date", today),
+    undefined,
+    "[rate-limit]"
+  );
 
-  if (error || !data) {
+  if (!data) {
     // No record exists, user has full quota
     return {
       allowed: true,
