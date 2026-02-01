@@ -43,6 +43,7 @@ Primary conversion metrics:
 | Event Name | Trigger | Properties |
 |------------|---------|------------|
 | `Submitted Username` | User submits Instagram username | `username`, `isLoggedIn`, `creditsRemaining`, `source` |
+| `Clicked Example Account` | User clicks a suggested example account on homepage | `username` |
 | `Started Analysis` | Analysis begins (API called) | `username`, `isFromCache` |
 | `Completed Analysis` | Analysis finishes successfully | `username`, `verdict`, `confidenceScore`, `duration_ms`, `isFromCache` |
 | `Failed Analysis` | Analysis fails | `username`, `errorType`, `errorMessage` |

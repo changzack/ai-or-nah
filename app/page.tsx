@@ -15,6 +15,7 @@ import { Footer } from "@/components/Footer";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { WhyUseSection } from "@/components/landing/WhyUseSection";
 import { HowItWorks } from "@/components/landing/HowItWorks";
+import { GaugePreview } from "@/components/landing/GaugePreview";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition, float } from "@/lib/animations";
@@ -291,7 +292,7 @@ function HomePageContent() {
             >
               <Input
                 type="text"
-                placeholder="@username or instagram.com/username"
+                placeholder="Enter Instagram username"
                 value={input}
                 onChange={(e) => {
                   setInput(e.target.value);
@@ -327,13 +328,53 @@ function HomePageContent() {
                     Checking...
                   </motion.span>
                 ) : (
-                  "Let's Check 'Em"
+                  "Is This Account Real?"
                 )}
               </Button>
             </motion.form>
 
+            {/* Try These Examples */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className="text-center mt-4"
+            >
+              <span className="text-sm text-gray-500">Try these: </span>
+              {["lilmiquela", "shudu.gram", "imma.gram"].map((username, idx) => (
+                <span key={username}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      track('Clicked Example Account', { username });
+                      router.push(`/check/${username}`);
+                    }}
+                    className="text-sm text-[#8B5CF6] hover:text-[#7C3AED] font-medium hover:underline"
+                  >
+                    @{username}
+                  </button>
+                  {idx < 2 && <span className="text-gray-400 mx-1">·</span>}
+                </span>
+              ))}
+            </motion.div>
+
             {/* Trust Signals */}
             <TrustBar />
+
+            {/* Social Proof */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+              className="text-center mt-2 mb-6"
+            >
+              <span className="text-sm text-gray-500">
+                <span className="text-[#A8D5BA] font-semibold">✓ 48,000+</span> accounts checked
+              </span>
+            </motion.div>
+
+            {/* Gauge Preview Teaser */}
+            <GaugePreview />
 
             {/* Why Use Section */}
             <WhyUseSection />

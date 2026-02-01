@@ -8,21 +8,21 @@ export function TrustBar() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.5 }}
-      className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-gray-500 mt-6 mb-16"
+      className="flex items-center justify-center gap-3 text-sm text-gray-500 mt-4"
     >
       <span className="flex items-center gap-1">
-        <span>⚡</span>
-        <span>Results in seconds</span>
-      </span>
-      <span className="hidden sm:inline text-gray-300">•</span>
-      <span className="flex items-center gap-1">
         <span>🔒</span>
-        <span>100% private</span>
+        <span>Private</span>
       </span>
-      <span className="hidden sm:inline text-gray-300">•</span>
+      <span className="text-gray-300">·</span>
+      <span className="flex items-center gap-1">
+        <span>⚡</span>
+        <span>10 seconds</span>
+      </span>
+      <span className="text-gray-300">·</span>
       <span className="flex items-center gap-1">
         <span>✨</span>
-        <span>No account needed</span>
+        <span>Free</span>
       </span>
     </motion.div>
   );

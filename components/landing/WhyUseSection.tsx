@@ -26,7 +26,7 @@ export function WhyUseSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.6 }}
-      className="mb-16"
+      className="mt-10 mb-12"
     >
       <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
         Why Use AI or Nah?
