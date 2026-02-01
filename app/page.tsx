@@ -340,7 +340,7 @@ function HomePageContent() {
               className="text-center mt-4"
             >
               <span className="text-sm text-gray-500">Try these: </span>
-              {["soycatalinacruz", "shudu.gram", "itsleahlin"].map((username, idx) => (
+              {["soycatalinacruz", "mayakitsunexo", "itsleahlin"].map((username, idx) => (
                 <span key={username}>
                   <button
                     type="button"
