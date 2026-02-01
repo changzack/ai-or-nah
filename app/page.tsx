@@ -361,18 +361,6 @@ function HomePageContent() {
             {/* Trust Signals */}
             <TrustBar />
 
-            {/* Social Proof */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
-              className="text-center mt-2 mb-6"
-            >
-              <span className="text-sm text-gray-500">
-                <span className="text-[#A8D5BA] font-semibold">✓ 48,000+</span> accounts checked
-              </span>
-            </motion.div>
-
             {/* Gauge Preview Teaser */}
             <GaugePreview />
 
