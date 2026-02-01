@@ -15,7 +15,6 @@ import { Footer } from "@/components/Footer";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { WhyUseSection } from "@/components/landing/WhyUseSection";
 import { HowItWorks } from "@/components/landing/HowItWorks";
-import { GaugePreview } from "@/components/landing/GaugePreview";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDeviceIdentity } from "@/hooks/useDeviceIdentity";
 import { fadeInUp, staggerContainer, springTransition, float } from "@/lib/animations";
@@ -360,9 +359,6 @@ function HomePageContent() {
 
             {/* Trust Signals */}
             <TrustBar />
-
-            {/* Gauge Preview Teaser */}
-            <GaugePreview />
 
             {/* Why Use Section */}
             <WhyUseSection />
